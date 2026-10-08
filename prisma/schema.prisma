@@ -1,0 +1,184 @@
+// Prisma schema for MongoDB.
+// MongoDB has no foreign keys: relations are resolved by Prisma, and order
+// lines keep a snapshot (name, price, options) so history survives product edits.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum DeliveryMethod {
+  DELIVERY
+  PICKUP
+}
+
+enum PaymentMethod {
+  CASH
+  CARD_ON_DELIVERY
+  CARD_ONLINE
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PREPARING
+  READY
+  OUT_FOR_DELIVERY
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  phone        String?
+  passwordHash String?
+  role         Role     @default(CUSTOMER)
+  orders       Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String    @unique
+  description String    @default("")
+  image       String?
+  order       Int       @default(0)
+  active      Boolean   @default(true)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([active, order])
+}
+
+model Product {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  slug             String            @unique
+  description      String
+  shortDescription String
+  /// Prices are stored in bani (1/100 RON) to avoid floating point errors.
+  price            Int
+  oldPrice         Int?
+  image            String
+  images           String[]
+  ingredients      String[]
+  allergens        String[]
+  /// Grams (food) or millilitres (drinks) — see `weightUnit`.
+  weight           Int?
+  weightUnit       String            @default("g")
+  calories         Int?
+  categoryId       String            @db.ObjectId
+  category         Category          @relation(fields: [categoryId], references: [id])
+  options          ProductOption[]
+  popular          Boolean           @default(false)
+  featured         Boolean           @default(false)
+  isNew            Boolean           @default(false)
+  active           Boolean           @default(true)
+  sortOrder        Int               @default(0)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([categoryId, active])
+  @@index([active, popular])
+}
+
+model ProductOption {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  price     Int
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+}
+
+model Location {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  address   String
+  phone     String
+  hours     String
+  active    Boolean  @default(true)
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Snapshot of a selected product option stored on the order line.
+type OrderItemOption {
+  name  String
+  price Int
+}
+
+model Order {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  /// Human-friendly order number shown to customers (e.g. FB-7K2M9Q).
+  number          String         @unique
+  userId          String?        @db.ObjectId
+  user            User?          @relation(fields: [userId], references: [id])
+  customerName    String
+  customerPhone   String
+  customerEmail   String
+  deliveryAddress String?
+  deliveryMethod  DeliveryMethod
+  locationId      String?        @db.ObjectId
+  location        Location?      @relation(fields: [locationId], references: [id])
+  paymentMethod   PaymentMethod
+  status          OrderStatus    @default(NEW)
+  subtotal        Int
+  deliveryFee     Int
+  total           Int
+  notes           String?
+  items           OrderItem[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  orderId     String            @db.ObjectId
+  order       Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  /// Not a relation on purpose: the product may later be deleted.
+  productId   String            @db.ObjectId
+  productName String
+  productSlug String
+  image       String
+  quantity    Int
+  /// Unit price including options, in bani.
+  price       Int
+  options     OrderItemOption[]
+  total       Int
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  avatar    String?
+  rating    Int
+  text      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

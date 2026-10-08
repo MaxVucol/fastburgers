@@ -1,0 +1,192 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { ArrowDown, ArrowUp, Loader2, Trash2 } from "lucide-react";
+import type { OrderStatus } from "@prisma/client";
+import { deleteCategory, moveCategory, setCategoryActive } from "@/actions/admin/categories";
+import { updateOrderStatus } from "@/actions/admin/orders";
+import { deleteProduct, setProductFlag } from "@/actions/admin/products";
+import { ORDER_STATUSES, ORDER_STATUS_LABEL } from "@/lib/order-status";
+import { cn } from "@/lib/utils";
+
+function Switch({
+  checked,
+  pending,
+  label,
+  onToggle,
+}: {
+  checked: boolean;
+  pending: boolean;
+  label: string;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={pending}
+      onClick={onToggle}
+      className={cn(
+        "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors disabled:opacity-60",
+        checked ? "bg-herb" : "bg-oat",
+      )}
+    >
+      <span className={cn("inline-block size-5 rounded-full bg-white shadow transition-transform", checked ? "translate-x-5.5" : "translate-x-0.5")} />
+    </button>
+  );
+}
+
+export function ProductFlagSwitch({
+  id,
+  flag,
+  value,
+  label,
+}: {
+  id: string;
+  flag: "active" | "popular" | "isNew" | "featured";
+  value: boolean;
+  label: string;
+}) {
+  const [optimistic, setOptimistic] = useState(value);
+  const [prev, setPrev] = useState(value);
+  const [pending, startTransition] = useTransition();
+  if (value !== prev) {
+    setPrev(value);
+    setOptimistic(value);
+  }
+  return (
+    <Switch
+      checked={optimistic}
+      pending={pending}
+      label={label}
+      onToggle={() => {
+        const next = !optimistic;
+        setOptimistic(next);
+        startTransition(() => setProductFlag(id, flag, next));
+      }}
+    />
+  );
+}
+
+export function CategoryActiveSwitch({ id, value, label }: { id: string; value: boolean; label: string }) {
+  const [optimistic, setOptimistic] = useState(value);
+  const [prev, setPrev] = useState(value);
+  const [pending, startTransition] = useTransition();
+  if (value !== prev) {
+    setPrev(value);
+    setOptimistic(value);
+  }
+  return (
+    <Switch
+      checked={optimistic}
+      pending={pending}
+      label={label}
+      onToggle={() => {
+        const next = !optimistic;
+        setOptimistic(next);
+        startTransition(() => setCategoryActive(id, next));
+      }}
+    />
+  );
+}
+
+export function DeleteButton({
+  id,
+  kind,
+  name,
+}: {
+  id: string;
+  kind: "product" | "category";
+  name: string;
+}) {
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <span className="inline-flex flex-col items-end">
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => {
+          if (!window.confirm(`Ștergi definitiv „${name}”? Acțiunea nu poate fi anulată.`)) return;
+          setError(null);
+          startTransition(async () => {
+            if (kind === "product") {
+              await deleteProduct(id);
+            } else {
+              const result = await deleteCategory(id);
+              if (result.error) setError(result.error);
+            }
+          });
+        }}
+        className="grid size-9 place-items-center rounded-lg text-muted hover:bg-accent-soft hover:text-accent disabled:opacity-50"
+        aria-label={`Șterge ${name}`}
+      >
+        {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Trash2 className="size-4" aria-hidden />}
+      </button>
+      {error && (
+        <span role="alert" className="mt-1 max-w-56 text-right text-xs font-medium text-accent">
+          {error}
+        </span>
+      )}
+    </span>
+  );
+}
+
+export function MoveButtons({ id, isFirst, isLast, name }: { id: string; isFirst: boolean; isLast: boolean; name: string }) {
+  const [pending, startTransition] = useTransition();
+  const btn = "grid size-8 place-items-center rounded-lg text-ink-soft hover:bg-sand disabled:opacity-30";
+  return (
+    <span className="inline-flex flex-col">
+      <button type="button" className={btn} disabled={pending || isFirst} onClick={() => startTransition(() => moveCategory(id, "up"))} aria-label={`Mută ${name} mai sus`}>
+        <ArrowUp className="size-4" aria-hidden />
+      </button>
+      <button type="button" className={btn} disabled={pending || isLast} onClick={() => startTransition(() => moveCategory(id, "down"))} aria-label={`Mută ${name} mai jos`}>
+        <ArrowDown className="size-4" aria-hidden />
+      </button>
+    </span>
+  );
+}
+
+export function OrderStatusSelect({ id, status }: { id: string; status: OrderStatus }) {
+  const [value, setValue] = useState<OrderStatus>(status);
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label htmlFor={`status-${id}`} className="text-sm font-semibold text-ink-soft">
+        Status comandă
+      </label>
+      <div className="flex items-center gap-2">
+        <select
+          id={`status-${id}`}
+          value={value}
+          disabled={pending}
+          onChange={(e) => {
+            const next = e.target.value as OrderStatus;
+            setValue(next);
+            setError(null);
+            startTransition(async () => {
+              const result = await updateOrderStatus(id, next);
+              if (result.error) {
+                setError(result.error);
+                setValue(status);
+              }
+            });
+          }}
+          className="h-11 flex-1 cursor-pointer rounded-xl border border-line bg-white px-3 font-semibold focus:border-accent focus:outline-none"
+        >
+          {ORDER_STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {ORDER_STATUS_LABEL[s]}
+            </option>
+          ))}
+        </select>
+        {pending && <Loader2 className="size-5 animate-spin text-muted" aria-label="Se salvează" />}
+      </div>
+      {error && <p role="alert" className="text-sm text-accent">{error}</p>}
+    </div>
+  );
+}
