@@ -2,14 +2,32 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { del, put } from "@vercel/blob";
 import sharp from "sharp";
 
-// Uploaded images are normalized to WebP and stored outside /public (files added to
-// /public after build are not served). They are exposed through /media/[file].
-// To move to S3/Cloudinary, replace these functions — callers only see URLs.
+// Uploaded images are normalized to WebP. Two backends, chosen by environment —
+// callers only ever see URLs:
+//  - Vercel Blob when BLOB_READ_WRITE_TOKEN is set (required on Vercel, whose
+//    filesystem is read-only and not shared between function instances);
+//  - local disk otherwise, stored outside /public (files added to /public after build
+//    are not served) and exposed through /media/[file].
 
 export const UPLOAD_DIR = path.join(process.cwd(), "storage", "uploads");
 const MEDIA_PREFIX = "/media/";
+const BLOB_HOST_SUFFIX = ".public.blob.vercel-storage.com";
+
+function blobEnabled(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
+function isBlobUrl(url: string): boolean {
+  try {
+    const { protocol, hostname } = new URL(url);
+    return protocol === "https:" && hostname.endsWith(BLOB_HOST_SUFFIX);
+  } catch {
+    return false;
+  }
+}
 const MAX_BYTES = 8 * 1024 * 1024;
 const ACCEPTED = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 
@@ -36,6 +54,27 @@ export async function saveImage(file: File): Promise<string> {
   }
 
   const name = `${randomUUID()}.webp`;
+
+  if (blobEnabled()) {
+    try {
+      const blob = await put(`uploads/${name}`, output, {
+        access: "public",
+        contentType: "image/webp",
+        cacheControlMaxAge: 60 * 60 * 24 * 365,
+      });
+      return blob.url;
+    } catch (error) {
+      console.error("Blob upload failed", error);
+      throw new UploadError("Încărcarea imaginii a eșuat. Încearcă din nou.");
+    }
+  }
+
+  if (process.env.VERCEL) {
+    throw new UploadError(
+      "Stocarea imaginilor nu este configurată: conectează un Vercel Blob store (BLOB_READ_WRITE_TOKEN).",
+    );
+  }
+
   await mkdir(UPLOAD_DIR, { recursive: true });
   await writeFile(path.join(UPLOAD_DIR, name), output);
   return `${MEDIA_PREFIX}${name}`;
@@ -43,6 +82,10 @@ export async function saveImage(file: File): Promise<string> {
 
 /** Deletes an uploaded image. Bundled demo images in /public are never touched. */
 export async function deleteImage(url: string): Promise<void> {
+  if (isBlobUrl(url)) {
+    if (blobEnabled()) await del(url).catch((error) => console.error("Blob delete failed", error));
+    return;
+  }
   const name = mediaFileName(url);
   if (!name) return;
   await unlink(path.join(UPLOAD_DIR, name)).catch(() => undefined);

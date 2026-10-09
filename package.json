@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/check-env.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -12,10 +12,12 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "images:fetch": "node scripts/fetch-images.mjs",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "check-env": "node scripts/check-env.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@vercel/blob": "^2.8.1",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.12",
     "lucide-react": "^1.53.0",

@@ -1,10 +1,20 @@
+/**
+ * Public origin for canonical URLs, sitemap and Open Graph. Prefers an explicit
+ * NEXT_PUBLIC_SITE_URL (custom domain), then the production domain Vercel exposes.
+ */
+function resolveSiteUrl(): string {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "http://localhost:3000";
+}
+
 export const siteConfig = {
   name: "Fast Burgers",
   shortName: "FastBurgers",
   tagline: "Smash burgers, pizza & crispy chicken",
   description:
     "Fast Burgers — smash burgers din vită Angus, pizza la cuptor, crispy chicken și cartofi tăiați zilnic. Comandă online cu livrare rapidă în București sau ridicare din restaurant.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: resolveSiteUrl(),
   locale: "ro_RO",
   phone: "+40 721 000 321",
   phoneHref: "tel:+40721000321",

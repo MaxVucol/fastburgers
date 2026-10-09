@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 85],
+    // Admin uploads are stored in Vercel Blob in production (see lib/storage.ts).
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
   },
   serverExternalPackages: ["sharp"],
   turbopack: {
