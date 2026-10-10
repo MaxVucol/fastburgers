@@ -8,8 +8,8 @@ import type { CategorySummary } from "@/types/catalog";
 
 /**
  * The menu as a typographic index: numbered rows with the category name set large, its
- * description and item count. Phones and tablets: a small photo opens each row. Desktop: one
- * big photo panel beside the list shows the hovered or focused category (plain CSS, see
+ * description and item count, on cream between the dark blocks. Phones and tablets: a small
+ * photo opens each row. Desktop: one big photo panel right of the list shows the hovered or focused category (plain CSS, see
  * `.cat-index` in globals.css); each row carries its photo so the panel never needs JavaScript.
  */
 export async function CategoryIndex({
@@ -30,9 +30,7 @@ export async function CategoryIndex({
         lead={t.categories.lead}
         action={{ href: href("/menu"), label: t.categories.viewAll }}
       />
-      <div className="cat-index relative lg:grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] lg:gap-14">
-        {/* The panel the row photos are positioned on (desktop only). */}
-        <div className="hidden overflow-hidden rounded-[var(--radius-panel)] bg-ink lg:block" aria-hidden />
+      <div className="cat-index relative lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-14">
         <ol className="border-t-[1.5px] border-ink">
           {categories.map((c, i) => (
             <li key={c.id}>
@@ -60,7 +58,7 @@ export async function CategoryIndex({
                 </span>
               </Link>
               {c.image && (
-                <span className="cat-photo pointer-events-none absolute inset-y-0 left-0 hidden w-[calc((100%-3.5rem)*0.8/1.8)] overflow-hidden rounded-[var(--radius-panel)] transition-opacity duration-[var(--duration-slow)] lg:block">
+                <span className="cat-photo pointer-events-none absolute inset-y-0 right-0 hidden w-[calc((100%-3.5rem)*0.9/1.9)] overflow-hidden rounded-[var(--radius-panel)] transition-opacity duration-[var(--duration-slow)] lg:block">
                   <Image
                     src={c.image}
                     alt=""
@@ -68,15 +66,18 @@ export async function CategoryIndex({
                     sizes="(min-width: 1344px) 560px, 40vw"
                     className="object-cover"
                   />
-                  <span className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/80 to-transparent" />
-                  <span className="absolute bottom-6 left-7 font-display text-3xl font-extrabold tracking-[-0.03em] text-on-dark">
-                    {c.name}
+                  <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-night/90 to-transparent" />
+                  <span className="absolute inset-x-7 bottom-7 text-on-dark">
+                    <span className="block font-display text-[2.5rem] leading-none font-black tracking-[-0.04em] uppercase">{c.name}</span>
+                    <span className="mt-2 block max-w-sm text-sm text-on-dark/80">{c.description}</span>
                   </span>
                 </span>
               )}
             </li>
           ))}
         </ol>
+        {/* The panel the row photos are positioned on (desktop only). */}
+        <div className="hidden overflow-hidden rounded-[var(--radius-panel)] bg-ink lg:block" aria-hidden />
       </div>
     </section>
   );

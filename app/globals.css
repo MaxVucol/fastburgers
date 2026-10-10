@@ -26,6 +26,8 @@
   --color-graphite: #242424;
   --color-graphite-soft: #303030;
   --color-line-dark: #3d3d3d;
+  /* Near-black stage for the dark editorial blocks (header, first screen, hits, combo). */
+  --color-night: #151515;
 
   /* Text */
   --color-ink-soft: #3b3a37;
@@ -188,18 +190,18 @@
     font-size: clamp(3.75rem, 5.4vw, 5.25rem);
   }
 }
-/* Campaign-poster type for the first screen: the slogan stacked one word per line. */
+/* Poster type for the first screen: the slogan stacked one word per line (set uppercase there). */
 @utility type-poster {
   font-family: var(--font-display);
   font-weight: 900;
-  line-height: 0.86;
-  letter-spacing: -0.05em;
-  font-size: clamp(3.25rem, 16vw, 6rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  font-size: clamp(2.625rem, 13.5vw, 4.75rem);
   @media (width >= 48rem) {
-    font-size: clamp(5.5rem, 11.5vw, 7.5rem);
+    font-size: clamp(4.75rem, 10vw, 6rem);
   }
   @media (width >= 64rem) {
-    font-size: clamp(5.25rem, 7.4vw, 7.25rem);
+    font-size: clamp(4.25rem, 6.1vw, 6.25rem);
   }
 }
 @utility type-h1 {
@@ -307,4 +309,18 @@ dialog[open]::backdrop {
 }
 .cat-index:has(li:is(:hover, :focus-within)) li:first-child:not(:hover, :focus-within) .cat-photo {
   opacity: 0;
+}
+
+/* A photo shot on a dark background that should run straight into a dark stage: wide, soft fades
+   on all four edges (two linear masks intersected), so no frame shows while the middle of the
+   scene stays untouched. */
+.photo-blend {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 20%, #000 90%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 90%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 20%, #000 90%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 90%, transparent);
+  mask-composite: intersect;
 }

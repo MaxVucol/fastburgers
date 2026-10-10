@@ -13,7 +13,7 @@ import path from "node:path";
 const W = 1200;
 const H = 630;
 const PHOTO_W = 600; // the photo panel on the right, edge slanted like the hero
-const SRC = path.join(process.cwd(), "public", "images", "hero", "hero.webp");
+const SRC = path.join(process.cwd(), "public", "images", "hero", "cheeseburger.webp");
 const OUT = path.join(process.cwd(), "public", "images", "og", "buniq.jpg");
 
 // Brand tokens (app/globals.css).

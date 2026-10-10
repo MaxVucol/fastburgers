@@ -115,8 +115,8 @@ export async function Footer() {
         <NewsLine t={t} href={href} />
       </NewsSlot>
 
-      <div className="container-page grid gap-12 pt-16 pb-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.35fr] lg:gap-10 lg:pt-20">
-        <div className="sm:col-span-2 lg:col-span-1">
+      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 pt-14 pb-12 sm:gap-y-12 lg:grid-cols-[1.5fr_1fr_1fr_1.35fr] lg:gap-10 lg:pt-20">
+        <div className="col-span-2 lg:col-span-1">
           <Logo href={href("/")} label={t.header.homeLink} tone="dark" />
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-on-dark">{t.footer.about}</p>
           {socials.length > 0 && (
@@ -153,7 +153,7 @@ export async function Footer() {
 
         <nav aria-label={t.footer.categories}>
           <ColumnTitle>{t.footer.categories}</ColumnTitle>
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-3 text-[0.9375rem] sm:grid-cols-1">
+          <ul className="space-y-3 text-[0.9375rem]">
             {categories.map((c) => {
               const category = localizeCategory(c, locale);
               return (
@@ -167,7 +167,8 @@ export async function Footer() {
           </ul>
         </nav>
 
-        <div>
+        {/* Phones: navigation and categories side by side, contact across. */}
+        <div className="col-span-2 sm:col-span-1">
           <ColumnTitle>{t.footer.contact}</ColumnTitle>
           <ul className="space-y-3 text-[0.9375rem]">
             <li className="flex gap-2.5 text-on-dark/85">
@@ -203,7 +204,11 @@ export async function Footer() {
           <p>
             © <CurrentYear /> {siteConfig.name}. {t.footer.rights}
           </p>
-          <p>{t.footer.vat}</p>
+          <p className="sm:text-right">
+            {t.footer.vat}
+            {/* BUNIQ is a design concept; the contact details, hours and orders are examples. */}
+            <span className="mt-1 block text-on-dark/70">{t.footer.demo}</span>
+          </p>
         </div>
       </div>
 

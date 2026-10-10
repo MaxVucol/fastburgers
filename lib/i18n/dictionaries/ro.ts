@@ -83,7 +83,7 @@ export const ro = {
     lead: "Vită Angus presată pe plita încinsă, pizza cu blat crescut 48 de ore și pui crocant. Gătit după ce comanzi, livrat fierbinte.",
     primary: "Comandă acum",
     from: "Burgeri de la {price}",
-    imageAlt: "Burger smash dublu cu cheddar topit, castraveți murați și ceapă, pe fundal întunecat",
+    imageAlt: "Cheeseburger cu chiflă cu susan, salată, ceapă roșie, roșii, cheddar topit și castraveți murați, pe un fundal de lemn întunecat",
   },
 
   benefits: {
@@ -99,7 +99,6 @@ export const ro = {
     eyebrow: "Cele mai iubite",
     title: "Hiturile casei",
     lead: "Gusturile la care clienții se întorc cel mai des.",
-    note: "cele mai comandate",
     viewAll: "Toate produsele populare",
   },
 
@@ -117,12 +116,14 @@ export const ro = {
     title: "Burger, cartofi și băutură. Un singur preț.",
     save: "Economisești {amount}",
     customize: "Personalizează",
-    imageAlt: "Classic Smash, cartofi prăjiți și o doză de Coca-Cola pe fundal închis",
+    imageAlt: "Burger dublu cu cheddar, cartofi prăjiți și o doză de Coca-Cola pe o placă de lemn",
     badge: "ofertă",
   },
 
   picks: {
     eyebrow: "Noutăți și favorite",
+    prev: "Anterioarele",
+    next: "Următoarele",
     title: "Merită încercate",
     lead: "Best seller-uri și noutăți din fiecare categorie, de la pizza la deserturi.",
     viewAll: plural({ one: "Vezi produsul", few: "Vezi toate cele {count} produse", other: "Vezi toate cele {count} de produse" }),
@@ -137,9 +138,9 @@ export const ro = {
   },
 
   cta: {
-    titleLines: ["Ți-e foame?", "Comandă în două minute."],
-    text: "Alegi din meniu, plătești la livrare sau la ridicare și urmărești comanda în timp real.",
+    note: "Ți-e foame?",
     primary: "Comandă acum",
+    call: "Sau sună-ne",
   },
 
   footer: {
@@ -155,6 +156,7 @@ export const ro = {
     contact: "Contact și program",
     rights: "Toate drepturile rezervate.",
     vat: "Prețurile includ TVA. Fotografiile sunt cu titlu de prezentare.",
+    demo: "BUNIQ este un concept demonstrativ: contactele, adresele, programul și comenzile sunt exemple.",
     social: "{name} pe {network}",
   },
 
@@ -287,6 +289,7 @@ export const ro = {
     submitting: "Se trimite comanda…",
     submit: "Plasează comanda · {total}",
     priceNote: "Prețurile sunt verificate din nou la plasarea comenzii.",
+    demo: "Concept demonstrativ: comanda se înregistrează doar ca exemplu și nu va fi preparată sau livrată.",
   },
 
   errors: {

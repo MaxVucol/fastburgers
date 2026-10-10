@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "dark" | "outline" | "light" | "ghost" | "soft";
+type Variant = "primary" | "dark" | "outline" | "outline-light" | "light" | "ghost" | "soft";
 type Size = "sm" | "md" | "lg" | "icon";
 
 const base =
@@ -16,6 +16,7 @@ const variants: Record<Variant, string> = {
   dark: "bg-ink text-on-dark hover:bg-graphite-soft",
   outline: "border-[1.5px] border-ink/85 text-ink hover:bg-ink hover:text-on-dark",
   // For dark sections.
+  "outline-light": "border-[1.5px] border-on-dark/35 text-on-dark hover:border-on-dark hover:bg-on-dark/5",
   light: "bg-cream text-ink hover:bg-paper",
   ghost: "text-ink hover:bg-sand",
   soft: "bg-sand text-ink hover:bg-oat",

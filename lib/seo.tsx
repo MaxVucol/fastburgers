@@ -22,7 +22,7 @@ export function restaurantJsonLd(description: string, menuPath: string): { [key:
     url: siteConfig.url,
     telephone: siteConfig.phone,
     email: siteConfig.email,
-    image: absoluteUrl("/images/hero/hero.webp"),
+    image: absoluteUrl("/images/hero/cheeseburger.webp"),
     servesCuisine: ["Burgers", "Pizza", "American"],
     priceRange: "$$",
     hasMenu: absoluteUrl(menuPath),

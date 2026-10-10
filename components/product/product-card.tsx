@@ -97,15 +97,10 @@ export async function ProductCard({
 
 export function ProductGrid({
   children,
-  layout = "grid",
   columns = "auto",
   className,
 }: {
   children: React.ReactNode;
-  /**
-   * "rail": horizontal swipe list on phones (keeps sections short), grid from `sm` up.
-   */
-  layout?: "grid" | "rail";
   /** "four": four columns from `lg` (a single row of highlights); "auto": 3 on `lg`, 4 on `xl`. */
   columns?: "auto" | "four";
   className?: string;
@@ -113,13 +108,7 @@ export function ProductGrid({
   const wide = columns === "four" ? "lg:grid-cols-4" : "lg:grid-cols-3 xl:grid-cols-4";
   return (
     <div
-      className={cn(
-        layout === "rail"
-          ? "no-scrollbar -mx-[var(--gutter)] flex snap-x snap-mandatory scroll-px-[var(--gutter)] gap-4 overflow-x-auto px-[var(--gutter)] pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 [&>*]:w-[min(78vw,18.5rem)] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto"
-          : "grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 sm:gap-5",
-        wide,
-        className,
-      )}
+      className={cn("grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 sm:gap-5", wide, className)}
     >
       {children}
     </div>
@@ -130,18 +119,16 @@ export function ProductGrid({
 export function ProductList({
   products,
   eagerCount = 0,
-  layout = "grid",
   columns,
   className,
 }: {
   products: ProductCardData[];
   eagerCount?: number;
-  layout?: "grid" | "rail";
   columns?: "auto" | "four";
   className?: string;
 }) {
   return (
-    <ProductGrid layout={layout} columns={columns} className={className}>
+    <ProductGrid columns={columns} className={className}>
       {products.map((p, i) => (
         <ProductCard
           key={p.id}

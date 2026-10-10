@@ -18,7 +18,7 @@ export function SearchDialog({ triggerClassName }: { triggerClassName?: string }
         type="button"
         onClick={() => ref.current?.showModal()}
         className={cn(
-          "grid size-11 place-items-center rounded-full text-ink transition-colors duration-[var(--duration-fast)] hover:bg-sand",
+          "grid size-11 place-items-center rounded-full text-on-dark transition-colors duration-[var(--duration-fast)] hover:bg-graphite-soft",
           triggerClassName,
         )}
         aria-label={t.search.label}

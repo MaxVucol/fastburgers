@@ -294,6 +294,8 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
             {isPending ? t.checkout.submitting : fill(t.checkout.submit, { total: price(total) })}
           </Button>
           <p className="mt-3 text-center text-xs text-muted-on-dark">{t.checkout.priceNote}</p>
+          {/* BUNIQ is a design concept: say so where it matters most, right under the order button. */}
+          <p className="mt-2 text-center text-xs text-flame">{t.checkout.demo}</p>
         </div>
       </aside>
     </form>

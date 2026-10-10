@@ -7,116 +7,85 @@ import { ButtonLink } from "@/components/ui/button";
 import { discountPercent, formatPrice } from "@/lib/format";
 import { fill } from "@/lib/i18n/config";
 import { getI18n } from "@/lib/i18n/server";
-import { cn } from "@/lib/utils";
 import type { ProductCardData } from "@/types/catalog";
 
-/** Soft oval vignette so photos shot on dark backgrounds melt into the graphite stage. */
-const MELT = "[mask-image:radial-gradient(closest-side,#000_52%,transparent_96%)]";
-
 /**
- * Combo promo — the page's second poster, on the same full-bleed graphite stage as the first
- * screen so it reads as an ad, not as one more catalog block: the offer title, the price set as
- * large as a headline, and the combo itself assembled from the menu's own product photos.
+ * Combo promo — a wide poster band on the near-black stage: the combo's name set as a headline
+ * with what is in it and the price on the left, the combo photo in the middle (with the discount
+ * beside it), and the call to action on the right. Phones: title and price, the combo, then the actions.
  * Discount, savings and price come from the combo product.
- * `parts` are the menu items the combo is made of; without them the single promo photo is used.
  */
-export async function PromoBanner({
-  product,
-  parts,
-}: {
-  product: ProductCardData;
-  /** Image paths of the menu items in the combo. */
-  parts?: { burger: string; fries: string; drink: string } | null;
-}) {
+export async function PromoBanner({ product }: { product: ProductCardData }) {
   const { locale, t, href } = await getI18n();
   const discount = discountPercent(product.price, product.oldPrice);
+  // The photo shows the Classic Combo (burger, fries and a can of Coca-Cola); any other combo
+  // promoted here gets the generic promo photo.
+  const photo = product.slug === "classic-combo" ? "/images/promo/classic-combo.webp" : "/images/promo/promo.webp";
 
   return (
     <section
       aria-labelledby="promo-title"
-      className="bg-[color-mix(in_srgb,var(--color-ink)_55%,#000)] bg-[radial-gradient(ellipse_at_74%_55%,rgb(255_107_46/0.16),transparent_55%)] text-on-dark"
+      className="overflow-hidden border-t border-line-dark bg-night bg-[radial-gradient(ellipse_at_55%_58%,rgb(255_107_46/0.28),transparent_45%)] text-on-dark"
     >
-      <div className="container-page grid xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] xl:items-center">
-        {/* ── The combo (first on phones, right on desktop) ── */}
-        <div
-          role="img"
-          aria-label={t.promo.imageAlt}
-          className="relative order-first mx-auto h-[16rem] w-full max-w-[40rem] min-[480px]:h-[20rem] sm:h-[25rem] xl:order-last xl:h-[34rem] xl:max-w-none"
-        >
-          {parts ? (
-            <>
-              <div className={cn("absolute top-[4%] left-[2%] aspect-square w-[34%] -rotate-6 xl:top-[8%] xl:left-[4%] xl:w-[30%]", MELT)}>
-                <Image src={parts.drink} alt="" fill sizes="(min-width: 1280px) 220px, 34vw" className="object-cover" />
-              </div>
-              <div className={cn("absolute top-[2%] right-[0%] aspect-square w-[40%] xl:top-[5%] xl:right-[2%] xl:w-[38%]", MELT)}>
-                <Image src={parts.fries} alt="" fill sizes="(min-width: 1280px) 280px, 40vw" className="object-cover object-[45%_55%]" />
-              </div>
-              <div
-                className={cn(
-                  "absolute bottom-[-4%] left-1/2 aspect-[4/3] w-[74%] -translate-x-1/2 xl:bottom-[0%] xl:left-[48%] xl:w-[72%]",
-                  MELT,
-                )}
-              >
-                <Image src={parts.burger} alt="" fill sizes="(min-width: 1280px) 520px, 74vw" className="object-cover object-[50%_45%]" />
-              </div>
-            </>
-          ) : (
-            <Image
-              src="/images/promo/promo.webp"
-              alt=""
-              fill
-              sizes="(min-width: 1344px) 690px, (min-width: 1280px) 52vw, 100vw"
-              className={cn("object-cover", MELT)}
-            />
-          )}
-          {discount && (
-            <p className="absolute top-[6%] right-[4%] grid size-20 rotate-[8deg] place-items-center rounded-full bg-accent text-center text-ink shadow-[var(--shadow-lift)] sm:size-24 xl:top-auto xl:right-auto xl:bottom-[8%] xl:left-[4%]">
-              <span>
-                <span className="block font-display text-2xl leading-none font-extrabold tracking-[-0.03em] sm:text-[1.75rem]">
-                  −{discount}%
-                </span>
-                <span className="mt-1 block text-[0.6875rem] font-semibold">{t.promo.badge}</span>
-              </span>
-            </p>
-          )}
-        </div>
-
-        {/* ── Copy ── */}
-        <div className="relative pt-4 pb-14 sm:pb-16 xl:py-24 xl:pr-6">
+      <div className="container-page grid items-center gap-x-6 gap-y-6 py-12 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.35fr)_minmax(0,0.62fr)] xl:py-20">
+        {/* ── Name, contents and price ── */}
+        <div className="relative z-10 lg:col-start-1 lg:row-start-1 lg:self-end xl:self-center">
           <p className="type-eyebrow flex items-center gap-2 text-flame">
             <Crown className="h-3.5" />
             {t.promo.eyebrow}
           </p>
-          <h2 id="promo-title" className="type-h1 mt-4 max-w-xl text-on-dark">
-            {t.promo.title}
+          <h2 id="promo-title" className="mt-4 font-display text-[clamp(2.75rem,8vw,5rem)] leading-[0.9] font-black tracking-[-0.045em] text-on-dark uppercase">
+            {product.name}
           </h2>
-          <p className="mt-5 max-w-md leading-relaxed text-muted-on-dark">
-            <span className="font-semibold text-on-dark">{product.name}.</span> {product.shortDescription}
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-end gap-x-5 gap-y-2">
-            <span className="font-display text-[clamp(3.25rem,9vw,5.5rem)] leading-[0.85] font-black tracking-[-0.05em] whitespace-nowrap text-flame tabular-nums">
+          <p className="mt-4 max-w-md text-[1.0625rem] font-semibold text-on-dark sm:text-lg">{t.promo.title}</p>
+          <p className="mt-1.5 max-w-md text-sm leading-relaxed text-muted-on-dark">{product.shortDescription}</p>
+          <div className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+            <span className="font-display text-[clamp(2.5rem,6vw,3.5rem)] leading-none font-black tracking-[-0.045em] whitespace-nowrap text-flame tabular-nums">
               {formatPrice(product.price, locale)}
             </span>
             {product.oldPrice && product.oldPrice > product.price && (
-              <span className="pb-1 text-sm text-muted-on-dark">
-                <span className="line-through tabular-nums">
+              <>
+                <span className="text-base text-muted-on-dark line-through tabular-nums">
                   <span className="sr-only">{t.product.oldPrice} </span>
                   {formatPrice(product.oldPrice, locale)}
                 </span>
-                <span className="mt-0.5 block font-semibold text-on-dark">
+                <span className="rounded-full bg-accent/15 px-3 py-1 text-[0.8125rem] font-semibold whitespace-nowrap text-flame">
                   {fill(t.promo.save, { amount: formatPrice(product.oldPrice - product.price, locale) })}
                 </span>
-              </span>
+              </>
             )}
           </div>
+        </div>
 
-          {/* One action group: go to the combos, or add this one straight away (+), or customise it. */}
-          <div className="mt-9 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <ButtonLink href={href("/categorii/combo")} size="lg" className="flex-1 px-8 min-[420px]:flex-none">
-              {t.promo.cta}
-              <ArrowRight className="size-4.5" aria-hidden />
-            </ButtonLink>
+        {/* ── The combo photo (burger, fries and a drink on one board) with the discount at its left.
+            The photo spills past its slot on every side and its edges fade out wide, so its own dark
+            background runs straight into the stage: no visible frame, the board and the warm light stay. ── */}
+        <div className="relative mx-auto aspect-[2/1] w-full max-w-[46rem] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:max-w-none xl:row-span-1">
+          {/* The whole 3:1 photo, wider than its slot and centred on it, so nothing is cropped; the copy
+              and the buttons sit above it (z-10). */}
+          <div className="absolute top-1/2 left-1/2 aspect-[3/1] w-[150%] -translate-x-[52%] -translate-y-1/2">
+            <Image
+              src={photo}
+              alt={t.promo.imageAlt}
+              fill
+              sizes="(min-width: 1280px) 880px, (min-width: 1024px) 80vw, 150vw"
+              className="photo-blend object-cover brightness-[1.08] saturate-[1.05]"
+            />
+          </div>
+          {discount && (
+            <p className="absolute top-[34%] left-[3%] -rotate-6 rounded-xl bg-accent px-3.5 py-1.5 text-center font-display text-xl leading-none font-extrabold tracking-[-0.03em] text-ink shadow-[var(--shadow-lift)] sm:text-2xl">
+              −{discount}%<span className="sr-only"> {t.promo.badge}</span>
+            </p>
+          )}
+        </div>
+
+        {/* ── Actions: go to the combos; or add this one straight away (+), or customise it ── */}
+        <div className="relative z-10 flex flex-col gap-3 lg:col-start-1 lg:row-start-2 lg:max-w-sm lg:self-start xl:col-start-3 xl:row-start-1 xl:max-w-none xl:self-center">
+          <ButtonLink href={href("/categorii/combo")} size="lg" className="w-full px-8">
+            {t.promo.cta}
+            <ArrowRight className="size-4.5" aria-hidden />
+          </ButtonLink>
+          <div className="flex items-center justify-center gap-3">
             <QuickAddButton
               variant="icon"
               tone="dark"
@@ -124,7 +93,7 @@ export async function PromoBanner({
             />
             <Link
               href={href(`/menu/${product.slug}`)}
-              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 font-semibold text-on-dark underline-offset-4 hover:text-flame hover:underline min-[420px]:ml-3 min-[420px]:w-auto"
+              className="group inline-flex min-h-11 items-center gap-2 font-semibold whitespace-nowrap text-on-dark underline-offset-4 hover:text-flame hover:underline"
             >
               {t.promo.customize}
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />

@@ -16,7 +16,7 @@ export function CartButton() {
     <button
       type="button"
       onClick={() => cartActions.open()}
-      className="relative grid size-11 place-items-center rounded-full text-ink transition-colors duration-[var(--duration-base)] hover:bg-sand"
+      className="relative grid size-11 place-items-center rounded-full text-on-dark transition-colors duration-[var(--duration-base)] hover:bg-graphite-soft"
       aria-label={
         filled ? `${plural(locale, count, t.cart.button)}, ${formatPrice(subtotal, locale)}` : t.cart.buttonEmpty
       }
@@ -25,7 +25,7 @@ export function CartButton() {
       {filled && (
         <span
           key={bump}
-          className="absolute top-0.5 right-0 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-accent px-1 text-[0.6875rem] leading-none font-bold text-ink tabular-nums ring-2 ring-cream"
+          className="absolute top-0.5 right-0 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-accent px-1 text-[0.6875rem] leading-none font-bold text-ink tabular-nums ring-2 ring-night"
           aria-hidden
         >
           {count > 99 ? "99+" : count}

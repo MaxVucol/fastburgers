@@ -5,15 +5,16 @@ import { Hits } from "@/components/home/hits";
 import { OrderCta } from "@/components/home/order-cta";
 import { PromoBanner } from "@/components/home/promo-banner";
 import { Reviews } from "@/components/home/reviews";
-import { ProductList } from "@/components/product/product-card";
+import { ProductCard } from "@/components/product/product-card";
 import { ButtonLink } from "@/components/ui/button";
+import { ScrollRail } from "@/components/ui/scroll-rail";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { plural } from "@/lib/i18n/config";
 import { getI18n, localeAlternates } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
 import { JsonLd, restaurantJsonLd } from "@/lib/seo";
 import { getReviews } from "@/services/catalog";
-import { getLocalizedProduct, getMenu } from "@/services/localized-catalog";
+import { getMenu } from "@/services/localized-catalog";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale } = await getI18n();
@@ -42,16 +43,6 @@ export default async function HomePage() {
     products.find((p) => p.slug === "classic-combo") ??
     products.find((p) => p.categorySlug === "combo" && p.oldPrice) ??
     null;
-  // The Classic Combo is a Classic Smash, classic fries and a canned drink: the banner shows those
-  // menu items. If any of them is missing, it falls back to the single promo photo.
-  const bySlug = (slug: string) => products.find((p) => p.slug === slug);
-  const [fries, drink, smash] = [bySlug("classic-fries"), bySlug("coca-cola"), await getLocalizedProduct("classic-smash", locale)];
-  // The burger's gallery shot shows it whole (bun to bun), which reads better in the composition.
-  const burgerImage = smash?.images.find((src) => src !== smash.image) ?? smash?.image;
-  const promoParts =
-    promo?.slug === "classic-combo" && burgerImage && fries && drink
-      ? { burger: burgerImage, fries: fries.image, drink: drink.image }
-      : null;
 
   return (
     <>
@@ -62,17 +53,29 @@ export default async function HomePage() {
 
       <Hits products={hits} />
 
-      {promo && <PromoBanner product={promo} parts={promoParts} />}
+      {promo && <PromoBanner product={promo} />}
 
       {picks.length > 0 && (
         <section aria-labelledby="picks-title" className="container-page section-y">
           <SectionHeading id="picks-title" eyebrow={t.picks.eyebrow} title={t.picks.title} lead={t.picks.lead} />
-          <ProductList products={picks} layout="rail" />
-          <div className="mt-10 flex justify-center">
-            <ButtonLink href={href("/menu")} variant="outline" size="lg">
-              {plural(locale, products.length, t.picks.viewAll)}
-            </ButtonLink>
-          </div>
+          {/* One scrolling row instead of a two-row grid of identical cards: shorter, and the
+              buttons make the extra items obvious on every screen. */}
+          <ScrollRail
+            label={t.picks.title}
+            prevLabel={t.picks.prev}
+            nextLabel={t.picks.next}
+            footer={
+              <ButtonLink href={href("/menu")} variant="outline" size="lg" className="w-full px-6 sm:w-auto">
+                {plural(locale, products.length, t.picks.viewAll)}
+              </ButtonLink>
+            }
+          >
+            {picks.map((p) => (
+              <li key={p.id}>
+                <ProductCard product={p} className="w-full" />
+              </li>
+            ))}
+          </ScrollRail>
         </section>
       )}
 

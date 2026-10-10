@@ -1,38 +1,51 @@
+import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
-import { Crown } from "@/components/ui/brand";
-import { ButtonLink } from "@/components/ui/button";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
 
-/** Closing band in flame orange — the only full orange surface on the site, set in the poster type of the first screen. */
+/**
+ * Closing band: one short handwritten line, the order call set as large as the first screen's
+ * slogan (the whole phrase is the link to the menu) and the phone number for ordering by call.
+ * Warm cream-to-peach light, so it reads as the poster's sign-off before the dark footer.
+ * The last word is in the deep orange (accent-ink): large text, ≥4:1 on this background.
+ */
 export async function OrderCta() {
   const { t, href } = await getI18n();
-  const [lineOne, lineTwo] = t.cta.titleLines;
+  const words = t.cta.primary.split(" ");
+  const last = words.length > 1 ? words.pop() : null;
 
   return (
-    <section aria-labelledby="cta-title" className="relative overflow-hidden bg-accent text-ink">
-      <Crown
-        className="pointer-events-none absolute -right-6 -bottom-10 hidden h-56 sm:block rotate-[-14deg] text-ink/12 sm:h-72 lg:right-[4%] lg:-bottom-14 lg:h-80"
-        strokeWidth={2.2}
-      />
-      <div className="relative container-page grid items-end gap-8 py-16 sm:py-20 lg:grid-cols-[1fr_auto] lg:py-24">
-        <div>
-          <h2 id="cta-title" className="font-display text-[clamp(2rem,9vw,5.75rem)] leading-[0.9] font-black tracking-[-0.05em]">
-            <span className="block">{lineOne}</span>
-            <span className="block">{lineTwo}</span>
-          </h2>
-          <p className="mt-6 max-w-lg text-lg leading-relaxed text-ink">{t.cta.text}</p>
-        </div>
-        <div className="flex flex-col gap-3 min-[420px]:flex-row lg:flex-col xl:flex-row">
-          <ButtonLink href={href("/menu")} size="lg" variant="dark">
-            {t.cta.primary}
-            <ArrowRight className="size-4.5" aria-hidden />
-          </ButtonLink>
-          <ButtonLink href={siteConfig.phoneHref} size="lg" variant="outline">
+    <section
+      aria-labelledby="cta-title"
+      className="bg-[linear-gradient(100deg,var(--color-cream)_25%,#ffd2b9)] text-ink"
+    >
+      <div className="container-page grid items-center gap-x-10 gap-y-5 py-12 sm:py-14 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:py-16">
+        <p className="type-script -rotate-3 text-[1.75rem] text-accent-ink sm:text-[2.25rem]">{t.cta.note}</p>
+        <h2 id="cta-title">
+          <Link
+            href={href("/menu")}
+            className="group font-display text-[clamp(2.25rem,8vw,5.5rem)] leading-[0.9] font-black tracking-[-0.045em] uppercase"
+          >
+            {words.join(" ")}
+            {last && <span className="text-accent-ink"> {last}</span>}
+            {/* Inline, so it stays on the last line however the phrase wraps. */}
+            <span className="ml-[0.25em] inline-grid size-[0.62em] place-items-center rounded-full bg-accent align-[-0.06em] text-ink transition-transform duration-[var(--duration-base)] group-hover:translate-x-1">
+              <ArrowRight className="size-[0.4em]" aria-hidden strokeWidth={2.4} />
+            </span>
+          </Link>
+        </h2>
+        <a
+          href={siteConfig.phoneHref}
+          className="inline-flex items-center gap-3 justify-self-start text-sm font-semibold lg:justify-self-end"
+        >
+          <span className="grid size-11 place-items-center rounded-full border-[1.5px] border-ink/70">
             <Phone className="size-4.5" aria-hidden />
-            {siteConfig.phone}
-          </ButtonLink>
-        </div>
+          </span>
+          <span>
+            <span className="block text-muted">{t.cta.call}</span>
+            <span className="text-base tabular-nums">{siteConfig.phone}</span>
+          </span>
+        </a>
       </div>
     </section>
   );

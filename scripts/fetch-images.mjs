@@ -33,7 +33,8 @@ const IMAGES = {
   // ── Pizza ─────────────────────────────────────────────────
   "products/margherita/main.webp": "1574071318508-1cdbab80d002",
   "products/pepperoni/main.webp": "1628840042765-356cda07504e",
-  "products/bbq-chicken-pizza/main.webp": "1565299624946-b28f40a0ae38",
+  // products/bbq-chicken-pizza/main.webp is a drawn placeholder, not fetched: the only photo found
+  // (1565299624946-b28f40a0ae38) shows pineapple, which this pizza does not have.
   "products/four-cheese/main.webp": "1513104890138-7c749659a591",
   // ── Chicken ───────────────────────────────────────────────
   // Close-up of breaded strips around a creamy herb dip — sharp, no third-party packaging in frame.
@@ -76,7 +77,8 @@ const IMAGES = {
   // ── Campaign ──────────────────────────────────────────────
   // Full width of the original (5000×7336), 0.9:1 so the whole burger fits every panel shape from phones
   // (≈1.1:1) to 1920px desktops (≈1.35:1); 2400px wide covers the 1–2x desktop panel without upscaling.
-  "hero/hero.webp": ["1678110707289-ab14382a1625", { size: [2400, 2667], focus: [0.5, 0.357], grade: false, quality: 90 }], // @arvid-skywalker
+  // hero/cheeseburger.webp (the first-screen photo) is supplied by the project owner (1774×887,
+  // converted as is), not fetched; a new file name keeps browsers from showing a cached older photo.
   // Social preview (Open Graph / Twitter): 1.91:1, JPEG for the widest crawler support.
   "hero/og.jpg": ["1586816001966-79b736744398", { size: [1200, 630], position: "centre" }], // @mafe-estudio
   "promo/promo.webp": ["1551782450-a2132b4ba21d", { position: "centre" }], // @sk

@@ -46,8 +46,8 @@ function NavLinksView({ pathname }: { pathname: string }) {
                 "relative inline-flex h-10 items-center px-3 text-[0.9375rem] font-medium transition-colors duration-[var(--duration-fast)]",
                 "after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:origin-left after:bg-accent after:transition-transform after:duration-[var(--duration-base)]",
                 active
-                  ? "text-accent-ink after:scale-x-100"
-                  : "text-ink after:scale-x-0 hover:after:scale-x-100",
+                  ? "text-flame after:scale-x-100"
+                  : "text-on-dark/85 after:scale-x-0 hover:text-on-dark hover:after:scale-x-100",
               )}
             >
               {t.nav[item.key]}

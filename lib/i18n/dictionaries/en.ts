@@ -76,7 +76,7 @@ export const en: Dictionary = {
     lead: "Angus beef smashed on a scorching griddle, pizza dough proofed for 48 hours and crispy chicken. Cooked after you order, delivered hot.",
     primary: "Order now",
     from: "Burgers from {price}",
-    imageAlt: "Double smash burger with melted cheddar, pickles and onion on a dark background",
+    imageAlt: "Cheeseburger in a sesame bun with lettuce, red onion, tomato, melted cheddar and pickles on a dark wooden board",
   },
 
   benefits: {
@@ -92,7 +92,6 @@ export const en: Dictionary = {
     eyebrow: "Most loved",
     title: "House favourites",
     lead: "The flavours people keep coming back for.",
-    note: "most ordered",
     viewAll: "All popular items",
   },
 
@@ -110,12 +109,14 @@ export const en: Dictionary = {
     title: "Burger, fries and a drink. One price.",
     save: "You save {amount}",
     customize: "Customise",
-    imageAlt: "Classic Smash, fries and a can of Coca-Cola on a dark background",
+    imageAlt: "Double cheeseburger, fries and a can of Coca-Cola on a wooden board",
     badge: "deal",
   },
 
   picks: {
     eyebrow: "New & favourites",
+    prev: "Previous",
+    next: "Next",
     title: "Worth a try",
     lead: "Best sellers and new arrivals from every category, from pizza to desserts.",
     viewAll: { one: "See {count} item", other: "See all {count} items" },
@@ -130,9 +131,9 @@ export const en: Dictionary = {
   },
 
   cta: {
-    titleLines: ["Hungry?", "Order in two minutes."],
-    text: "Pick from the menu, pay on delivery or pickup and follow your order in real time.",
+    note: "Hungry?",
     primary: "Order now",
+    call: "Or call us",
   },
 
   footer: {
@@ -148,6 +149,7 @@ export const en: Dictionary = {
     contact: "Contact and hours",
     rights: "All rights reserved.",
     vat: "Prices include VAT. Photos are for illustration purposes.",
+    demo: "BUNIQ is a demo concept: contacts, addresses, opening hours and orders are examples.",
     social: "{name} on {network}",
   },
 
@@ -279,6 +281,7 @@ export const en: Dictionary = {
     submitting: "Placing your order…",
     submit: "Place order · {total}",
     priceNote: "Prices are checked again when the order is placed.",
+    demo: "Demo concept: the order is saved only as an example and won't be prepared or delivered.",
   },
 
   errors: {
