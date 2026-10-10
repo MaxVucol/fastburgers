@@ -1,15 +1,14 @@
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { Crown, Swash } from "@/components/ui/brand";
+import { Crown, ScribbleArrow, Swash } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
-import { Benefits } from "./benefits";
 
 /**
- * First screen. Phones: copy and CTA, then the burger photo with a slanted top edge, then
- * the three promises. Desktop: copy and promises on cream, the photo in a graphite panel
- * with a diagonal edge that bleeds off the right side of the viewport.
+ * First screen. Phones: copy and CTA, then the burger photo with a slanted top edge.
+ * Desktop: copy on cream, the photo in a graphite panel with a diagonal edge that bleeds off
+ * the right side of the viewport. The three promises follow as their own band (Benefits).
  * One <Image> serves both layouts, so there is a single LCP request. The photo panel has no
  * entrance animation: fading the LCP element in only delays the moment it counts as painted.
  */
@@ -19,7 +18,7 @@ export async function Hero() {
 
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden">
-      <div className="container-page grid lg:min-h-[min(46rem,calc(100svh-var(--header-h)))] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:grid-rows-[1fr_auto]">
+      <div className="container-page grid lg:min-h-[min(42rem,calc(100svh-var(--header-h)-6rem))] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         {/* ── Copy ───────────────────────────────────────── */}
         <div className="relative z-10 pt-9 pb-9 sm:pt-12 lg:col-start-1 lg:row-start-1 lg:self-center lg:py-14 lg:pr-6">
           <p className="enter type-eyebrow text-[0.6875rem] tracking-[0.12em] text-accent-ink sm:text-xs sm:tracking-[0.14em]">
@@ -47,12 +46,12 @@ export async function Hero() {
           </div>
         </div>
 
-        {/* ── Photo panel (the photo carries the alt text; the crown is decorative) ── */}
+        {/* ── Photo panel (the photo carries the alt text; crown and note are decorative) ── */}
         <div
           className={[
             "relative -mx-[var(--gutter)] h-[clamp(19rem,92vw,32rem)] overflow-hidden bg-ink [container-type:size]",
             "[clip-path:polygon(0_7%,100%_0,100%_100%,0_100%)]",
-            "lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:ml-0 lg:h-auto",
+            "lg:col-start-2 lg:row-start-1 lg:ml-0 lg:h-auto",
             "lg:mr-[calc((var(--gutter)+max(0px,(100vw-var(--page-max))/2))*-1)]",
             "lg:[clip-path:polygon(17%_0,100%_0,100%_100%,0_100%)]",
           ].join(" ")}
@@ -82,11 +81,14 @@ export async function Hero() {
             className="absolute top-[9%] right-[7%] h-9 rotate-[14deg] text-accent sm:h-11 lg:top-[8%] lg:right-[8%] lg:h-14"
             strokeWidth={3}
           />
-        </div>
-
-        {/* ── Promises ───────────────────────────────────── */}
-        <div className="enter py-7 [--enter-step:4] lg:col-start-1 lg:row-start-2 lg:pt-0 lg:pb-12">
-          <Benefits />
+          {/* Handwritten note on the dark plate under the burger, its arrow pointing back at the food. */}
+          <p
+            aria-hidden
+            className="type-script absolute right-[5%] bottom-[5%] flex items-end gap-1 text-[1.5rem] text-flame sm:text-[1.9rem] lg:right-[6%] lg:bottom-[6%] lg:text-[2.25rem]"
+          >
+            <ScribbleArrow className="mb-3 h-6 w-9 -scale-x-100 rotate-[160deg] text-on-dark/75 sm:h-8 sm:w-11" />
+            <span className="-rotate-6 leading-[0.95] before:content-[attr(data-text)]" data-text={t.hero.note} />
+          </p>
         </div>
       </div>
     </section>

@@ -75,6 +75,7 @@ export const en: Dictionary = {
     eyebrow: "Burgers. Pizza. Chicken. Combos. Drinks.",
     lead: "Angus beef smashed on a scorching griddle, pizza dough proofed for 48 hours and crispy chicken. Cooked after you order, delivered hot.",
     primary: "Order now",
+    note: "juicy burgers",
     imageAlt: "Double smash burger with melted cheddar, pickles and onion on a dark background",
   },
 
@@ -88,6 +89,7 @@ export const en: Dictionary = {
   },
 
   hits: {
+    eyebrow: "Most loved",
     title: "House favourites",
     lead: "The flavours people keep coming back for.",
     note: "most ordered",
@@ -95,6 +97,7 @@ export const en: Dictionary = {
   },
 
   categories: {
+    eyebrow: "What are you craving",
     title: "The menu, by category",
     lead: "Eight categories, one standard: everything is cooked after you order.",
     count: { one: "{count} item", other: "{count} items" },
@@ -102,21 +105,25 @@ export const en: Dictionary = {
   },
 
   promo: {
+    cta: "Choose a combo",
+    note: "the full meal",
     eyebrow: "Deal of the week",
     title: "Burger, fries and a drink. One price.",
     save: "You save {amount}",
     customize: "Customise",
-    imageAlt: "Burger with lettuce on a sesame bun and fries in a wire basket on a wooden board",
+    imageAlt: "Classic Smash, fries and a can of Coca-Cola on a dark background",
     badge: "deal",
   },
 
   picks: {
+    eyebrow: "New & favourites",
     title: "Worth a try",
     lead: "Best sellers and new arrivals from every category, from pizza to desserts.",
     viewAll: { one: "See {count} item", other: "See all {count} items" },
   },
 
   reviews: {
+    eyebrow: "Reviews",
     title: "What our customers say",
     lead: "Average rating {average} out of 5, from reviews verified after delivery.",
     originalLanguage: "Reviews are shown in their original language.",
@@ -130,6 +137,12 @@ export const en: Dictionary = {
   },
 
   footer: {
+    news: {
+      title: "New dishes land on the menu first",
+      text: "Every new dish and every live offer is marked on the menu. No account needed — just an appetite.",
+      cta: "See what’s new",
+      sale: "Live offers",
+    },
     about:
       "Smash burgers, oven-baked pizza and crispy chicken, cooked to order from fresh ingredients. Fast delivery across Bucharest, or come and see us at the restaurant.",
     navigation: "Navigation",

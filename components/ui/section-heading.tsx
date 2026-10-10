@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
-import { Swash } from "@/components/ui/brand";
+import { Crown, Swash } from "@/components/ui/brand";
 import { cn } from "@/lib/utils";
 
 /**
- * Section heading: dense Montserrat title, optional lead, optional handwritten note and a
- * quiet "view all →" link aligned to the title's baseline on wider screens.
+ * Section heading: optional crown eyebrow, dense Montserrat title, optional lead, optional
+ * handwritten note and a quiet "view all →" link aligned to the title's baseline on wider screens.
  */
 export function SectionHeading({
   title,
+  eyebrow,
   lead,
   note,
   action,
@@ -18,6 +19,8 @@ export function SectionHeading({
   className,
 }: {
   title: ReactNode;
+  /** Short kicker above the title (orange, with the crown). */
+  eyebrow?: string;
   lead?: string;
   note?: string;
   action?: { href: string; label: string };
@@ -29,6 +32,12 @@ export function SectionHeading({
   return (
     <div className={cn("mb-7 grid gap-x-10 gap-y-3 sm:mb-9 md:grid-cols-[1fr_auto] md:items-end", className)}>
       <div className="max-w-2xl">
+        {eyebrow && (
+          <p className={cn("type-eyebrow mb-3 flex items-center gap-2", dark ? "text-flame" : "text-accent-ink")}>
+            <Crown className="h-3.5" />
+            {eyebrow}
+          </p>
+        )}
         <h2 id={id} className={cn("type-h2", dark ? "text-on-dark" : "text-ink")}>
           {title}
         </h2>

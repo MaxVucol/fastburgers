@@ -19,6 +19,7 @@ export async function CategoryIndex({
     <section aria-labelledby="categorii-title" className="container-page section-y">
       <SectionHeading
         id="categorii-title"
+        eyebrow={t.categories.eyebrow}
         title={t.categories.title}
         lead={t.categories.lead}
         action={{ href: href("/menu"), label: t.categories.viewAll }}

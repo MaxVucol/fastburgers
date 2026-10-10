@@ -82,6 +82,7 @@ export const ro = {
     eyebrow: "Burgeri. Pizza. Chicken. Combo. Băuturi.",
     lead: "Vită Angus presată pe plita încinsă, pizza cu blat crescut 48 de ore și pui crocant. Gătit după ce comanzi, livrat fierbinte.",
     primary: "Comandă acum",
+    note: "burgeri suculenți",
     imageAlt: "Burger smash dublu cu cheddar topit, castraveți murați și ceapă, pe fundal întunecat",
   },
 
@@ -95,6 +96,7 @@ export const ro = {
   },
 
   hits: {
+    eyebrow: "Cele mai iubite",
     title: "Hiturile casei",
     lead: "Gusturile la care clienții se întorc cel mai des.",
     note: "cele mai comandate",
@@ -102,6 +104,7 @@ export const ro = {
   },
 
   categories: {
+    eyebrow: "Ce poftești azi",
     title: "Meniul, pe categorii",
     lead: "Opt categorii, un singur standard: totul se gătește după comandă.",
     count: plural({ one: "{count} produs", few: "{count} produse", other: "{count} de produse" }),
@@ -109,21 +112,25 @@ export const ro = {
   },
 
   promo: {
+    cta: "Alege combo",
+    note: "gust complet",
     eyebrow: "Oferta săptămânii",
     title: "Burger, cartofi și băutură. Un singur preț.",
     save: "Economisești {amount}",
     customize: "Personalizează",
-    imageAlt: "Burger cu salată pe chiflă cu susan și cartofi prăjiți într-un coș, pe un platou de lemn",
+    imageAlt: "Classic Smash, cartofi prăjiți și o doză de Coca-Cola pe fundal închis",
     badge: "ofertă",
   },
 
   picks: {
+    eyebrow: "Noutăți și favorite",
     title: "Merită încercate",
     lead: "Best seller-uri și noutăți din fiecare categorie, de la pizza la deserturi.",
     viewAll: plural({ one: "Vezi produsul", few: "Vezi toate cele {count} produse", other: "Vezi toate cele {count} de produse" }),
   },
 
   reviews: {
+    eyebrow: "Recenzii",
     title: "Ce spun clienții",
     lead: "Nota medie {average} din 5, din recenzii verificate după livrare.",
     originalLanguage: "",
@@ -137,6 +144,12 @@ export const ro = {
   },
 
   footer: {
+    news: {
+      title: "Noutățile, primele în meniu",
+      text: "Fiecare preparat nou și fiecare ofertă activă sunt marcate în meniu. Nu ai nevoie de cont — doar de poftă.",
+      cta: "Vezi noutățile",
+      sale: "Oferte active",
+    },
     about:
       "Smash burgers, pizza la cuptor și pui crocant, gătite la comandă din ingrediente proaspete. Livrăm rapid în București sau te așteptăm în restaurant.",
     navigation: "Navigare",

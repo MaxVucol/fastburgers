@@ -1,12 +1,17 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cacheLife } from "next/cache";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import { Crown } from "@/components/ui/brand";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { localizeCategory } from "@/lib/i18n/catalog";
 import { fill } from "@/lib/i18n/config";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
+import { cn } from "@/lib/utils";
 import { getCategories } from "@/services/catalog";
 import { Logo } from "./logo";
+import { NewsSlot } from "./news-slot";
 
 function InstagramIcon() {
   return (
@@ -43,6 +48,88 @@ function ColumnTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="type-eyebrow mb-5 text-muted-on-dark">{children}</h2>;
 }
 
+type NewsProps = { t: Dictionary; href: (path: string) => string };
+
+/** Home page: heading, short text, pill link with the orange arrow, fries spilling over the edge. */
+function NewsBand({ t, href }: NewsProps) {
+  return (
+    <section aria-labelledby="footer-news-title" className="relative border-b border-line-dark">
+      <div className="container-page relative grid gap-7 py-11 sm:py-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-10 lg:py-14 lg:pr-[17rem] xl:pr-[19rem]">
+        <div className="max-w-xl">
+          <Crown className="mb-4 h-6 -rotate-6 text-accent" strokeWidth={3} />
+          <h2 id="footer-news-title" className="type-h2 text-on-dark">
+            {t.footer.news.title}
+          </h2>
+          <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-on-dark">{t.footer.news.text}</p>
+        </div>
+        <div className="flex flex-col items-start gap-3 md:items-stretch">
+          <NewsPill href={href("/menu?filter=new")} label={t.footer.news.cta} />
+          <SaleLink href={href("/menu?filter=sale")} label={t.footer.news.sale} className="md:self-start md:px-6" />
+        </div>
+      </div>
+      {/* Fries spilling over the band's edge; decorative, so it is hidden from assistive tech. */}
+      <div className="pointer-events-none absolute right-[max(0px,calc((100vw-var(--page-max))/2-2rem))] -bottom-10 hidden aspect-square w-60 [mask-image:radial-gradient(closest-side,#000_60%,transparent)] lg:block xl:w-72">
+        <Image src="/images/products/classic-fries/main.webp" alt="" fill sizes="288px" className="-rotate-6 object-cover object-[50%_60%]" />
+      </div>
+    </section>
+  );
+}
+
+/** Inner pages: the same promise and links on one line, no text block or photo. */
+function NewsLine({ t, href }: NewsProps) {
+  return (
+    <section aria-labelledby="footer-news-title" className="border-b border-line-dark">
+      <div className="container-page flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between md:gap-8">
+        <h2 id="footer-news-title" className="flex items-center gap-3 font-display text-lg font-extrabold tracking-[-0.02em] text-on-dark sm:text-xl">
+          <Crown className="h-5 shrink-0 -rotate-6 text-accent" strokeWidth={3} />
+          {t.footer.news.title}
+        </h2>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <NewsPill href={href("/menu?filter=new")} label={t.footer.news.cta} compact />
+          <SaleLink href={href("/menu?filter=sale")} label={t.footer.news.sale} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NewsPill({ href, label, compact = false }: { href: string; label: string; compact?: boolean }) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "group flex items-center justify-between gap-6 rounded-full bg-on-dark pr-1.5 font-semibold text-ink transition-colors hover:bg-paper",
+        compact ? "h-12 pl-5 text-[0.9375rem]" : "h-14 w-full pl-6 min-[420px]:w-auto md:min-w-[19rem]",
+      )}
+    >
+      {label}
+      <span
+        className={cn(
+          "grid place-items-center rounded-full bg-accent transition-transform duration-[var(--duration-fast)] group-hover:translate-x-0.5",
+          compact ? "size-9" : "size-11",
+        )}
+      >
+        <ArrowRight className="size-5" aria-hidden />
+      </span>
+    </Link>
+  );
+}
+
+function SaleLink({ href, label, className }: { href: string; label: string; className?: string }) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "group inline-flex min-h-11 items-center gap-2 px-1 text-sm font-semibold text-flame underline-offset-4 hover:underline",
+        className,
+      )}
+    >
+      {label}
+      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+    </Link>
+  );
+}
+
 export async function Footer() {
   const [{ locale, t, href }, categories] = await Promise.all([getI18n(), getCategories()]);
   const nav = [
@@ -59,6 +146,11 @@ export async function Footer() {
 
   return (
     <footer className="relative mt-auto overflow-hidden bg-ink text-on-dark">
+      {/* What's new — there is no newsletter backend, so instead of a sign-up form that would
+          go nowhere this links to the menu's real "new" and "on offer" filters. Full band on the
+          home page, one compact line elsewhere, nothing in the menu and the order flow. */}
+      <NewsSlot full={<NewsBand t={t} href={href} />} compact={<NewsLine t={t} href={href} />} />
+
       <div className="container-page grid gap-12 pt-16 pb-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.35fr] lg:gap-10 lg:pt-20">
         <div className="sm:col-span-2 lg:col-span-1">
           <Logo href={href("/")} label={t.header.homeLink} tone="dark" />

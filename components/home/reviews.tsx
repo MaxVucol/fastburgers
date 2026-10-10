@@ -1,3 +1,4 @@
+import { Crown } from "@/components/ui/brand";
 import { Stars } from "@/components/ui/stars";
 import { formatDate, formatNumber } from "@/lib/format";
 import { fill } from "@/lib/i18n/config";
@@ -27,6 +28,10 @@ export async function Reviews({ reviews }: { reviews: Review[] }) {
     <section aria-labelledby="reviews-title" className="bg-sand">
       <div className="container-page section-y grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-16">
         <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:self-start">
+          <p className="type-eyebrow mb-3 flex items-center gap-2 text-accent-ink">
+            <Crown className="h-3.5" />
+            {t.reviews.eyebrow}
+          </p>
           <h2 id="reviews-title" className="type-h2">
             {t.reviews.title}
           </h2>
