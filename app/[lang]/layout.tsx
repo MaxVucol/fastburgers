@@ -29,13 +29,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: siteConfig.name,
       title: t.meta.ogTitle,
       description: t.meta.description,
-      images: [{ url: "/images/hero/hero.webp", width: 1600, height: 1200, alt: t.meta.ogImageAlt }],
+      images: [{ url: "/images/hero/og.jpg", width: 1200, height: 630, alt: t.meta.ogImageAlt }],
     },
     twitter: {
       card: "summary_large_image",
       title: siteConfig.name,
       description: t.meta.description,
-      images: ["/images/hero/hero.webp"],
+      images: ["/images/hero/og.jpg"],
     },
     // No default canonical/hreflang here: each indexable page declares its own, and
     // noindex pages (checkout, order status) must not point at the home page.

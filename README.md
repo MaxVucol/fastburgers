@@ -95,4 +95,4 @@ lib/i18n/            configurare limbi, dicționare, traduceri catalog
 
 ## Imagini
 
-Fotografiile demo provin de pe [Unsplash](https://unsplash.com/license) (licență gratuită pentru uz comercial) și sunt normalizate de `scripts/fetch-images.mjs`: crop 4:3, WebP și o corecție de culoare comună. Sunt organizate după slug în `public/images/products/<slug>/`.
+Fotografiile demo provin de pe [Unsplash](https://unsplash.com/license) (licență gratuită pentru uz comercial; fără imagini Unsplash+) și sunt normalizate de `scripts/fetch-images.mjs`: crop 4:3 pentru produse, pătrat pentru categorii și hero (care stă într-un cerc), 1200×630 JPEG pentru previzualizarea socială (`hero/og.jpg`), WebP și o corecție de culoare comună. Sunt organizate după slug în `public/images/products/<slug>/`, iar fiecare categorie are propria fotografie, diferită de cele ale produselor. Scriptul notează autorul fiecărei fotografii noi și acceptă prefixe, ca să regenereze doar o parte: `npm run images:fetch -- hero/ products/sprite/`.

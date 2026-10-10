@@ -6,7 +6,7 @@ export const en: Dictionary = {
     description:
       "Angus smash burgers, oven-baked pizza, crispy chicken and fries cut fresh every day. Order online for fast delivery in Bucharest or pick up from the restaurant.",
     ogTitle: "Fast Burgers — smash burgers, pizza and crispy chicken",
-    ogImageAlt: "Double smash burger with melted cheddar and fries",
+    ogImageAlt: "Beef burger with melted cheddar, lettuce and tomato on a wooden board",
     keywords: "fast food Bucharest, smash burger, pizza, crispy chicken, food delivery, burgers",
     menuTitle: "Menu — burgers, pizza, chicken, fries and desserts",
     menuDescription:
@@ -83,7 +83,7 @@ export const en: Dictionary = {
     deliveryValue: "~30 min",
     note: "no shortcuts",
     spotlight: "Most ordered",
-    imageAlt: "Double smash burger with melted cheddar and bacon next to fries on a wooden board",
+    imageAlt: "Double smash burger with melted cheddar, pickles and onion on a dark background",
   },
 
   benefits: {
@@ -114,7 +114,7 @@ export const en: Dictionary = {
     title: "Burger, fries and a drink. One price.",
     save: "You save {amount}",
     customize: "Customise",
-    imageAlt: "Beef burger with cheddar, lettuce and tomato on a sesame bun",
+    imageAlt: "Burger with lettuce on a sesame bun and fries in a wire basket on a wooden board",
     badge: "deal",
   },
 

@@ -66,7 +66,7 @@ export async function Hero({ spotlight }: { spotlight: ProductCardData | null })
               fill
               preload
               sizes="(min-width: 1024px) 560px, (min-width: 640px) 460px, 86vw"
-              className="object-cover object-[80%_55%]"
+              className="object-cover"
             />
           </div>
 

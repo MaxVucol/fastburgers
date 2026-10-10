@@ -13,7 +13,7 @@ export const ro = {
     description:
       "Smash burgers din vită Angus, pizza la cuptor, crispy chicken și cartofi tăiați zilnic. Comandă online cu livrare rapidă în București sau ridicare din restaurant.",
     ogTitle: "Fast Burgers — smash burgers, pizza și crispy chicken",
-    ogImageAlt: "Burger smash dublu cu cheddar topit și cartofi prăjiți",
+    ogImageAlt: "Burger cu vită, cheddar topit, salată și roșii pe un platou de lemn",
     keywords: "fast food București, smash burger, pizza, crispy chicken, livrare mâncare, burgeri",
     menuTitle: "Meniu — burgeri, pizza, chicken, cartofi și deserturi",
     menuDescription:
@@ -90,7 +90,7 @@ export const ro = {
     deliveryValue: "~30 min",
     note: "fără scurtături",
     spotlight: "Cel mai comandat",
-    imageAlt: "Burger smash dublu cu cheddar topit și bacon, lângă cartofi prăjiți pe un platou de lemn",
+    imageAlt: "Burger smash dublu cu cheddar topit, castraveți murați și ceapă, pe fundal întunecat",
   },
 
   benefits: {
@@ -121,7 +121,7 @@ export const ro = {
     title: "Burger, cartofi și băutură. Un singur preț.",
     save: "Economisești {amount}",
     customize: "Personalizează",
-    imageAlt: "Burger cu vită, cheddar, salată și roșii pe chiflă cu susan",
+    imageAlt: "Burger cu salată pe chiflă cu susan și cartofi prăjiți într-un coș, pe un platou de lemn",
     badge: "ofertă",
   },
 
