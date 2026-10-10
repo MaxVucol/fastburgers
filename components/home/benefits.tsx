@@ -3,7 +3,11 @@ import { getI18n } from "@/lib/i18n/server";
 
 const ICONS = [CookingPot, Leaf, Bike];
 
-/** Three short promises under the hero copy: line icons, hairline dividers, no card chrome. */
+/**
+ * Three short promises under the hero copy: line icons, hairline dividers, no card chrome.
+ * Icon beside the text where the columns are wide; above it in the narrow hero column (lg–xl)
+ * so titles do not break into two or three lines.
+ */
 export async function Benefits() {
   const { t } = await getI18n();
   return (
@@ -17,7 +21,7 @@ export async function Benefits() {
           return (
             <li
               key={item.title}
-              className="flex flex-col items-center gap-2 px-2 text-center first:pl-0 last:pr-0 sm:flex-row sm:items-start sm:gap-3 sm:px-4 sm:text-left"
+              className="flex flex-col items-center gap-2 px-2 text-center first:pl-0 last:pr-0 sm:flex-row sm:items-start sm:gap-3 sm:px-4 sm:text-left lg:flex-col lg:gap-2 xl:flex-row xl:gap-3"
             >
               <Icon className="size-6 shrink-0 text-accent-ink" strokeWidth={1.6} aria-hidden />
               <div>

@@ -34,7 +34,6 @@ export async function PromoBanner({ product }: { product: ProductCardData }) {
             aria-hidden
           />
           <Crown className="absolute top-[10%] left-[8%] h-10 -rotate-12 text-accent sm:h-12 lg:left-[14%]" strokeWidth={3} />
-          <Crown className="absolute top-[22%] right-[7%] h-7 rotate-[18deg] text-accent/80 sm:h-8" strokeWidth={3.4} />
           {discount && (
             <p className="absolute right-5 bottom-5 grid size-24 rotate-[8deg] place-items-center rounded-full bg-accent text-center text-ink shadow-[var(--shadow-lift)] sm:size-28 lg:right-8 lg:bottom-8">
               <span>

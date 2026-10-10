@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { Crown, ScribbleArrow, Swash } from "@/components/ui/brand";
+import { Crown, Swash } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
@@ -47,35 +47,41 @@ export async function Hero() {
           </div>
         </div>
 
-        {/* ── Photo panel (the photo carries the alt text; crown and note are decorative) ── */}
+        {/* ── Photo panel (the photo carries the alt text; the crown is decorative) ── */}
         <div
           className={[
-            "relative -mx-[var(--gutter)] h-[clamp(19rem,92vw,32rem)] overflow-hidden bg-ink",
+            "relative -mx-[var(--gutter)] h-[clamp(19rem,92vw,32rem)] overflow-hidden bg-ink [container-type:size]",
             "[clip-path:polygon(0_7%,100%_0,100%_100%,0_100%)]",
             "lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:ml-0 lg:h-auto",
             "lg:mr-[calc((var(--gutter)+max(0px,(100vw-var(--page-max))/2))*-1)]",
             "lg:[clip-path:polygon(17%_0,100%_0,100%_100%,0_100%)]",
           ].join(" ")}
         >
-          <Image
-            src="/images/hero/hero.webp"
-            alt={t.hero.imageAlt}
-            fill
-            preload
-            sizes="(min-width: 1024px) 56vw, 100vw"
-            className="object-cover object-[50%_40%] lg:object-[58%_28%]"
-          />
+          {/* The photo is never wider than its own 0.9:1 frame (90% of the panel height), so the whole
+              burger stays in shot on any panel shape; on wider panels the edges fade into the graphite.
+              Centred a little right on desktop, where the diagonal hides the panel's left edge.
+              `sizes` mirrors that width: 0.9 × panel height (92vw on phones, capped at 32rem; ~46rem on desktop). */}
+          <div className="absolute inset-y-0 left-1/2 w-[min(100cqw,90cqh)] -translate-x-1/2 lg:left-[53%]">
+            <Image
+              src="/images/hero/hero.webp"
+              alt={t.hero.imageAlt}
+              fill
+              preload
+              quality={85}
+              sizes="(min-width: 1024px) min(52vw, 42rem), min(83vw, 29rem)"
+              className="object-cover object-[47%_50%]"
+            />
+            {/* Fade width follows the spare room beside the photo: a hairline vignette when the photo fills
+                the panel, a long blend when graphite shows on both sides (never over the burger itself). */}
+            <span className="absolute inset-y-0 left-0 w-[clamp(1.25rem,min(20%,calc((100cqw-90cqh)*0.6)),10rem)] bg-gradient-to-r from-ink to-transparent" aria-hidden />
+            <span className="absolute inset-y-0 right-0 w-[clamp(1.25rem,min(20%,calc((100cqw-90cqh)*0.6)),10rem)] bg-gradient-to-l from-ink to-transparent" aria-hidden />
+            <span className="absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-ink/80 to-transparent" aria-hidden />
+          </div>
+          {/* One brand accent, kept small and on the dark backdrop so it never sits on the food. */}
           <Crown
-            className="absolute top-[13%] right-[9%] h-12 rotate-[14deg] text-accent sm:h-16 lg:top-[11%] lg:right-[12%] lg:h-20"
+            className="absolute top-[9%] right-[7%] h-9 rotate-[14deg] text-accent sm:h-11 lg:top-[8%] lg:right-[8%] lg:h-14"
             strokeWidth={3}
           />
-          <p
-            aria-hidden
-            className="type-script absolute right-[6%] bottom-[7%] flex items-end gap-1 text-[1.65rem] text-flame sm:text-[2rem] lg:right-[6%] lg:bottom-[5%] lg:text-[2.4rem]"
-          >
-            <ScribbleArrow className="mb-3 h-7 w-10 -scale-x-100 rotate-[160deg] text-on-dark/80 sm:h-9 sm:w-12" />
-            <span className="-rotate-6 leading-[0.95] before:content-[attr(data-text)]" data-text={t.hero.note} />
-          </p>
         </div>
 
         {/* ── Promises ───────────────────────────────────── */}

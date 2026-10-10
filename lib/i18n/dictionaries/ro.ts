@@ -82,7 +82,6 @@ export const ro = {
     eyebrow: "Burgeri. Pizza. Chicken. Combo. Băuturi.",
     lead: "Vită Angus presată pe plita încinsă, pizza cu blat crescut 48 de ore și pui crocant. Gătit după ce comanzi, livrat fierbinte.",
     primary: "Comandă acum",
-    note: "burgeri suculenți",
     imageAlt: "Burger smash dublu cu cheddar topit, castraveți murați și ceapă, pe fundal întunecat",
   },
 

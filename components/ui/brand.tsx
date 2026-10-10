@@ -59,22 +59,3 @@ export function Swash({ className, stretch = false }: { className?: string; stre
     </svg>
   );
 }
-
-/** A loose hand-drawn arrow pointing down-right — pairs with a handwritten note. */
-export function ScribbleArrow({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 64 40"
-      className={cn("h-8 w-12", className)}
-      aria-hidden
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M58 6C46 4 30 8 22 18c-5 6-6 12-3 17" />
-      <path d="M11 28l8 8 8-7" />
-    </svg>
-  );
-}

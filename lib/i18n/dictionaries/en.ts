@@ -75,7 +75,6 @@ export const en: Dictionary = {
     eyebrow: "Burgers. Pizza. Chicken. Combos. Drinks.",
     lead: "Angus beef smashed on a scorching griddle, pizza dough proofed for 48 hours and crispy chicken. Cooked after you order, delivered hot.",
     primary: "Order now",
-    note: "juicy burgers",
     imageAlt: "Double smash burger with melted cheddar, pickles and onion on a dark background",
   },
 

@@ -15,6 +15,8 @@ const OUT = path.join(process.cwd(), "public", "images");
  *   used for tall shots where neither "north" nor "centre" keeps the whole burger in frame. zoom > 1 crops tighter,
  *   e.g. to leave a third-party brand or packaging in the background out of the shot.
  * options.size: [width, height] — defaults to 1600×1200 (4:3) for products, 800×800 for categories.
+ * options.grade: false skips the shared colour grade (the hero keeps the photographer's own grade).
+ * options.quality: output quality (default 82 WebP / 84 JPEG).
  * The author (Unsplash username) is noted where it is known.
  */
 const IMAGES = {
@@ -34,8 +36,8 @@ const IMAGES = {
   "products/bbq-chicken-pizza/main.webp": "1565299624946-b28f40a0ae38",
   "products/four-cheese/main.webp": "1513104890138-7c749659a591",
   // ── Chicken ───────────────────────────────────────────────
-  // Zoomed in so the soda can and branded box behind the bowl stay out of frame.
-  "products/crispy-tenders/main.webp": ["1605291581926-df4bf7ee3e89", { focus: [0.25, 1, 1.5] }], // @logan-jeffrey
+  // Close-up of breaded strips around a creamy herb dip — sharp, no third-party packaging in frame.
+  "products/crispy-tenders/main.webp": ["1562967914-608f82629710", { focus: [0.425, 0.681, 1.4775] }], // @leo-roza
   "products/hot-wings/main.webp": "1567620832903-9fc6debc209f",
   "products/hot-wings/2.webp": ["1780037384670-63862da64775", { position: "centre" }], // @allen-y
   "products/chicken-box/main.webp": ["1580217593608-61931cefc821", { position: "centre" }], // @andy-wang
@@ -72,8 +74,9 @@ const IMAGES = {
   "categories/deserturi.webp": ["1642220618391-72214d19711c", { position: "centre" }], // @tai-s-captures
   "categories/bauturi.webp": ["1676159434854-2f7f860a18cd", { position: "centre" }], // @hogir-saeed
   // ── Campaign ──────────────────────────────────────────────
-  // Hero sits in a circle, so it is cut square around the burger.
-  "hero/hero.webp": ["1678110707289-ab14382a1625", { size: [1400, 1400], focus: [0.5, 0.52] }], // @arvid-skywalker
+  // Full width of the original (5000×7336), 0.9:1 so the whole burger fits every panel shape from phones
+  // (≈1.1:1) to 1920px desktops (≈1.35:1); 2400px wide covers the 1–2x desktop panel without upscaling.
+  "hero/hero.webp": ["1678110707289-ab14382a1625", { size: [2400, 2667], focus: [0.5, 0.357], grade: false, quality: 90 }], // @arvid-skywalker
   // Social preview (Open Graph / Twitter): 1.91:1, JPEG for the widest crawler support.
   "hero/og.jpg": ["1586816001966-79b736744398", { size: [1200, 630], position: "centre" }], // @mafe-estudio
   "promo/promo.webp": ["1551782450-a2132b4ba21d", { position: "centre" }], // @sk
@@ -100,13 +103,15 @@ async function fetchOne(target, entry) {
   const res = await fetch(`https://images.unsplash.com/photo-${id}?w=${sourceWidth}&q=90&fm=jpg`);
   if (!res.ok) throw new Error(`${id}: HTTP ${res.status}`);
   const input = Buffer.from(await res.arrayBuffer());
-  const pipeline = sharp(opts.focus ? await cropAt(input, w, h, opts.focus) : input)
-    .resize(w, h, { fit: "cover", position: opts.position ?? "attention" })
-    // A gentle, uniform grade so photos from different shoots read as one set.
-    .modulate({ saturation: 1.06, brightness: 1.02 });
+  let pipeline = sharp(opts.focus ? await cropAt(input, w, h, opts.focus) : input).resize(w, h, {
+    fit: "cover",
+    position: opts.position ?? "attention",
+  });
+  // A gentle, uniform grade so photos from different shoots read as one set.
+  if (opts.grade !== false) pipeline = pipeline.modulate({ saturation: 1.06, brightness: 1.02 });
   const out = target.endsWith(".jpg")
-    ? await pipeline.jpeg({ quality: 84, mozjpeg: true }).toBuffer()
-    : await pipeline.webp({ quality: 82 }).toBuffer();
+    ? await pipeline.jpeg({ quality: opts.quality ?? 84, mozjpeg: true }).toBuffer()
+    : await pipeline.webp({ quality: opts.quality ?? 82 }).toBuffer();
   const file = path.join(OUT, target);
   // Targets are fixed keys above; never write outside /public/images.
   if (!file.startsWith(OUT + path.sep)) throw new Error(`refusing to write outside ${OUT}: ${target}`);
