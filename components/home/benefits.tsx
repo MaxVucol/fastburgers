@@ -1,25 +1,30 @@
-import { Bike, Flame, Leaf } from "lucide-react";
+import { Bike, CookingPot, Leaf } from "lucide-react";
 import { getI18n } from "@/lib/i18n/server";
 
-const ICONS = [Flame, Leaf, Bike];
+const ICONS = [CookingPot, Leaf, Bike];
 
-/** Dark band right after the hero: three promises, separated by hairlines. */
+/** Three short promises under the hero copy: line icons, hairline dividers, no card chrome. */
 export async function Benefits() {
   const { t } = await getI18n();
   return (
-    <section aria-labelledby="benefits-title" className="bg-ink text-on-dark">
+    <section aria-labelledby="benefits-title">
       <h2 id="benefits-title" className="sr-only">
         {t.benefits.title}
       </h2>
-      <ul className="container-page grid divide-y divide-line-dark md:grid-cols-3 md:divide-x md:divide-y-0">
+      <ul className="grid grid-cols-3 divide-x divide-line border-t border-line pt-6">
         {t.benefits.items.map((item, i) => {
-          const Icon = ICONS[i] ?? Flame;
+          const Icon = ICONS[i] ?? Leaf;
           return (
-            <li key={item.title} className="flex items-start gap-4 py-6 md:px-8 md:py-9 md:first:pl-0 md:last:pr-0">
-              <Icon className="mt-0.5 size-7 shrink-0 text-flame" strokeWidth={1.6} aria-hidden />
+            <li
+              key={item.title}
+              className="flex flex-col items-center gap-2 px-2 text-center first:pl-0 last:pr-0 sm:flex-row sm:items-start sm:gap-3 sm:px-4 sm:text-left"
+            >
+              <Icon className="size-6 shrink-0 text-accent-ink" strokeWidth={1.6} aria-hidden />
               <div>
-                <h3 className="font-sans text-base font-semibold tracking-normal">{item.title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-on-dark">{item.text}</p>
+                <h3 className="font-sans text-[0.8125rem] leading-snug font-semibold tracking-normal sm:text-sm">
+                  {item.title}
+                </h3>
+                <p className="mt-0.5 text-xs leading-snug text-muted">{item.text}</p>
               </div>
             </li>
           );

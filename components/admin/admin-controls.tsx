@@ -120,13 +120,13 @@ export function DeleteButton({
             }
           });
         }}
-        className="grid size-9 place-items-center rounded-lg text-muted hover:bg-accent-soft hover:text-accent disabled:opacity-50"
+        className="grid size-9 place-items-center rounded-lg text-muted hover:bg-accent-soft hover:text-accent-ink disabled:opacity-50"
         aria-label={`Șterge ${name}`}
       >
         {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Trash2 className="size-4" aria-hidden />}
       </button>
       {error && (
-        <span role="alert" className="mt-1 max-w-56 text-right text-xs font-medium text-accent">
+        <span role="alert" className="mt-1 max-w-56 text-right text-xs font-medium text-accent-ink">
           {error}
         </span>
       )}
@@ -186,7 +186,7 @@ export function OrderStatusSelect({ id, status }: { id: string; status: OrderSta
         </select>
         {pending && <Loader2 className="size-5 animate-spin text-muted" aria-label="Se salvează" />}
       </div>
-      {error && <p role="alert" className="text-sm text-accent">{error}</p>}
+      {error && <p role="alert" className="text-sm text-accent-ink">{error}</p>}
     </div>
   );
 }

@@ -43,7 +43,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
         <Panel
           title="Comenzi recente"
-          action={<Link href="/admin/orders" className="text-sm font-semibold text-accent hover:underline">Toate comenzile</Link>}
+          action={<Link href="/admin/orders" className="text-sm font-semibold text-accent-ink hover:underline">Toate comenzile</Link>}
         >
           {stats.recentOrders.length === 0 ? (
             <p className="p-5 text-sm text-muted">Încă nu există comenzi.</p>

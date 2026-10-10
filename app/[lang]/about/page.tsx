@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { ArrowRight, Award, ChefHat, Leaf, Soup } from "lucide-react";
-import { Spark } from "@/components/ui/brand";
+import { Crown } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
 import { getI18n, localeAlternates } from "@/lib/i18n/server";
 
@@ -24,7 +24,7 @@ export default async function AboutPage() {
       <section className="container-page grid items-center gap-12 pt-10 pb-16 sm:pt-14 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:pb-24">
         <div>
           <p className="type-eyebrow flex items-center gap-2 text-ink-soft">
-            <Spark className="size-3.5 text-accent" />
+            <Crown className="h-3.5 text-accent-ink" />
             {t.about.eyebrow}
           </p>
           <h1 className="type-h1 mt-4">{t.about.title}</h1>

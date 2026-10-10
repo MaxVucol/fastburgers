@@ -28,11 +28,11 @@ export function Price({
     <div className={cn("flex flex-wrap items-baseline gap-x-2", className)}>
       <span
         className={cn(
-          "font-display font-semibold tracking-[0.01em] tabular-nums",
+          "font-display font-extrabold tracking-[-0.02em] tabular-nums",
           tone === "dark" ? "text-flame" : "text-ink",
-          size === "sm" && "text-lg",
-          size === "md" && "text-[1.375rem]",
-          size === "lg" && "text-4xl",
+          size === "sm" && "text-base",
+          size === "md" && "text-[1.1875rem]",
+          size === "lg" && "text-[2rem]",
         )}
       >
         {formatPrice(price, locale)}

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Benefits } from "@/components/home/benefits";
 import { CategoryIndex } from "@/components/home/category-index";
 import { Hero } from "@/components/home/hero";
 import { OrderCta } from "@/components/home/order-cta";
 import { PromoBanner } from "@/components/home/promo-banner";
 import { Reviews } from "@/components/home/reviews";
-import { FeatureCard, ProductList } from "@/components/product/product-card";
+import { ProductList } from "@/components/product/product-card";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { plural } from "@/lib/i18n/config";
@@ -27,7 +26,7 @@ export default async function HomePage() {
   for (const p of products) counts[p.categorySlug] = (counts[p.categorySlug] ?? 0) + 1;
 
   const popular = products.filter((p) => p.popular);
-  const hits = popular.slice(0, 6);
+  const hits = popular.slice(0, 4);
   const featured = products.filter((p) => p.featured && !p.popular).slice(0, 4);
   const fresh = products.filter((p) => p.isNew && !p.popular && !p.featured).slice(0, 4);
   const picks = [...featured, ...fresh].slice(0, 8);
@@ -39,11 +38,14 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={restaurantJsonLd(t.meta.description, href("/menu"))} />
-      <Hero spotlight={popular[0] ?? null} />
-      <Benefits />
+      <Hero />
+
+      <div className="border-t border-line">
+        <CategoryIndex categories={categories} counts={counts} />
+      </div>
 
       {hits.length > 0 && (
-        <section id="hituri" aria-labelledby="hits-title" className="container-page section-y scroll-mt-[calc(var(--header-h)+1rem)]">
+        <section id="hituri" aria-labelledby="hits-title" className="container-page pb-[var(--section-y)] scroll-mt-[calc(var(--header-h)+1rem)]">
           <SectionHeading
             id="hits-title"
             title={t.hits.title}
@@ -51,23 +53,14 @@ export default async function HomePage() {
             note={t.hits.note}
             action={{ href: href("/menu?filter=popular"), label: t.hits.viewAll }}
           />
-          {/* Phones show three; the rest appear from tablet width up. */}
-          <div className="grid gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-3 [&>*:nth-child(n+4)]:hidden md:[&>*:nth-child(n+4)]:grid">
-            {hits.map((p, i) => (
-              <FeatureCard key={p.id} product={p} eager={i < 2} />
-            ))}
-          </div>
+          <ProductList products={hits} layout="rail" columns="four" />
         </section>
       )}
-
-      <div className="border-t border-line">
-        <CategoryIndex categories={categories} counts={counts} />
-      </div>
 
       {promo && <PromoBanner product={promo} />}
 
       {picks.length > 0 && (
-        <section aria-labelledby="picks-title" className="container-page section-y">
+        <section aria-labelledby="picks-title" className="container-page pb-[var(--section-y)]">
           <SectionHeading
             id="picks-title"
             title={t.picks.title}

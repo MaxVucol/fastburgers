@@ -69,12 +69,12 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
             <ul className="space-y-3 p-5 text-sm">
               <li className="font-semibold">{order.customerName}</li>
               <li>
-                <a href={`tel:${order.customerPhone}`} className="flex items-center gap-2 hover:text-accent">
+                <a href={`tel:${order.customerPhone}`} className="flex items-center gap-2 hover:text-accent-ink">
                   <Phone className="size-4 text-muted" aria-hidden /> {order.customerPhone}
                 </a>
               </li>
               <li>
-                <a href={`mailto:${order.customerEmail}`} className="flex items-center gap-2 break-all hover:text-accent">
+                <a href={`mailto:${order.customerEmail}`} className="flex items-center gap-2 break-all hover:text-accent-ink">
                   <Mail className="size-4 shrink-0 text-muted" aria-hidden /> {order.customerEmail}
                 </a>
               </li>

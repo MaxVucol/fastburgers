@@ -7,7 +7,7 @@ export default async function NotFound() {
   const { t, href } = await getI18n();
   return (
     <div className="container-page flex flex-col items-start py-20 sm:py-28">
-      <p className="relative font-display text-[clamp(7rem,28vw,15rem)] leading-[0.8] font-bold text-accent">
+      <p className="relative font-display text-[clamp(7rem,28vw,15rem)] leading-[0.8] font-extrabold tracking-[-0.04em] text-accent-ink">
         404
         <Strokes className="absolute -top-4 -right-12 size-14 rotate-[100deg] text-ink sm:-right-16 sm:size-20" />
       </p>

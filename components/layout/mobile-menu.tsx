@@ -33,7 +33,7 @@ export function MobileMenu() {
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
         }}
-        className="drawer fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-dvh w-full max-w-md bg-ink p-0 text-on-dark"
+        className="drawer-left fixed inset-y-0 right-auto left-0 m-0 h-dvh max-h-dvh w-full max-w-md bg-ink p-0 text-on-dark"
       >
         <div className="flex h-full flex-col">
           <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line-dark px-5">
@@ -76,7 +76,7 @@ export function MobileMenu() {
                             onClick={close}
                             aria-current={active ? "page" : undefined}
                             className={cn(
-                              "flex items-center justify-between py-3.5 font-display text-[2rem] leading-none font-semibold uppercase transition-colors",
+                              "flex items-center justify-between py-4 font-display text-[1.75rem] leading-none font-extrabold tracking-[-0.03em] transition-colors",
                               active ? "text-flame" : "text-on-dark hover:text-flame",
                             )}
                           >

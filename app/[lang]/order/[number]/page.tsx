@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Check, CircleX, MapPin } from "lucide-react";
 import type { OrderStatus } from "@prisma/client";
 import { AutoRefresh } from "@/components/checkout/auto-refresh";
-import { Spark } from "@/components/ui/brand";
+import { Crown } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
 import { formatDateTime, formatPrice } from "@/lib/format";
 import { optionName } from "@/lib/i18n/catalog";
@@ -59,7 +59,7 @@ async function OrderDetails({
       {!isFinal && <AutoRefresh />}
       <header>
         <p className="type-eyebrow flex items-center gap-2 text-ink-soft">
-          <Spark className="size-3.5 text-accent" />
+          <Crown className="h-3.5 text-accent-ink" />
           {t.order.number} {order.number}
         </p>
         <h1 className="type-h1 mt-4">

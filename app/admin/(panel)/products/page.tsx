@@ -72,7 +72,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                   <Image src={p.image} alt="" fill sizes="56px" className="object-cover" />
                 </span>
                 <span className="min-w-0">
-                  <Link href={`/admin/products/${p.id}`} className="block truncate font-semibold hover:text-accent">
+                  <Link href={`/admin/products/${p.id}`} className="block truncate font-semibold hover:text-accent-ink">
                     {p.name}
                   </Link>
                   <span className="block truncate text-xs text-muted">

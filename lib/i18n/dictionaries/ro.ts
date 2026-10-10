@@ -9,29 +9,29 @@ const plural = (forms: PluralForms): PluralForms => forms;
 
 export const ro = {
   meta: {
-    title: "Fast Burgers — smash burgers, pizza și crispy chicken în București",
+    title: "BUNIQ — Burgers & More: smash burgers, pizza și crispy chicken în București",
     description:
       "Smash burgers din vită Angus, pizza la cuptor, crispy chicken și cartofi tăiați zilnic. Comandă online cu livrare rapidă în București sau ridicare din restaurant.",
-    ogTitle: "Fast Burgers — smash burgers, pizza și crispy chicken",
-    ogImageAlt: "Burger cu vită, cheddar topit, salată și roșii pe un platou de lemn",
+    ogTitle: "BUNIQ — Real Burgers. Better Days.",
+    ogImageAlt: "BUNIQ — Real Burgers. Better Days. Burger smash dublu cu cheddar topit, castraveți murați și ceapă",
     keywords: "fast food București, smash burger, pizza, crispy chicken, livrare mâncare, burgeri",
     menuTitle: "Meniu — burgeri, pizza, chicken, cartofi și deserturi",
     menuDescription:
-      "Tot meniul Fast Burgers cu prețuri: smash burgers din vită Angus, pizza la cuptor, aripioare, wraps, combo-uri, deserturi și băuturi. Comandă online.",
+      "Tot meniul BUNIQ cu prețuri: smash burgers din vită Angus, pizza la cuptor, aripioare, wraps, combo-uri, deserturi și băuturi. Comandă online.",
     categoryTitle: "{name} — comandă online",
-    categoryDescription: "{description} Vezi prețurile și comandă online de la Fast Burgers.",
+    categoryDescription: "{description} Vezi prețurile și comandă online de la BUNIQ.",
     productUnavailable: "Produs indisponibil",
     categoryUnavailable: "Categorie indisponibilă",
     checkoutTitle: "Finalizează comanda",
-    checkoutDescription: "Completează datele de livrare și plasează comanda Fast Burgers.",
+    checkoutDescription: "Completează datele de livrare și plasează comanda BUNIQ.",
     orderTitle: "Comanda ta",
     accountTitle: "Urmărește comanda",
-    accountDescription: "Urmărește statusul comenzii Fast Burgers.",
+    accountDescription: "Urmărește statusul comenzii BUNIQ.",
     aboutTitle: "Despre noi",
     aboutDescription:
-      "Povestea Fast Burgers: o bucătărie mică din centrul Bucureștiului care face smash burgers, pizza și pui crocant fără scurtături.",
+      "Povestea BUNIQ: o bucătărie mică din centrul Bucureștiului care face smash burgers, pizza și pui crocant fără scurtături.",
     contactTitle: "Contact și locații",
-    contactDescription: "Adresele restaurantelor Fast Burgers din București, telefon, email și programul de funcționare.",
+    contactDescription: "Adresele restaurantelor BUNIQ din București, telefon, email și programul de funcționare.",
   },
 
   common: {
@@ -57,12 +57,11 @@ export const ro = {
   },
 
   topbar: {
-    items: ["Livrare rapidă", "Gătit la comandă"],
     language: "Limba site-ului",
   },
 
   header: {
-    homeLink: "fastburgers — pagina principală",
+    homeLink: "BUNIQ — pagina principală",
     search: "Caută în meniu",
     openMenu: "Deschide meniul",
     closeMenu: "Închide meniul",
@@ -80,25 +79,19 @@ export const ro = {
   },
 
   hero: {
-    eyebrow: "Smash burgers · proaspăt în fiecare zi",
-    titleLines: ["Foamea nu", "așteaptă."],
-    script: "Smash it.",
+    eyebrow: "Burgeri. Pizza. Chicken. Combo. Băuturi.",
     lead: "Vită Angus presată pe plita încinsă, pizza cu blat crescut 48 de ore și pui crocant. Gătit după ce comanzi, livrat fierbinte.",
     primary: "Comandă acum",
-    secondary: "Vezi meniul",
-    delivery: "Livrare",
-    deliveryValue: "~30 min",
-    note: "fără scurtături",
-    spotlight: "Cel mai comandat",
+    note: "burgeri suculenți",
     imageAlt: "Burger smash dublu cu cheddar topit, castraveți murați și ceapă, pe fundal întunecat",
   },
 
   benefits: {
-    title: "De ce Fast Burgers",
+    title: "De ce BUNIQ",
     items: [
-      { title: "Gătit la comandă", text: "Nimic ținut la cald. Burgerul intră pe plită după ce comanzi." },
-      { title: "Ingrediente proaspete", text: "Vită Angus tocată zilnic, cartofi tăiați în fiecare dimineață." },
-      { title: "Livrare rapidă", text: "Curieri proprii și genți termice, în medie ~30 de minute." },
+      { title: "Gătit la comandă", text: "Nimic ținut la cald" },
+      { title: "Ingrediente proaspete", text: "Vită tocată zilnic" },
+      { title: "Livrare rapidă", text: "În medie ~30 de minute" },
     ],
   },
 
@@ -363,7 +356,7 @@ export const ro = {
     eyebrow: "Despre noi",
     title: "Am pornit de la o plită și o obsesie.",
     paragraphs: [
-      "Fast Burgers a început în 2019 într-un spațiu de 30 de metri pătrați pe Ion Câmpineanu, cu o singură plită și o idee simplă: burgerul perfect are crustă, nu doar gust.",
+      "BUNIQ a început în 2019 într-un spațiu de 30 de metri pătrați pe Ion Câmpineanu, cu o singură plită și o idee simplă: burgerul perfect are crustă, nu doar gust.",
       "Între timp am adăugat pizza cu blat crescut lent, pui marinat peste noapte și cartofi tăiați în fiecare dimineață. Regula a rămas aceeași: totul se gătește după ce comanzi.",
     ],
     stats: [
@@ -372,7 +365,7 @@ export const ro = {
       { value: "48h", label: "maturare pentru blatul de pizza" },
       { value: "~30 min", label: "timp mediu de livrare" },
     ],
-    statsLabel: "Fast Burgers în cifre",
+    statsLabel: "BUNIQ în cifre",
     principlesTitle: "Fast food, dar fără scurtături.",
     principlesLead: "Suntem rapizi pentru că suntem organizați, nu pentru că pregătim dinainte.",
     principles: [

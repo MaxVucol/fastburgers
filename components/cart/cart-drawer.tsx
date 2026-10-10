@@ -42,7 +42,7 @@ export function CartDrawer() {
     >
       <div className="flex h-full flex-col">
         <header className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line px-5 sm:px-6">
-          <h2 id="cart-title" className="flex items-baseline gap-2 font-display text-2xl font-semibold uppercase">
+          <h2 id="cart-title" className="flex items-baseline gap-2 font-display text-2xl font-extrabold tracking-[-0.02em]">
             {t.cart.title}
             {count > 0 && <span className="text-base font-medium text-muted tabular-nums">({count})</span>}
           </h2>
@@ -61,7 +61,7 @@ export function CartDrawer() {
             <span className="grid size-20 place-items-center rounded-full border-[1.5px] border-dashed border-oat">
               <ShoppingBag className="size-8 text-muted" aria-hidden strokeWidth={1.6} />
             </span>
-            <p className="mt-5 font-display text-2xl font-semibold uppercase">{t.cart.emptyTitle}</p>
+            <p className="mt-5 font-display text-2xl font-extrabold tracking-[-0.02em]">{t.cart.emptyTitle}</p>
             <p className="mt-2 max-w-xs text-sm text-muted">{t.cart.emptyText}</p>
             <ButtonLink href={href("/menu")} onClick={close} className="mt-7">
               {t.common.viewMenu}

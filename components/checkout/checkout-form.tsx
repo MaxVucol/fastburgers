@@ -73,10 +73,10 @@ function Step({ step, title, children }: { step: number; title: string; children
   return (
     <section className="grid gap-5 border-t-2 border-ink pt-5 md:grid-cols-[11rem_1fr] md:gap-8 md:pt-6">
       <h2 className="flex items-baseline gap-3 md:block">
-        <span className="font-display text-[2.5rem] leading-none font-semibold text-accent md:block md:text-5xl" aria-hidden>
+        <span className="font-display text-[2.5rem] leading-none font-extrabold tracking-[-0.03em] text-accent-ink md:block md:text-5xl" aria-hidden>
           {String(step).padStart(2, "0")}
         </span>
-        <span className="font-display text-xl font-semibold uppercase md:mt-2 md:block">{title}</span>
+        <span className="font-display text-xl font-extrabold tracking-[-0.02em] md:mt-2 md:block">{title}</span>
       </h2>
       <div className="min-w-0">{children}</div>
     </section>
@@ -110,7 +110,7 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
     return (
       <div key="empty" className="flex min-h-[34rem] flex-col items-center justify-center rounded-[var(--radius-panel)] border-[1.5px] border-dashed border-oat px-6 py-16 text-center">
         <ShoppingBag className="size-11 text-muted" aria-hidden strokeWidth={1.5} />
-        <h2 className="mt-5 font-display text-3xl font-semibold uppercase">{t.checkout.emptyTitle}</h2>
+        <h2 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.02em]">{t.checkout.emptyTitle}</h2>
         <p className="mt-2 max-w-sm text-muted">{t.checkout.emptyText}</p>
         <ButtonLink href={href("/menu")} size="lg" className="mt-7">
           {t.common.viewMenu}
@@ -229,7 +229,9 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
         <Step step={3} title={t.checkout.stepPayment}>
           <fieldset>
             <legend className="sr-only">{t.checkout.paymentMethod}</legend>
-            <div className="grid gap-3 sm:grid-cols-3">
+            {/* Three across only while the form is full-width; beside the step label and the summary
+                the cards get too narrow, so they stack like on phones. */}
+            <div className="grid gap-3 sm:grid-cols-3 md:grid-cols-1">
               <ChoiceCard name="paymentMethod" value="CASH" checked={payment === "CASH"} onChange={() => setPayment("CASH")} icon={Banknote} title={t.checkout.cash} description={delivery === "DELIVERY" ? t.checkout.onDelivery : t.checkout.onPickup} />
               <ChoiceCard name="paymentMethod" value="CARD_ON_DELIVERY" checked={payment === "CARD_ON_DELIVERY"} onChange={() => setPayment("CARD_ON_DELIVERY")} icon={CreditCard} title={t.checkout.card} description={delivery === "DELIVERY" ? t.checkout.courierPos : t.checkout.atCounter} />
               <ChoiceCard name="paymentMethod" value="CARD_ONLINE" checked={payment === "CARD_ONLINE"} onChange={() => setPayment("CARD_ONLINE")} icon={Lock} title={t.checkout.online} description={t.checkout.soon} disabled />
@@ -245,7 +247,7 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
         className="overflow-hidden rounded-[var(--radius-panel)] bg-ink text-on-dark lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]"
         aria-labelledby="summary-title"
       >
-        <h2 id="summary-title" className="border-b border-line-dark px-5 py-4 font-display text-2xl font-semibold uppercase sm:px-6">
+        <h2 id="summary-title" className="border-b border-line-dark px-5 py-4 font-display text-2xl font-extrabold tracking-[-0.02em] sm:px-6">
           {t.checkout.summary}
         </h2>
         <ul className="max-h-[22rem] divide-y divide-line-dark overflow-y-auto px-5 sm:px-6">

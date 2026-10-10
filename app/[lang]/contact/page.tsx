@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
-import { Spark } from "@/components/ui/brand";
+import { Crown } from "@/components/ui/brand";
 import { getI18n, localeAlternates } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
 import { getLocalizedLocations } from "@/services/localized-catalog";
@@ -21,7 +21,7 @@ export default async function ContactPage() {
   return (
     <div className="container-page pt-10 pb-20 sm:pt-14 sm:pb-28">
       <p className="type-eyebrow flex items-center gap-2 text-ink-soft">
-        <Spark className="size-3.5 text-accent" />
+        <Crown className="h-3.5 text-accent-ink" />
         {t.contact.eyebrow}
       </p>
       <h1 className="type-h1 mt-4 max-w-3xl">{t.contact.title}</h1>
@@ -57,7 +57,7 @@ export default async function ContactPage() {
             {locations.map((l) => (
               <li key={l.id} className="grid gap-3 py-6 sm:grid-cols-[1fr_auto] sm:items-start">
                 <div>
-                  <h3 className="font-display text-2xl font-semibold uppercase">{l.name}</h3>
+                  <h3 className="font-display text-2xl font-extrabold tracking-[-0.02em]">{l.name}</h3>
                   <p className="mt-2 flex gap-2 text-sm text-ink-soft">
                     <MapPin className="mt-0.5 size-4 shrink-0 text-accent-ink" aria-hidden /> {l.address}
                   </p>

@@ -1,4 +1,3 @@
-import { Spark } from "@/components/ui/brand";
 import { Stars } from "@/components/ui/stars";
 import { formatDate, formatNumber } from "@/lib/format";
 import { fill } from "@/lib/i18n/config";
@@ -28,12 +27,11 @@ export async function Reviews({ reviews }: { reviews: Review[] }) {
     <section aria-labelledby="reviews-title" className="bg-sand">
       <div className="container-page section-y grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-16">
         <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:self-start">
-          <h2 id="reviews-title" className="type-h2 flex items-start gap-3">
-            <Spark className="mt-[0.12em] size-[0.62em] shrink-0 text-accent" />
+          <h2 id="reviews-title" className="type-h2">
             {t.reviews.title}
           </h2>
           <p className="mt-6 flex items-end gap-3">
-            <span className="font-display text-[5.5rem] leading-[0.8] font-semibold tabular-nums">
+            <span className="font-display text-[5rem] leading-[0.8] font-extrabold tracking-[-0.04em] tabular-nums">
               {formatNumber(average, locale)}
             </span>
             <span className="pb-1">
@@ -55,7 +53,7 @@ export async function Reviews({ reviews }: { reviews: Review[] }) {
               <figure
                 className={cn(
                   "rounded-[var(--radius-card)] p-6 sm:p-7",
-                  i % 3 === 0 ? "bg-ink text-on-dark" : "bg-ivory",
+                  i % 3 === 0 ? "bg-ink text-on-dark" : "border border-line bg-paper",
                 )}
               >
                 <Stars

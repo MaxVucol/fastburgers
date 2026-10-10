@@ -33,7 +33,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps<"/
                   {c.image && <Image src={c.image} alt="" fill sizes="48px" className="object-cover" />}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <Link href={`/admin/categories/${c.id}`} className="block truncate font-semibold hover:text-accent">
+                  <Link href={`/admin/categories/${c.id}`} className="block truncate font-semibold hover:text-accent-ink">
                     {c.name}
                   </Link>
                   <span className="block truncate text-xs text-muted">

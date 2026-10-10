@@ -24,8 +24,8 @@ export function QuickAddButton({
   className,
 }: {
   product: QuickAddProduct;
-  /** compact: "Add +" on cards · full: wide button with the full label. */
-  variant?: "compact" | "full";
+  /** compact: "Add +" · full: wide button with the full label · icon: round "+" on catalog cards. */
+  variant?: "compact" | "full" | "icon";
   /** dark: the button sits on a graphite surface. */
   tone?: "light" | "dark";
   className?: string;
@@ -53,6 +53,31 @@ export function QuickAddButton({
 
   const doneVariant = tone === "dark" ? "light" : "dark";
   const label = variant === "full" ? (added ? t.product.addedToCart : t.product.addToCart) : added ? t.product.added : t.product.add;
+  const ariaLabel = fill(added ? t.product.addedNamed : t.product.addToCartNamed, { name: product.name });
+
+  if (variant === "icon") {
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        className={buttonStyles({
+          variant: added ? doneVariant : "primary",
+          size: "icon",
+          className: cn("size-11 hover:scale-105 active:scale-95", className),
+        })}
+        aria-label={ariaLabel}
+      >
+        <span className="sr-only" aria-live="polite">
+          {added ? t.product.added : ""}
+        </span>
+        {added ? (
+          <Check className="size-5 animate-pop" aria-hidden strokeWidth={2.5} />
+        ) : (
+          <Plus className="size-5" aria-hidden strokeWidth={2.6} />
+        )}
+      </button>
+    );
+  }
 
   return (
     <button
@@ -63,7 +88,7 @@ export function QuickAddButton({
         size: variant === "full" ? "lg" : "sm",
         className: cn(variant === "compact" ? "h-10 gap-1.5 pr-3.5 pl-4" : "w-full", className),
       })}
-      aria-label={fill(added ? t.product.addedNamed : t.product.addToCartNamed, { name: product.name })}
+      aria-label={ariaLabel}
     >
       <span aria-live="polite">{label}</span>
       {added ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden strokeWidth={2.5} />}

@@ -52,17 +52,17 @@ export function MenuToolbar({
     return () => window.clearTimeout(timer);
   }, [text, lastSent, query, router, menuPath]);
 
+  // Category chips: the active one is the orange pill, the rest stay quiet.
   const tab = (active: boolean) =>
     cn(
-      "relative inline-flex h-12 shrink-0 items-center px-1 text-[0.9375rem] font-semibold whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
-      "after:absolute after:inset-x-0 after:-bottom-px after:h-[3px] after:bg-accent after:transition-transform after:duration-[var(--duration-base)]",
-      active ? "text-ink after:scale-x-100" : "text-muted after:scale-x-0 hover:text-ink",
+      "inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
+      active ? "border-accent bg-accent text-ink" : "border-line bg-paper text-ink-soft hover:border-ink/30 hover:text-ink",
     );
 
   return (
     <div>
       <nav aria-label={t.menu.categoriesLabel} className="border-b border-line">
-        <div className="no-scrollbar -mx-[var(--gutter)] flex gap-6 overflow-x-auto px-[var(--gutter)] sm:gap-7">
+        <div className="no-scrollbar -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] pb-3">
           <button type="button" aria-pressed={!query.category} onClick={() => navigate({ category: "" })} className={tab(!query.category)}>
             {t.menu.allCategories}
           </button>
@@ -134,7 +134,7 @@ export function MenuToolbar({
                 onClick={() => navigate({ filter: f })}
                 className={cn(
                   "h-9 shrink-0 rounded-full px-3.5 text-sm font-semibold whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
-                  query.filter === f ? "bg-ink text-on-dark" : "text-ink-soft hover:bg-sand",
+                  query.filter === f ? "bg-accent text-ink" : "text-ink-soft hover:bg-sand",
                 )}
               >
                 {t.menu.filters[f]}

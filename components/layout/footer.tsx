@@ -50,11 +50,12 @@ export async function Footer() {
     { href: "/account", label: t.nav.track },
     { href: "/checkout", label: t.nav.checkout },
   ];
+  // Only profiles that are actually configured get an icon (see siteConfig.social).
   const socials = [
     { href: siteConfig.social.instagram, label: "Instagram", icon: <InstagramIcon /> },
     { href: siteConfig.social.facebook, label: "Facebook", icon: <FacebookIcon /> },
     { href: siteConfig.social.tiktok, label: "TikTok", icon: <TiktokIcon /> },
-  ];
+  ].filter((s) => s.href !== "");
 
   return (
     <footer className="relative mt-auto overflow-hidden bg-ink text-on-dark">
@@ -62,21 +63,23 @@ export async function Footer() {
         <div className="sm:col-span-2 lg:col-span-1">
           <Logo href={href("/")} label={t.header.homeLink} tone="dark" />
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-on-dark">{t.footer.about}</p>
-          <ul className="mt-6 flex gap-2">
-            {socials.map((s) => (
-              <li key={s.label}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={fill(t.footer.social, { name: siteConfig.name, network: s.label })}
-                  className="grid size-10 place-items-center rounded-full border border-line-dark text-on-dark transition-colors duration-[var(--duration-fast)] hover:border-accent hover:bg-accent hover:text-ink"
-                >
-                  {s.icon}
-                </a>
-              </li>
-            ))}
-          </ul>
+          {socials.length > 0 && (
+            <ul className="mt-6 flex gap-2">
+              {socials.map((s) => (
+                <li key={s.label}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={fill(t.footer.social, { name: siteConfig.name, network: s.label })}
+                    className="grid size-10 place-items-center rounded-full border border-line-dark text-on-dark transition-colors duration-[var(--duration-fast)] hover:border-accent hover:bg-accent hover:text-ink"
+                  >
+                    {s.icon}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <nav aria-label={t.footer.navigation}>
@@ -148,11 +151,11 @@ export async function Footer() {
         </div>
       </div>
 
-      {/* Oversized, cropped wordmark — the footer's signature. Decorative only. */}
+      {/* Oversized wordmark — the footer's signature; shown whole so the Q keeps its tail. Decorative only. */}
       <p
         aria-hidden
-        data-text="fastburgers"
-        className="pointer-events-none -mb-[0.24em] text-center font-sans text-[15.5vw] leading-[0.8] font-extrabold tracking-[-0.06em] text-graphite-soft select-none before:content-[attr(data-text)]"
+        data-text="BUNIQ"
+        className="pointer-events-none pb-[0.06em] text-center font-display text-[24vw] leading-[0.82] font-extrabold tracking-[-0.06em] text-graphite-soft select-none before:content-[attr(data-text)]"
       />
     </footer>
   );

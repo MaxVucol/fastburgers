@@ -34,7 +34,7 @@ export async function GroupedMenu({
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div>
-                <h2 id={`cat-${category.slug}`} className="font-display text-[2rem] leading-none font-bold uppercase sm:text-[2.5rem]">
+                <h2 id={`cat-${category.slug}`} className="font-display text-[1.75rem] leading-tight font-extrabold tracking-[-0.03em] sm:text-[2.25rem]">
                   {category.name}
                 </h2>
                 {category.description && <p className="mt-2 text-sm text-muted sm:text-base">{category.description}</p>}
@@ -61,7 +61,7 @@ export async function FilteredMenu({ products, hasSearch }: { products: ProductC
     return (
       <div className="flex flex-col items-center rounded-[var(--radius-panel)] border-[1.5px] border-dashed border-oat px-6 py-20 text-center">
         <SearchX className="size-10 text-muted" aria-hidden strokeWidth={1.6} />
-        <h2 className="mt-5 font-display text-3xl font-semibold uppercase">{t.menu.emptyTitle}</h2>
+        <h2 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.02em]">{t.menu.emptyTitle}</h2>
         <p className="mt-2 max-w-sm text-muted">{hasSearch ? t.menu.emptySearch : t.menu.emptyFilters}</p>
         <ButtonLink href={href("/menu")} variant="dark" className="mt-7">
           {t.menu.seeAll}

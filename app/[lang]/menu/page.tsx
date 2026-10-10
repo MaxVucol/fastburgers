@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { MenuToolbar } from "@/components/menu/menu-toolbar";
 import { FilteredMenu, GroupedMenu } from "@/components/menu/menu-views";
-import { Spark } from "@/components/ui/brand";
+import { Crown } from "@/components/ui/brand";
 import { plural } from "@/lib/i18n/config";
 import { getI18n, localeAlternates } from "@/lib/i18n/server";
 import { DEFAULT_MENU_QUERY, filterProducts, isDefaultQuery, parseMenuQuery } from "@/lib/menu-query";
+import { siteConfig } from "@/lib/site";
 import { getMenu } from "@/services/localized-catalog";
 import type { CategorySummary, ProductCardData } from "@/types/catalog";
 
@@ -15,7 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
     title: t.meta.menuTitle,
     description: t.meta.menuDescription,
     alternates: localeAlternates(locale, "/menu"),
-    openGraph: { title: t.meta.menuTitle },
+    // A page-level openGraph replaces the layout's one entirely, so the card is repeated here.
+    openGraph: {
+      title: t.meta.menuTitle,
+      images: [{ url: siteConfig.ogImage, width: 1200, height: 630, alt: t.meta.ogImageAlt }],
+    },
   };
 }
 
@@ -28,7 +33,7 @@ export default async function MenuPage({ searchParams }: PageProps<"/[lang]/menu
     <>
       <header className="container-page pt-10 pb-8 sm:pt-14 sm:pb-10">
         <p className="type-eyebrow flex items-center gap-2 text-ink-soft">
-          <Spark className="size-3.5 text-accent" />
+          <Crown className="h-3.5 text-accent-ink" />
           {t.menu.eyebrow}
         </p>
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_minmax(0,24rem)] lg:items-end">

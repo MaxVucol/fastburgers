@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { ProductList } from "@/components/product/product-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { fill, plural } from "@/lib/i18n/config";
+import { siteConfig } from "@/lib/site";
 import { getI18n, localeAlternates } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 import { getCategories } from "@/services/catalog";
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/categorii/
     description: fill(t.meta.categoryDescription, { description: category.description }),
     alternates: localeAlternates(locale, `/categorii/${category.slug}`),
     openGraph: {
-      title: `${category.name} | Fast Burgers`,
+      title: `${category.name} | ${siteConfig.name}`,
       images: category.image ? [{ url: category.image, alt: category.name }] : undefined,
     },
   };
@@ -64,16 +65,17 @@ async function CategoryContent({ params }: { params: PageProps<"/[lang]/categori
         </div>
       </header>
       <nav aria-label={t.menu.otherCategories} className="mb-10 border-b border-line">
-        <div className="no-scrollbar -mx-[var(--gutter)] flex gap-6 overflow-x-auto px-[var(--gutter)] sm:mx-0 sm:gap-7 sm:px-0">
+        <div className="no-scrollbar -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] pb-4 sm:mx-0 sm:px-0">
           {categories.map((c) => (
             <Link
               key={c.id}
               href={href(`/categorii/${c.slug}`)}
               aria-current={c.slug === slug ? "page" : undefined}
               className={cn(
-                "relative inline-flex h-12 shrink-0 items-center text-[0.9375rem] font-semibold whitespace-nowrap transition-colors",
-                "after:absolute after:inset-x-0 after:-bottom-px after:h-[3px] after:bg-accent after:transition-transform",
-                c.slug === slug ? "text-ink after:scale-x-100" : "text-muted after:scale-x-0 hover:text-ink",
+                "inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors",
+                c.slug === slug
+                  ? "border-accent bg-accent text-ink"
+                  : "border-line bg-paper text-ink-soft hover:border-ink/30 hover:text-ink",
               )}
             >
               {c.name}

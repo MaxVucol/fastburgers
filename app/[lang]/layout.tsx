@@ -3,7 +3,6 @@ import { CartDrawer } from "@/components/cart/cart-drawer";
 import { I18nProvider } from "@/components/i18n/i18n-provider";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import { TopBar } from "@/components/layout/top-bar";
 import { fontVariables } from "@/lib/fonts";
 import { intlLocale, locales, ogLocale } from "@/lib/i18n/config";
 import { getI18n } from "@/lib/i18n/server";
@@ -29,13 +28,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: siteConfig.name,
       title: t.meta.ogTitle,
       description: t.meta.description,
-      images: [{ url: "/images/hero/og.jpg", width: 1200, height: 630, alt: t.meta.ogImageAlt }],
+      images: [{ url: siteConfig.ogImage, width: 1200, height: 630, alt: t.meta.ogImageAlt }],
     },
     twitter: {
       card: "summary_large_image",
-      title: siteConfig.name,
+      title: t.meta.ogTitle,
       description: t.meta.description,
-      images: ["/images/hero/og.jpg"],
+      images: [{ url: siteConfig.ogImage, alt: t.meta.ogImageAlt }],
     },
     // No default canonical/hreflang here: each indexable page declares its own, and
     // noindex pages (checkout, order status) must not point at the home page.
@@ -43,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#1b1b1b",
+  themeColor: "#f6f3ea",
   colorScheme: "light",
 };
 
@@ -60,7 +59,6 @@ export default async function SiteRootLayout({ children }: LayoutProps<"/[lang]"
           >
             {t.common.skipToContent}
           </a>
-          <TopBar />
           <Header />
           <main id="continut" className="flex-1">
             {children}

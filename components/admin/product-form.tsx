@@ -187,7 +187,7 @@ export function ProductForm({
             </Button>
           </div>
           {Object.entries(fe).some(([k]) => k.startsWith("options")) && (
-            <p className="text-sm text-accent" role="alert">Verifică opțiunile: fiecare are nevoie de nume și preț valid.</p>
+            <p className="text-sm text-accent-ink" role="alert">Verifică opțiunile: fiecare are nevoie de nume și preț valid.</p>
           )}
           {options.length === 0 ? (
             <p className="text-sm text-muted">Fără extra-uri. Ex.: „Extra bacon” +7,00 lei.</p>
@@ -206,7 +206,7 @@ export function ProductForm({
                   <button
                     type="button"
                     onClick={() => setOptions((rows) => rows.filter((r) => r.key !== o.key))}
-                    className="grid size-9 place-items-center rounded-lg text-muted hover:bg-accent-soft hover:text-accent"
+                    className="grid size-9 place-items-center rounded-lg text-muted hover:bg-accent-soft hover:text-accent-ink"
                     aria-label={`Elimină opțiunea ${o.name || i + 1}`}
                   >
                     <Trash2 className="size-4" aria-hidden />

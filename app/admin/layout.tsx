@@ -8,7 +8,7 @@ import "../globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: { default: "Administrare", template: "%s · Admin Fast Burgers" },
+  title: { default: "Administrare", template: "%s · Admin BUNIQ" },
   robots: { index: false, follow: false },
 };
 

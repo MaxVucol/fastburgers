@@ -10,17 +10,26 @@ function resolveSiteUrl(): string {
 
 // Facts only — user-facing copy lives in lib/i18n/dictionaries.
 export const siteConfig = {
-  name: "Fast Burgers",
-  shortName: "FastBurgers",
+  name: "BUNIQ",
+  shortName: "BUNIQ",
+  /** Brand line under the wordmark and the slogan; both stay in English on every locale. */
+  tagline: "Burgers & More",
+  slogan: ["Real Burgers.", "Better Days."],
+  /** Branded social card (1200×630), built by scripts/make-og.mjs. */
+  ogImage: "/images/og/buniq.jpg",
   url: resolveSiteUrl(),
   phone: "+40 721 000 321",
   phoneHref: "tel:+40721000321",
   email: "salut@fastburgers.ro",
   address: "Str. Ion Câmpineanu 21, București",
+  /**
+   * Social profiles. Empty until the real BUNIQ accounts exist — the footer shows an
+   * icon only for a filled-in URL, so there are never links to a network's home page.
+   */
   social: {
-    instagram: "https://instagram.com",
-    facebook: "https://facebook.com",
-    tiktok: "https://tiktok.com",
+    instagram: "",
+    facebook: "",
+    tiktok: "",
   },
   /** Main navigation; labels come from the dictionary (`t.nav[key]`). */
   nav: [

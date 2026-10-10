@@ -10,6 +10,7 @@ import { Price } from "@/components/ui/price";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { discountPercent, formatPrice } from "@/lib/format";
 import { fill } from "@/lib/i18n/config";
+import { siteConfig } from "@/lib/site";
 import { getI18n, localeAlternates } from "@/lib/i18n/server";
 import { FREE_DELIVERY_THRESHOLD } from "@/lib/pricing";
 import { JsonLd, productJsonLd } from "@/lib/seo";
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/menu/[slug
     alternates: localeAlternates(locale, `/menu/${product.slug}`),
     openGraph: {
       type: "website",
-      title: `${product.name} | Fast Burgers`,
+      title: `${product.name} | ${siteConfig.name}`,
       description: product.description,
       images: [{ url: product.image, width: 1600, height: 1200, alt: product.name }],
     },

@@ -1,31 +1,61 @@
 import Link from "next/link";
-import { Spark } from "@/components/ui/brand";
+import { Crown } from "@/components/ui/brand";
 import { cn } from "@/lib/utils";
 
-/** The spark on its own — favicon-sized brand mark. */
+/**
+ * Compact brand mark: the orange crown on a graphite tile. Used where the full wordmark
+ * does not fit (favicon, admin header, small screens).
+ */
 export function LogoMark({ className }: { className?: string }) {
-  return <Spark className={cn("size-9 text-accent", className)} />;
+  return (
+    <span className={cn("inline-grid size-10 place-items-center rounded-[var(--radius-sm)] bg-ink", className)}>
+      <Crown className="h-[46%] text-accent" strokeWidth={3.8} />
+    </span>
+  );
 }
 
-export function Wordmark({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) {
+/**
+ * BUNIQ wordmark: crown over the name, "Burgers & More" underneath. Sized by font-size
+ * (everything is in em), so one prop scales the whole lock-up.
+ */
+export function Wordmark({
+  className,
+  tone = "light",
+  tagline = true,
+}: {
+  className?: string;
+  tone?: "light" | "dark";
+  /** Hide the small "Burgers & More" line where it would be too small to read. */
+  tagline?: boolean;
+}) {
   return (
-    <span className={cn("inline-flex items-center gap-1.5", className)}>
-      <Spark className="size-[0.82em] shrink-0 text-accent" />
+    <span className={cn("inline-flex flex-col items-center leading-none", className)}>
+      <Crown className="mb-[0.05em] h-[0.62em] -translate-x-[0.5em] -rotate-[10deg] text-accent" strokeWidth={3.6} />
       <span
         className={cn(
-          "font-sans leading-none font-extrabold tracking-[-0.045em]",
+          "font-display text-[1em] leading-[0.8] font-extrabold tracking-[-0.045em]",
           tone === "dark" ? "text-on-dark" : "text-ink",
         )}
       >
-        fastburgers
+        BUNIQ
       </span>
+      {tagline && (
+        <span
+          className={cn(
+            "mt-[0.32em] pl-[0.3em] font-display text-[0.25em] font-semibold tracking-[0.3em] whitespace-nowrap uppercase",
+            tone === "dark" ? "text-muted-on-dark" : "text-ink-soft",
+          )}
+        >
+          Burgers &amp; More
+        </span>
+      )}
     </span>
   );
 }
 
 export function Logo({
   href = "/",
-  label = "fastburgers",
+  label = "BUNIQ",
   tone = "light",
   className,
   onClick,
@@ -38,7 +68,7 @@ export function Logo({
 }) {
   return (
     <Link href={href} onClick={onClick} className={cn("inline-flex rounded-[var(--radius-xs)]", className)} aria-label={label}>
-      <Wordmark tone={tone} className="text-[1.6rem] lg:text-[1.75rem]" />
+      <Wordmark tone={tone} className="text-[1.75rem] lg:text-[2rem]" />
     </Link>
   );
 }

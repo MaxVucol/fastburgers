@@ -1,4 +1,4 @@
-# Fast Burgers
+# BUNIQ — Burgers & More
 
 Website complet pentru un restaurant fast-food: meniu cu căutare și filtre, pagini de produs cu extra-uri și preț dinamic, coș, checkout, urmărirea comenzii și panou de administrare (produse, categorii, comenzi).
 
@@ -92,6 +92,14 @@ lib/i18n/            configurare limbi, dicționare, traduceri catalog
 - **Imagini încărcate:** convertite în WebP cu `sharp`. Se salvează în Vercel Blob dacă există `BLOB_READ_WRITE_TOKEN`, altfel în `storage/uploads` (în afara `public/`). Pentru S3 sau Cloudinary, înlocuiește funcțiile din `lib/storage.ts`.
 - **Plata online** este pregătită ca opțiune („În curând”). Punctul de integrare este marcat în `services/orders.ts` (`CARD_ONLINE`).
 
+## Identitate vizuală (BUNIQ)
+
+- Culori, tipografie, raze și umbre sunt tokenuri în `app/globals.css` (`@theme`): crem `#F6F3EA`, grafit `#242424`, portocaliu `#FF6B2E`, salvie `#A7B8A4`. Butoanele portocalii au text grafit (5,5:1); textul portocaliu mic pe fundal deschis folosește `accent-ink`.
+- Fonturi (`lib/fonts.ts`): Montserrat pentru logo, titluri și prețuri, Inter pentru text, Caveat pentru notițele scrise de mână.
+- Logo: `components/layout/logo.tsx` (wordmark cu coroană, variantă pentru fundal închis și semn compact); coroana este în `components/ui/brand.tsx`. Iconițele site-ului: `app/icon.svg`, `app/apple-icon.png`, `app/favicon.ico`.
+- Numele, sloganul („Real Burgers. Better Days.”, rămâne în engleză în toate limbile) și rețelele sociale sunt în `lib/site.ts`. Iconițele sociale apar în footer doar după ce se completează adresele reale ale profilurilor.
+- Previzualizarea socială (Open Graph / Twitter, 1200×630): `public/images/og/buniq.jpg`, generată de `npm run og:build` (`scripts/make-og.mjs`) din logo, slogan și fotografia hero, cu Montserrat și `next/og` — fără dependențe noi; fontul se descarcă doar pentru randare și nu se păstrează în repo.
+
 ## Imagini
 
-Fotografiile demo provin de pe [Unsplash](https://unsplash.com/license) (licență gratuită pentru uz comercial; fără imagini Unsplash+) și sunt normalizate de `scripts/fetch-images.mjs`: crop 4:3 pentru produse, pătrat pentru categorii și hero (care stă într-un cerc), 1200×630 JPEG pentru previzualizarea socială (`hero/og.jpg`), WebP și o corecție de culoare comună. Sunt organizate după slug în `public/images/products/<slug>/`, iar fiecare categorie are propria fotografie, diferită de cele ale produselor. Scriptul notează autorul fiecărei fotografii noi și acceptă prefixe, ca să regenereze doar o parte: `npm run images:fetch -- hero/ products/sprite/`.
+Fotografiile demo provin de pe [Unsplash](https://unsplash.com/license) (licență gratuită pentru uz comercial; fără imagini Unsplash+) și sunt normalizate de `scripts/fetch-images.mjs`: crop 4:3 pentru produse, pătrat pentru categorii și hero, 1200×630 JPEG (`hero/og.jpg`, fotografia de rezervă; cardul social folosit este `og/buniq.jpg`, vezi mai sus), WebP și o corecție de culoare comună. Sunt organizate după slug în `public/images/products/<slug>/`, iar fiecare categorie are propria fotografie, diferită de cele ale produselor. Scriptul notează autorul fiecărei fotografii noi și acceptă prefixe, ca să regenereze doar o parte: `npm run images:fetch -- hero/ products/sprite/`.

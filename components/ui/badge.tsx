@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type Tone = "accent" | "dark" | "light" | "herb";
+type Tone = "accent" | "dark" | "light" | "herb" | "sage";
 
 const tones: Record<Tone, string> = {
   accent: "bg-accent text-ink",
   dark: "bg-ink text-on-dark",
-  light: "bg-cream text-ink",
+  light: "bg-paper text-ink",
   herb: "bg-herb text-white",
+  sage: "bg-sage text-ink",
 };
 
-/** Small square-cornered label: deliberately not a pill, so it reads as a tag, not a button. */
+/** Small pill label on photos and in lists; never interactive. */
 export function Badge({
   tone = "light",
   children,
@@ -23,7 +24,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-[var(--radius-xs)] px-2 py-1 text-[0.6875rem] leading-none font-bold tracking-[0.08em] uppercase",
+        "inline-flex items-center rounded-full px-2.5 py-1 text-[0.6875rem] leading-none font-semibold tracking-[0.01em]",
         tones[tone],
         className,
       )}
@@ -53,7 +54,7 @@ export function ProductBadges({
 }) {
   const items: ReactNode[] = [];
   if (discount) items.push(<Badge key="sale" tone="accent">−{discount}%</Badge>);
-  if (isNew) items.push(<Badge key="new" tone="herb">{labels.isNew}</Badge>);
+  if (isNew) items.push(<Badge key="new" tone="sage">{labels.isNew}</Badge>);
   if (popular) items.push(<Badge key="pop" tone="dark">{labels.popular}</Badge>);
   else if (featured) items.push(<Badge key="best" tone="light">{labels.best}</Badge>);
   if (items.length === 0) return null;

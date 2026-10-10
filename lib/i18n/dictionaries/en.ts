@@ -2,29 +2,29 @@ import type { Dictionary } from "./ro";
 
 export const en: Dictionary = {
   meta: {
-    title: "Fast Burgers — smash burgers, pizza and crispy chicken in Bucharest",
+    title: "BUNIQ — Burgers & More: smash burgers, pizza and crispy chicken in Bucharest",
     description:
       "Angus smash burgers, oven-baked pizza, crispy chicken and fries cut fresh every day. Order online for fast delivery in Bucharest or pick up from the restaurant.",
-    ogTitle: "Fast Burgers — smash burgers, pizza and crispy chicken",
-    ogImageAlt: "Beef burger with melted cheddar, lettuce and tomato on a wooden board",
+    ogTitle: "BUNIQ — Real Burgers. Better Days.",
+    ogImageAlt: "BUNIQ — Real Burgers. Better Days. A double smash burger with melted cheddar, pickles and onion",
     keywords: "fast food Bucharest, smash burger, pizza, crispy chicken, food delivery, burgers",
     menuTitle: "Menu — burgers, pizza, chicken, fries and desserts",
     menuDescription:
-      "The full Fast Burgers menu with prices: Angus smash burgers, oven-baked pizza, wings, wraps, combos, desserts and drinks. Order online.",
+      "The full BUNIQ menu with prices: Angus smash burgers, oven-baked pizza, wings, wraps, combos, desserts and drinks. Order online.",
     categoryTitle: "{name} — order online",
-    categoryDescription: "{description} See prices and order online from Fast Burgers.",
+    categoryDescription: "{description} See prices and order online from BUNIQ.",
     productUnavailable: "Item unavailable",
     categoryUnavailable: "Category unavailable",
     checkoutTitle: "Checkout",
-    checkoutDescription: "Enter your delivery details and place your Fast Burgers order.",
+    checkoutDescription: "Enter your delivery details and place your BUNIQ order.",
     orderTitle: "Your order",
     accountTitle: "Track your order",
-    accountDescription: "Track the status of your Fast Burgers order.",
+    accountDescription: "Track the status of your BUNIQ order.",
     aboutTitle: "About us",
     aboutDescription:
-      "The Fast Burgers story: a small kitchen in central Bucharest making smash burgers, pizza and crispy chicken with no shortcuts.",
+      "The BUNIQ story: a small kitchen in central Bucharest making smash burgers, pizza and crispy chicken with no shortcuts.",
     contactTitle: "Contact and locations",
-    contactDescription: "Fast Burgers restaurant addresses in Bucharest, phone, email and opening hours.",
+    contactDescription: "BUNIQ restaurant addresses in Bucharest, phone, email and opening hours.",
   },
 
   common: {
@@ -50,12 +50,11 @@ export const en: Dictionary = {
   },
 
   topbar: {
-    items: ["Fast delivery", "Cooked to order"],
     language: "Site language",
   },
 
   header: {
-    homeLink: "fastburgers — home page",
+    homeLink: "BUNIQ — home page",
     search: "Search the menu",
     openMenu: "Open menu",
     closeMenu: "Close menu",
@@ -73,25 +72,19 @@ export const en: Dictionary = {
   },
 
   hero: {
-    eyebrow: "Smash burgers · fresh every day",
-    titleLines: ["Hunger", "won’t wait."],
-    script: "Smash it.",
+    eyebrow: "Burgers. Pizza. Chicken. Combos. Drinks.",
     lead: "Angus beef smashed on a scorching griddle, pizza dough proofed for 48 hours and crispy chicken. Cooked after you order, delivered hot.",
     primary: "Order now",
-    secondary: "See the menu",
-    delivery: "Delivery",
-    deliveryValue: "~30 min",
-    note: "no shortcuts",
-    spotlight: "Most ordered",
+    note: "juicy burgers",
     imageAlt: "Double smash burger with melted cheddar, pickles and onion on a dark background",
   },
 
   benefits: {
-    title: "Why Fast Burgers",
+    title: "Why BUNIQ",
     items: [
-      { title: "Cooked to order", text: "Nothing kept warm. Your burger hits the griddle after you order." },
-      { title: "Fresh ingredients", text: "Angus beef ground daily, potatoes cut every morning." },
-      { title: "Fast delivery", text: "Our own couriers and thermal bags, about 30 minutes on average." },
+      { title: "Cooked to order", text: "Nothing kept warm" },
+      { title: "Fresh ingredients", text: "Beef ground daily" },
+      { title: "Fast delivery", text: "About 30 minutes on average" },
     ],
   },
 
@@ -355,7 +348,7 @@ export const en: Dictionary = {
     eyebrow: "About us",
     title: "It started with one griddle and an obsession.",
     paragraphs: [
-      "Fast Burgers opened in 2019 in a 30-square-metre space on Ion Câmpineanu Street, with a single griddle and a simple idea: the perfect burger has a crust, not just flavour.",
+      "BUNIQ opened in 2019 in a 30-square-metre space on Ion Câmpineanu Street, with a single griddle and a simple idea: the perfect burger has a crust, not just flavour.",
       "Since then we’ve added slow-proofed pizza, chicken marinated overnight and fries cut every morning. The rule hasn’t changed: everything is cooked after you order.",
     ],
     stats: [
@@ -364,7 +357,7 @@ export const en: Dictionary = {
       { value: "48h", label: "proofing for our pizza dough" },
       { value: "~30 min", label: "average delivery time" },
     ],
-    statsLabel: "Fast Burgers in numbers",
+    statsLabel: "BUNIQ in numbers",
     principlesTitle: "Fast food, without shortcuts.",
     principlesLead: "We’re fast because we’re organised, not because we cook ahead.",
     principles: [

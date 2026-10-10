@@ -1,4 +1,5 @@
 import type { CategorySummary, PickupLocation, ProductCardData, ProductDetail } from "@/types/catalog";
+import { siteConfig } from "@/lib/site";
 import { catalogCopy } from "./catalog-translations";
 import type { Locale } from "./config";
 
@@ -41,13 +42,20 @@ export function localizeProduct(product: ProductDetail, locale: Locale): Product
   };
 }
 
+/**
+ * Restaurant names are stored with the previous brand ("Fast Burgers Centru"). The
+ * database is left untouched; the current brand name is applied when displaying them.
+ */
+const LEGACY_BRAND = /^Fast Burgers\b/;
+
 export function localizeLocation(location: PickupLocation, locale: Locale): PickupLocation {
-  if (locale === "ro") return location;
+  const name = location.name.replace(LEGACY_BRAND, siteConfig.name);
+  if (locale === "ro") return { ...location, name };
   let hours = location.hours;
   for (const [from, to] of Object.entries(catalogCopy[locale].hoursWords)) {
     hours = hours.replace(from, to);
   }
-  return { ...location, hours };
+  return { ...location, name, hours };
 }
 
 /** Option names are stored in Romanian (database, cart, order snapshots). */

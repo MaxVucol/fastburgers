@@ -1,5 +1,5 @@
 import { ArrowRight, Phone } from "lucide-react";
-import { Strokes } from "@/components/ui/brand";
+import { Crown } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
@@ -11,8 +11,11 @@ export async function OrderCta() {
 
   return (
     <section aria-labelledby="cta-title" className="relative overflow-hidden bg-accent text-ink">
-      <Strokes className="absolute top-8 right-[6%] hidden size-24 rotate-[100deg] text-ink/85 md:block" />
-      <div className="container-page grid items-end gap-8 py-16 sm:py-20 lg:grid-cols-[1fr_auto] lg:py-24">
+      <Crown
+        className="pointer-events-none absolute -right-6 -bottom-10 hidden h-56 sm:block rotate-[-14deg] text-ink/12 sm:h-72 lg:right-[4%] lg:-bottom-14 lg:h-80"
+        strokeWidth={2.2}
+      />
+      <div className="relative container-page grid items-end gap-8 py-16 sm:py-20 lg:grid-cols-[1fr_auto] lg:py-24">
         <div>
           <h2 id="cta-title" className="type-h1">
             <span className="block">{lineOne}</span>
