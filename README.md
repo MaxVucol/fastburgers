@@ -19,7 +19,7 @@ npm run dev                   # http://localhost:3000
 
 `npm run db` descarcă la prima rulare un binar oficial `mongod` (prin `mongodb-memory-server`) și pornește un replica set cu un singur nod pe portul 27017, cu datele salvate în `.mongo-data/`. Nu e nevoie de Docker. În producție, setează `DATABASE_URL` către MongoDB Atlas sau orice replica set (Prisma are nevoie de replica set).
 
-**Admin:** `/admin` — utilizatorul este creat de seed din `ADMIN_EMAIL` / `ADMIN_PASSWORD` (implicit `admin@fastburgers.ro` / `Admin123!` — schimbă-l).
+**Admin:** `/admin` — utilizatorul este creat de seed din `ADMIN_EMAIL` / `ADMIN_PASSWORD` (obligatorii, fără parolă implicită; vezi `.env.example`).
 
 ## Deploy pe Vercel
 
@@ -36,14 +36,12 @@ Pași, o singură dată:
 
 1. **MongoDB Atlas:** creează un cluster. Atlas e replica set, deci compatibil cu Prisma. Creează un utilizator de bază de date. În **Network Access**, adaugă `0.0.0.0/0`, pentru că Vercel nu are IP-uri fixe.
 2. **Connection string:** ia-l din Atlas (Connect → Drivers) și **adaugă numele bazei** după `.mongodb.net/`, adică `/fastburgers`, fără de care Prisma refuză conexiunea. Dacă parola conține caractere speciale (`@ : / ? # %`), codifică-le URL.
-3. **Populează baza Atlas** de pe calculatorul tău, fără să salvezi URL-ul în fișiere:
-   ```powershell
-   $env:DATABASE_URL = "<connection string Atlas>"
-   npx prisma db push
-   npx prisma db seed      # doar prima dată — seed-ul resetează catalogul și comenzile
-   Remove-Item Env:DATABASE_URL
+3. **Populează baza Atlas** de pe calculatorul tău. Pune connection string-ul, plus `ADMIN_EMAIL`, `ADMIN_PASSWORD` și `SEED_DEMO_ORDERS="false"`, în fișierul `.env.atlas`, care e ignorat de Git. Apoi rulează:
+   ```bash
+   npm run db:check:atlas   # verificare read-only: ping + număr de documente, fără secrete în output
+   npm run db:push:atlas    # creează colecțiile și indexurile (nu șterge nimic)
+   npm run db:seed:atlas    # catalogul demo; refuză să ruleze dacă baza are deja date
    ```
-   Seed-ul creează adminul din `ADMIN_EMAIL` / `ADMIN_PASSWORD` din `.env`. Folosește o parolă puternică.
 4. Setează variabilele de mai sus în Vercel, conectează Blob store-ul și fă **Redeploy**.
 
 Imaginile încărcate din admin merg în Vercel Blob când există `BLOB_READ_WRITE_TOKEN`. Local, fără token, rămân în `storage/uploads`. Fotografiile demo din `public/images` sunt în Git și funcționează oriunde.
@@ -56,7 +54,8 @@ Imaginile încărcate din admin merg în Vercel Blob când există `BLOB_READ_WR
 | `npm run check-env` | Verifică doar variabilele de mediu |
 | `npm run typecheck` · `npm run lint` | TypeScript și ESLint |
 | `npm run db` | MongoDB local pentru dezvoltare |
-| `npm run db:push` · `npm run db:seed` | Schema Prisma și date demo (seed-ul **resetează** catalogul și comenzile) |
+| `npm run db:push` · `npm run db:seed` | Schema Prisma și date demo pe baza locală. Seed-ul refuză o bază care are deja date; pentru reset local intenționat setează `SEED_ALLOW_RESET=true`. |
+| `npm run db:check:atlas` · `db:push:atlas` · `db:seed:atlas` | Aceleași operații pe Atlas, folosind `.env.atlas` |
 | `npm run images:fetch` | Re-descarcă fotografiile demo în `public/images` |
 
 `next build` citește catalogul din baza de date pentru a pre-randa paginile, deci baza de date trebuie să fie accesibilă la build.

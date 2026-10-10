@@ -325,8 +325,88 @@ function imagePath(slug: string, file = "main.webp") {
   return `/images/products/${slug}/${file}`;
 }
 
+// ── Safety settings (explicit, via environment variables) ──────────────────────
+//  SEED_ALLOW_RESET=true   allow wiping a database that already contains catalog or
+//                          orders (meant for local development only). Default: false.
+//  SEED_DEMO_ORDERS=true|false  create the 7 fictional demo orders.
+//                          Default: true for a local database, false for a remote one.
+//  ADMIN_EMAIL / ADMIN_PASSWORD  required — there is no default password. For a remote
+//                          database the password must be strong.
+
+class SeedConfigError extends Error {}
+
+function readFlag(name: string, fallback: boolean): boolean {
+  const raw = process.env[name]?.trim().toLowerCase();
+  if (raw === undefined || raw === "") return fallback;
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  throw new SeedConfigError(`${name} must be "true" or "false".`);
+}
+
+function isLocalDatabase(): boolean {
+  try {
+    const host = new URL(process.env.DATABASE_URL ?? "").hostname;
+    return host === "localhost" || host === "127.0.0.1" || host === "::1";
+  } catch {
+    return false;
+  }
+}
+
+const WEAK_PASSWORDS = new Set(["admin123!", "change-me", "password", "password123", "admin", "admin123", "qwerty123"]);
+
+/** Validates admin credentials without ever printing the password. */
+function resolveAdmin(remote: boolean) {
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase() ?? "";
+  const password = process.env.ADMIN_PASSWORD ?? "";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new SeedConfigError("ADMIN_EMAIL is missing or not a valid email address.");
+  }
+  if (!password) throw new SeedConfigError("ADMIN_PASSWORD is missing — there is no default password.");
+  if (remote) {
+    const classes = [/[a-z]/, /[A-Z]/, /\d/, /[^A-Za-z0-9]/].filter((re) => re.test(password)).length;
+    if (password.length < 12 || classes < 3 || WEAK_PASSWORDS.has(password.toLowerCase())) {
+      throw new SeedConfigError(
+        "ADMIN_PASSWORD is too weak for a remote database: use at least 12 characters with at least " +
+          "three of lowercase, uppercase, digits and symbols (and not a known default).",
+      );
+    }
+  }
+  return { email, password };
+}
+
+/** Refuses to wipe a database that already holds a catalog or orders. */
+async function assertSafeToReset(allowReset: boolean) {
+  const [categories, products, orders] = await Promise.all([
+    prisma.category.count(),
+    prisma.product.count(),
+    prisma.order.count(),
+  ]);
+  if (categories + products + orders === 0) return;
+  if (!allowReset) {
+    throw new SeedConfigError(
+      `Database is not empty (${categories} categories, ${products} products, ${orders} orders). ` +
+        "Seeding would delete them, so nothing was changed. To reset a LOCAL dev database on purpose, " +
+        "set SEED_ALLOW_RESET=true.",
+    );
+  }
+  console.log(`SEED_ALLOW_RESET=true — resetting ${categories} categories, ${products} products, ${orders} orders.`);
+}
+
 async function main() {
-  console.log("Resetting demo data…");
+  // 1. Validate everything before touching the database.
+  const remote = !isLocalDatabase();
+  const allowReset = readFlag("SEED_ALLOW_RESET", false);
+  const seedDemoOrders = readFlag("SEED_DEMO_ORDERS", !remote);
+  const admin = resolveAdmin(remote);
+  if (remote && allowReset) {
+    console.warn("⚠ SEED_ALLOW_RESET=true on a REMOTE database — existing data will be deleted.");
+  }
+  console.log(`Target: ${remote ? "remote" : "local"} database · demo orders: ${seedDemoOrders ? "yes" : "no"}`);
+
+  // 2. Refuse to wipe existing data unless explicitly allowed.
+  await assertSafeToReset(allowReset);
+
+  console.log("Seeding catalog…");
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.productOption.deleteMany();
@@ -335,8 +415,8 @@ async function main() {
   await prisma.location.deleteMany();
   await prisma.review.deleteMany();
 
-  const adminEmail = (process.env.ADMIN_EMAIL ?? "admin@fastburgers.ro").toLowerCase();
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "Admin123!";
+  const adminEmail = admin.email;
+  const adminPassword = admin.password;
   await prisma.user.upsert({
     where: { email: adminEmail },
     update: { role: "ADMIN", passwordHash: await bcrypt.hash(adminPassword, 12) },
@@ -420,7 +500,7 @@ async function main() {
     { status: "CANCELLED", method: "DELIVERY", payment: "CASH", hoursAgo: 72, name: "Irina Toma", items: [["margherita", 1]] },
   ];
 
-  for (const [i, o] of demoOrders.entries()) {
+  for (const [i, o] of (seedDemoOrders ? demoOrders : []).entries()) {
     const items = o.items.map(([slug, quantity]) => {
       const p = productIds.get(slug);
       if (!p) throw new Error(`Unknown product ${slug}`);
@@ -449,13 +529,20 @@ async function main() {
     });
   }
 
-  console.log(`Seeded ${categories.length} categories, ${products.length} products, ${locations.length} locations.`);
+  console.log(
+    `Seeded ${categories.length} categories, ${products.length} products, ${locations.length} locations, ` +
+      `${seedDemoOrders ? demoOrders.length : 0} demo orders.`,
+  );
   console.log(`Admin: ${adminEmail}`);
 }
 
 main()
   .catch((error) => {
-    console.error(error);
+    if (error instanceof SeedConfigError) {
+      console.error(`✖ Seed refused: ${error.message}`);
+    } else {
+      console.error(error);
+    }
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());

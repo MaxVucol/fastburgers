@@ -11,6 +11,9 @@
     "db": "node scripts/dev-db.mjs",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
+    "db:check:atlas": "node scripts/atlas-check.mjs",
+    "db:push:atlas": "node --env-file=.env.atlas node_modules/prisma/build/index.js db push --skip-generate",
+    "db:seed:atlas": "node --env-file=.env.atlas node_modules/prisma/build/index.js db seed",
     "images:fetch": "node scripts/fetch-images.mjs",
     "postinstall": "prisma generate",
     "check-env": "node scripts/check-env.mjs"
