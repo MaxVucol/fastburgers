@@ -1,95 +1,112 @@
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import { Crown, ScribbleArrow, Swash } from "@/components/ui/brand";
+import Link from "next/link";
+import { ArrowRight, Bike, CookingPot, Leaf } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
+import { formatPrice } from "@/lib/format";
+import { fill } from "@/lib/i18n/config";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
 
+const FACT_ICONS = [CookingPot, Leaf, Bike];
+
 /**
- * First screen. Phones: copy and CTA, then the burger photo with a slanted top edge.
- * Desktop: copy on cream, the photo in a graphite panel with a diagonal edge that bleeds off
- * the right side of the viewport. The three promises follow as their own band (Benefits).
- * One <Image> serves both layouts, so there is a single LCP request. The photo panel has no
- * entrance animation: fading the LCP element in only delays the moment it counts as painted.
+ * First screen as a campaign poster on a full-bleed graphite stage: the slogan set huge in four
+ * lines (the second half in orange), the burger large on the right melting into the dark, one
+ * call to action, and the three promises as a strip along the bottom of the stage.
+ * Phones: slogan, photo, button, then the copy, so the button stays in the first viewport.
+ * One <Image> serves every layout, so there is a single LCP request, and it has no entrance
+ * animation (fading the LCP element in only delays the moment it counts as painted).
+ * `burgersFrom`: the lowest burger price on the menu, shown as a link to the category.
  */
-export async function Hero() {
-  const { t, href } = await getI18n();
-  const [lineOne, lineTwo] = siteConfig.slogan;
+export async function Hero({ burgersFrom }: { burgersFrom: number | null }) {
+  const { locale, t, href } = await getI18n();
 
   return (
-    <section aria-labelledby="hero-title" className="relative overflow-hidden">
-      <div className="container-page grid lg:min-h-[min(42rem,calc(100svh-var(--header-h)-6rem))] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-        {/* ── Copy ───────────────────────────────────────── */}
-        <div className="relative z-10 pt-9 pb-9 sm:pt-12 lg:col-start-1 lg:row-start-1 lg:self-center lg:py-14 lg:pr-6">
-          <p className="enter type-eyebrow text-[0.6875rem] tracking-[0.12em] text-accent-ink sm:text-xs sm:tracking-[0.14em]">
-            {t.hero.eyebrow}
-          </p>
-
+    <section aria-labelledby="hero-title" className="relative overflow-hidden bg-ink text-on-dark">
+      <div className="container-page grid lg:min-h-[min(46rem,calc(100svh-var(--header-h)))] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:grid-rows-[1fr_auto]">
+        {/* ── Slogan ── */}
+        <div className="relative z-10 pt-8 sm:pt-12 lg:col-start-1 lg:row-start-1 lg:self-center lg:pt-14 lg:pb-10">
+          <p className="enter type-eyebrow text-[0.6875rem] tracking-[0.14em] text-flame sm:text-xs">{t.hero.eyebrow}</p>
           {/* The slogan is part of the brand and stays in English on every locale. */}
-          <h1 id="hero-title" lang="en" className="enter type-hero mt-4 text-ink [--enter-step:1]">
-            <span className="block">{lineOne}</span>
-            <span className="relative inline-block">
-              {lineTwo}
-              <Swash stretch className="absolute -bottom-[0.14em] left-[0.02em] h-[0.16em] w-[96%] text-accent" />
-            </span>
+          <h1 id="hero-title" lang="en" className="enter type-poster mt-5 [--enter-step:1]">
+            {siteConfig.slogan.map((line, i) =>
+              line.split(" ").map((word) => (
+                <span key={`${i}-${word}`} className={i === 1 ? "block text-accent" : "block"}>
+                  {word}{" "}
+                </span>
+              )),
+            )}
           </h1>
-
-          <p className="enter mt-7 max-w-[31rem] text-[1.0625rem] leading-relaxed text-ink-soft [--enter-step:2] sm:text-lg">
-            {t.hero.lead}
-          </p>
-
-          <div className="enter mt-8 [--enter-step:3]">
-            <ButtonLink href={href("/menu")} size="lg" className="w-full px-8 min-[420px]:w-auto">
+          <div className="enter hidden [--enter-step:2] lg:block">
+            <p className="mt-8 max-w-[29rem] text-[1.0625rem] leading-relaxed text-muted-on-dark">{t.hero.lead}</p>
+            <ButtonLink href={href("/menu")} size="lg" className="mt-8 px-8">
               {t.hero.primary}
               <ArrowRight className="size-4.5" aria-hidden />
             </ButtonLink>
           </div>
         </div>
 
-        {/* ── Photo panel (the photo carries the alt text; crown and note are decorative) ── */}
+        {/* ── Photo: bleeds off the right edge on desktop, full width on phones ── */}
         <div
           className={[
-            "relative -mx-[var(--gutter)] h-[clamp(19rem,92vw,32rem)] overflow-hidden bg-ink [container-type:size]",
-            "[clip-path:polygon(0_7%,100%_0,100%_100%,0_100%)]",
-            "lg:col-start-2 lg:row-start-1 lg:ml-0 lg:h-auto",
+            "relative -mx-[var(--gutter)] -mt-6 h-[clamp(17rem,80vw,30rem)] [container-type:size]",
+            "lg:col-start-2 lg:row-start-1 lg:mt-0 lg:ml-0 lg:h-auto",
             "lg:mr-[calc((var(--gutter)+max(0px,(100vw-var(--page-max))/2))*-1)]",
-            "lg:[clip-path:polygon(17%_0,100%_0,100%_100%,0_100%)]",
           ].join(" ")}
         >
-          {/* The photo is never wider than its own 0.9:1 frame (90% of the panel height), so the whole
-              burger stays in shot on any panel shape; on wider panels the edges fade into the graphite.
-              Centred a little right on desktop, where the diagonal hides the panel's left edge.
-              `sizes` mirrors that width: 0.9 × panel height (92vw on phones, capped at 32rem; ~46rem on desktop). */}
-          <div className="absolute inset-y-0 left-1/2 w-[min(100cqw,90cqh)] -translate-x-1/2 lg:left-[53%]">
+          {/* Never wider than the photo's own 0.9:1 frame, so the whole burger stays in shot; the oval
+              mask melts the studio backdrop into the stage. `sizes`: 0.9 × the photo height. */}
+          <div className="absolute inset-y-0 left-1/2 w-[min(100cqw,90cqh)] -translate-x-1/2 [mask-image:radial-gradient(closest-side,#000_74%,transparent)] lg:left-[46%]">
             <Image
               src="/images/hero/hero.webp"
               alt={t.hero.imageAlt}
               fill
               preload
               quality={85}
-              sizes="(min-width: 1024px) min(52vw, 42rem), min(83vw, 29rem)"
+              sizes="(min-width: 1024px) min(46vw, 42rem), min(72vw, 27rem)"
               className="object-cover object-[47%_50%]"
             />
-            {/* Fade width follows the spare room beside the photo: a hairline vignette when the photo fills
-                the panel, a long blend when graphite shows on both sides (never over the burger itself). */}
-            <span className="absolute inset-y-0 left-0 w-[clamp(1.25rem,min(20%,calc((100cqw-90cqh)*0.6)),10rem)] bg-gradient-to-r from-ink to-transparent" aria-hidden />
-            <span className="absolute inset-y-0 right-0 w-[clamp(1.25rem,min(20%,calc((100cqw-90cqh)*0.6)),10rem)] bg-gradient-to-l from-ink to-transparent" aria-hidden />
-            <span className="absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-ink/80 to-transparent" aria-hidden />
           </div>
-          {/* One brand accent, kept small and on the dark backdrop so it never sits on the food. */}
-          <Crown
-            className="absolute top-[9%] right-[7%] h-9 rotate-[14deg] text-accent sm:h-11 lg:top-[8%] lg:right-[8%] lg:h-14"
-            strokeWidth={3}
-          />
-          {/* Handwritten note on the dark plate under the burger, its arrow pointing back at the food. */}
-          <p
-            aria-hidden
-            className="type-script absolute right-[5%] bottom-[5%] flex items-end gap-1 text-[1.5rem] text-flame sm:text-[1.9rem] lg:right-[6%] lg:bottom-[6%] lg:text-[2.25rem]"
-          >
-            <ScribbleArrow className="mb-3 h-6 w-9 -scale-x-100 rotate-[160deg] text-on-dark/75 sm:h-8 sm:w-11" />
-            <span className="-rotate-6 leading-[0.95] before:content-[attr(data-text)]" data-text={t.hero.note} />
-          </p>
+          {burgersFrom !== null && (
+            <Link
+              href={href("/categorii/burgeri")}
+              className="group absolute bottom-[6%] left-[var(--gutter)] inline-flex items-center gap-3 rounded-full bg-on-dark py-1.5 pr-1.5 pl-4 text-sm font-semibold text-ink shadow-[var(--shadow-lift)] transition-colors hover:bg-paper lg:bottom-[10%] lg:left-[6%]"
+            >
+              {fill(t.hero.from, { price: formatPrice(burgersFrom, locale) })}
+              <span className="grid size-8 place-items-center rounded-full bg-accent transition-transform group-hover:translate-x-0.5">
+                <ArrowRight className="size-4" aria-hidden />
+              </span>
+            </Link>
+          )}
         </div>
+
+        {/* ── Phones and tablets: the button right under the photo, then the copy ── */}
+        <div className="relative z-10 pt-6 lg:hidden">
+          <ButtonLink href={href("/menu")} size="lg" className="w-full px-8 min-[420px]:w-auto">
+            {t.hero.primary}
+            <ArrowRight className="size-4.5" aria-hidden />
+          </ButtonLink>
+          <p className="mt-6 max-w-[34rem] leading-relaxed text-muted-on-dark">{t.hero.lead}</p>
+        </div>
+
+        {/* ── The three promises along the bottom of the stage ── */}
+        <ul
+          aria-label={t.benefits.title}
+          className="relative z-10 mt-8 grid grid-cols-3 border-t border-line-dark py-5 sm:py-6 lg:col-span-2 lg:row-start-2 lg:mt-0"
+        >
+          {t.benefits.items.map((item, i) => {
+            const Icon = FACT_ICONS[i] ?? Leaf;
+            return (
+              <li key={item.title} className="flex flex-col gap-2 pr-2 sm:flex-row sm:items-center sm:gap-3.5 sm:pr-6">
+                <Icon className="size-5 shrink-0 text-flame sm:size-6" strokeWidth={1.7} aria-hidden />
+                <p className="text-xs leading-snug text-muted-on-dark sm:text-sm">
+                  <span className="block text-[0.8125rem] font-semibold text-on-dark sm:text-[0.9375rem]">{item.title}</span>
+                  {item.text}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

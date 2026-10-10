@@ -5,29 +5,24 @@ import { Suspense, type ReactNode } from "react";
 import { splitLocale } from "@/lib/i18n/config";
 
 /**
- * Which "what's new" band the footer shows on a page:
- *  - full: the home page, where it closes the page as a brand moment;
- *  - none: the menu (its own New / On offer filters sit right above) and the order flow
- *    (checkout, order status, account), where it would only pull people away;
- *  - compact: every other page — one line with the same two links.
+ * Whether the footer shows its "what's new" line on a page: not in the menu (its own New /
+ * On offer filters sit right above) nor in the order flow (checkout, order status, account),
+ * where it would only pull people away.
  */
-export function newsVariant(pathname: string): "full" | "compact" | "none" {
+export function showsNews(pathname: string): boolean {
   const path = splitLocale(pathname).path;
-  if (path === "/") return "full";
-  if (path === "/menu" || /^\/(checkout|order|account)(\/|$)/.test(path)) return "none";
-  return "compact";
+  return !(path === "/menu" || /^\/(checkout|order|account)(\/|$)/.test(path));
 }
 
-/** Picks the server-rendered variant for the current path (compact while the path is unknown). */
-export function NewsSlot({ full, compact }: { full: ReactNode; compact: ReactNode }) {
+/** Renders the server-rendered line where it belongs (shown while the path is unknown). */
+export function NewsSlot({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={compact}>
-      <PickVariant full={full} compact={compact} />
+    <Suspense fallback={children}>
+      <Pick>{children}</Pick>
     </Suspense>
   );
 }
 
-function PickVariant({ full, compact }: { full: ReactNode; compact: ReactNode }) {
-  const variant = newsVariant(usePathname());
-  return variant === "full" ? full : variant === "compact" ? compact : null;
+function Pick({ children }: { children: ReactNode }) {
+  return showsNews(usePathname()) ? children : null;
 }

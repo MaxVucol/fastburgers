@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 //  - Crown: the BUNIQ symbol (logo, eyebrows, a few accents next to food)
 //  - Strokes: three "sizzle" lines (motion/heat next to food)
 //  - Swash: a hand-drawn line under handwritten notes
-//  - ScribbleArrow: points a handwritten note at the food it describes
 
 /** Outlined three-point crown with a base band. Inherits colour from `currentColor`. */
 export function Crown({ className, strokeWidth = 3.4 }: { className?: string; strokeWidth?: number }) {
@@ -57,25 +56,6 @@ export function Swash({ className, stretch = false }: { className?: string; stre
       strokeLinecap="round"
     >
       <path d="M3 11c22-6 58-9 86-6 9 1 17 3 28 1" />
-    </svg>
-  );
-}
-
-/** A loose hand-drawn arrow pointing down-right — pairs with a handwritten note. */
-export function ScribbleArrow({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 64 40"
-      className={cn("h-8 w-12", className)}
-      aria-hidden
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M58 6C46 4 30 8 22 18c-5 6-6 12-3 17" />
-      <path d="M11 28l8 8 8-7" />
     </svg>
   );
 }

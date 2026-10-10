@@ -188,6 +188,20 @@
     font-size: clamp(3.75rem, 5.4vw, 5.25rem);
   }
 }
+/* Campaign-poster type for the first screen: the slogan stacked one word per line. */
+@utility type-poster {
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  font-size: clamp(3.25rem, 16vw, 6rem);
+  @media (width >= 48rem) {
+    font-size: clamp(5.5rem, 11.5vw, 7.5rem);
+  }
+  @media (width >= 64rem) {
+    font-size: clamp(5.25rem, 7.4vw, 7.25rem);
+  }
+}
 @utility type-h1 {
   font-family: var(--font-display);
   font-weight: 800;
@@ -280,4 +294,17 @@ dialog[open]::backdrop {
 /* /menu: a filtered result replaces the static grouped menu without client JavaScript. */
 .menu-root:has(.menu-filtered) .menu-grouped {
   display: none;
+}
+
+/* Home category index: on desktop the photo beside the list follows the hovered or focused row
+   (the first category while none is). Each row carries its own photo, positioned on the panel. */
+.cat-index .cat-photo {
+  opacity: 0;
+}
+.cat-index li:first-child .cat-photo,
+.cat-index li:is(:hover, :focus-within) .cat-photo {
+  opacity: 1;
+}
+.cat-index:has(li:is(:hover, :focus-within)) li:first-child:not(:hover, :focus-within) .cat-photo {
+  opacity: 0;
 }

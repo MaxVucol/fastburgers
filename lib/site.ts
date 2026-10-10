@@ -31,6 +31,12 @@ export const siteConfig = {
     facebook: "",
     tiktok: "",
   },
+  /**
+   * The reviews in the database are the seed's demo texts, not real customers, and there is no
+   * way to collect or moderate real ones yet — so the home page does not show them. Turn on once
+   * the reviews are genuine.
+   */
+  showReviews: false,
   /** Main navigation; labels come from the dictionary (`t.nav[key]`). */
   nav: [
     { href: "/", key: "home" },

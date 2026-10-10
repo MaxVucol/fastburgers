@@ -1,11 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { plural } from "@/lib/i18n/config";
 import { getI18n } from "@/lib/i18n/server";
 import type { CategorySummary } from "@/types/catalog";
 
-/** Photo tiles for the categories: a swipe rail on phones, 4 columns on tablets, one row on wide screens. */
+/**
+ * The menu as a typographic index: numbered rows with the category name set large, its
+ * description and item count. Phones and tablets: a small photo opens each row. Desktop: one
+ * big photo panel beside the list shows the hovered or focused category (plain CSS, see
+ * `.cat-index` in globals.css); each row carries its photo so the panel never needs JavaScript.
+ */
 export async function CategoryIndex({
   categories,
   counts,
@@ -24,41 +30,54 @@ export async function CategoryIndex({
         lead={t.categories.lead}
         action={{ href: href("/menu"), label: t.categories.viewAll }}
       />
-      <ul className="no-scrollbar -mx-[var(--gutter)] flex snap-x snap-mandatory scroll-px-[var(--gutter)] gap-3 overflow-x-auto px-[var(--gutter)] pb-2 md:mx-0 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-8 xl:gap-3">
-        {categories.map((c) => (
-          <li key={c.id} className="w-[38vw] max-w-[11.5rem] shrink-0 snap-start md:w-auto md:max-w-none">
-            <Link
-              href={href(`/categorii/${c.slug}`)}
-              className="group relative block aspect-[4/5] overflow-hidden rounded-[var(--radius-card)] bg-graphite transition-[transform,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out-brand)] hover:-translate-y-1 hover:shadow-[var(--shadow-lift)] md:aspect-[5/4] xl:aspect-[4/5]"
-            >
+      <div className="cat-index relative lg:grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] lg:gap-14">
+        {/* The panel the row photos are positioned on (desktop only). */}
+        <div className="hidden overflow-hidden rounded-[var(--radius-panel)] bg-ink lg:block" aria-hidden />
+        <ol className="border-t-[1.5px] border-ink">
+          {categories.map((c, i) => (
+            <li key={c.id}>
+              <Link
+                href={href(`/categorii/${c.slug}`)}
+                className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-4 border-b border-line py-2.5 transition-colors sm:gap-x-6 sm:py-3.5 lg:grid-cols-[2.5rem_minmax(0,1fr)_auto] lg:py-4"
+              >
+                <span className="relative size-14 overflow-hidden rounded-[var(--radius-sm)] bg-ink sm:size-16 lg:hidden">
+                  {c.image && <Image src={c.image} alt="" fill sizes="64px" className="object-cover" />}
+                </span>
+                <span className="hidden font-display text-sm font-bold text-accent-ink tabular-nums lg:block">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[1.5rem] leading-none font-extrabold tracking-[-0.035em] text-ink transition-[color,translate] duration-[var(--duration-base)] ease-[var(--ease-out-brand)] group-hover:text-accent-ink sm:text-[2rem] lg:text-[2.5rem] lg:group-hover:translate-x-1.5 xl:text-[2.75rem]">
+                    {c.name}
+                  </span>
+                  <span className="mt-1.5 block truncate text-[0.8125rem] text-muted sm:text-sm">
+                    <span className="font-semibold text-ink-soft">{plural(locale, counts[c.slug] ?? 0, t.categories.count)}</span>
+                    <span className="hidden md:inline"> · {c.description}</span>
+                  </span>
+                </span>
+                <span className="grid size-10 place-items-center rounded-full border-[1.5px] border-line text-ink transition-colors duration-[var(--duration-base)] group-hover:border-accent group-hover:bg-accent sm:size-11">
+                  <ArrowRight className="size-4.5" aria-hidden />
+                </span>
+              </Link>
               {c.image && (
-                <Image
-                  src={c.image}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1280px) 160px, (min-width: 768px) 24vw, 38vw"
-                  className="object-cover transition-transform duration-500 ease-[var(--ease-out-brand)] group-hover:scale-[1.06]"
-                />
+                <span className="cat-photo pointer-events-none absolute inset-y-0 left-0 hidden w-[calc((100%-3.5rem)*0.8/1.8)] overflow-hidden rounded-[var(--radius-panel)] transition-opacity duration-[var(--duration-slow)] lg:block">
+                  <Image
+                    src={c.image}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1344px) 560px, 40vw"
+                    className="object-cover"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/80 to-transparent" />
+                  <span className="absolute bottom-6 left-7 font-display text-3xl font-extrabold tracking-[-0.03em] text-on-dark">
+                    {c.name}
+                  </span>
+                </span>
               )}
-              {/* A short scrim only where the label sits, so the photo stays clean. */}
-              <span className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink/90 via-ink/45 to-transparent" aria-hidden />
-              <span className="absolute inset-x-0 bottom-0 p-3 text-on-dark sm:p-3.5">
-                <span className="block font-display text-[1.0625rem] leading-tight font-bold tracking-[-0.01em] sm:text-lg">
-                  {c.name}
-                </span>
-                <span className="mt-0.5 block text-xs text-on-dark/80">
-                  {plural(locale, counts[c.slug] ?? 0, t.categories.count)}
-                </span>
-              </span>
-              {/* Orange hairline that grows on hover — the only extra flourish. */}
-              <span
-                className="absolute bottom-0 left-0 h-[3px] w-0 bg-accent transition-[width] duration-[var(--duration-slow)] ease-[var(--ease-out-brand)] group-hover:w-full"
-                aria-hidden
-              />
-            </Link>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }

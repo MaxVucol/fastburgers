@@ -33,7 +33,8 @@ export function restaurantJsonLd(description: string, menuPath: string): { [key:
       addressLocality: "București",
       addressCountry: "RO",
     },
-    openingHours: ["Mo-Th 11:00-23:00", "Fr-Sa 11:00-01:00", "Su 12:00-22:00"],
+    // Same hours as the dictionaries' `hours` (shown in the footer and on the contact page).
+    openingHours: ["Mo-Su 11:00-23:00"],
   };
 }
 

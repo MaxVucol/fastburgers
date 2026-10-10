@@ -75,7 +75,7 @@ export const en: Dictionary = {
     eyebrow: "Burgers. Pizza. Chicken. Combos. Drinks.",
     lead: "Angus beef smashed on a scorching griddle, pizza dough proofed for 48 hours and crispy chicken. Cooked after you order, delivered hot.",
     primary: "Order now",
-    note: "juicy burgers",
+    from: "Burgers from {price}",
     imageAlt: "Double smash burger with melted cheddar, pickles and onion on a dark background",
   },
 
@@ -106,7 +106,6 @@ export const en: Dictionary = {
 
   promo: {
     cta: "Choose a combo",
-    note: "the full meal",
     eyebrow: "Deal of the week",
     title: "Burger, fries and a drink. One price.",
     save: "You save {amount}",
@@ -125,7 +124,7 @@ export const en: Dictionary = {
   reviews: {
     eyebrow: "Reviews",
     title: "What our customers say",
-    lead: "Average rating {average} out of 5, from reviews verified after delivery.",
+    lead: "Average rating: {average} out of 5.",
     originalLanguage: "Reviews are shown in their original language.",
     stars: "{rating} out of 5 stars",
   },
@@ -139,7 +138,6 @@ export const en: Dictionary = {
   footer: {
     news: {
       title: "New dishes land on the menu first",
-      text: "Every new dish and every live offer is marked on the menu. No account needed — just an appetite.",
       cta: "See what’s new",
       sale: "Live offers",
     },
@@ -153,11 +151,7 @@ export const en: Dictionary = {
     social: "{name} on {network}",
   },
 
-  hours: [
-    { days: "Mon – Thu", time: "11:00 – 23:00" },
-    { days: "Fri – Sat", time: "11:00 – 01:00" },
-    { days: "Sun", time: "12:00 – 22:00" },
-  ],
+  hours: [{ days: "Daily", time: "11:00 – 23:00" }],
 
   product: {
     add: "Add",

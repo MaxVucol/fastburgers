@@ -82,7 +82,7 @@ export const ro = {
     eyebrow: "Burgeri. Pizza. Chicken. Combo. Băuturi.",
     lead: "Vită Angus presată pe plita încinsă, pizza cu blat crescut 48 de ore și pui crocant. Gătit după ce comanzi, livrat fierbinte.",
     primary: "Comandă acum",
-    note: "burgeri suculenți",
+    from: "Burgeri de la {price}",
     imageAlt: "Burger smash dublu cu cheddar topit, castraveți murați și ceapă, pe fundal întunecat",
   },
 
@@ -113,7 +113,6 @@ export const ro = {
 
   promo: {
     cta: "Alege combo",
-    note: "gust complet",
     eyebrow: "Oferta săptămânii",
     title: "Burger, cartofi și băutură. Un singur preț.",
     save: "Economisești {amount}",
@@ -132,7 +131,7 @@ export const ro = {
   reviews: {
     eyebrow: "Recenzii",
     title: "Ce spun clienții",
-    lead: "Nota medie {average} din 5, din recenzii verificate după livrare.",
+    lead: "Nota medie: {average} din 5.",
     originalLanguage: "",
     stars: "{rating} din 5 stele",
   },
@@ -146,7 +145,6 @@ export const ro = {
   footer: {
     news: {
       title: "Noutățile, primele în meniu",
-      text: "Fiecare preparat nou și fiecare ofertă activă sunt marcate în meniu. Nu ai nevoie de cont — doar de poftă.",
       cta: "Vezi noutățile",
       sale: "Oferte active",
     },
@@ -160,11 +158,7 @@ export const ro = {
     social: "{name} pe {network}",
   },
 
-  hours: [
-    { days: "Luni – Joi", time: "11:00 – 23:00" },
-    { days: "Vineri – Sâmbătă", time: "11:00 – 01:00" },
-    { days: "Duminică", time: "12:00 – 22:00" },
-  ],
+  hours: [{ days: "Zilnic", time: "11:00 – 23:00" }],
 
   product: {
     add: "Adaugă",

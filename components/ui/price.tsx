@@ -28,7 +28,7 @@ export function Price({
     <div className={cn("flex flex-wrap items-baseline gap-x-2", className)}>
       <span
         className={cn(
-          "font-display font-extrabold tracking-[-0.02em] tabular-nums",
+          "font-display font-extrabold tracking-[-0.02em] whitespace-nowrap tabular-nums",
           tone === "dark" ? "text-flame" : "text-ink",
           size === "sm" && "text-base",
           size === "md" && "text-[1.1875rem]",
