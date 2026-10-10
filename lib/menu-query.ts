@@ -1,3 +1,4 @@
+import { intlLocale, type Locale } from "@/lib/i18n/config";
 import { normalizeText } from "@/lib/utils";
 import type { ProductCardData } from "@/types/catalog";
 
@@ -11,25 +12,22 @@ export type MenuQuery = {
   sort: MenuSort;
 };
 
-export const MENU_SORTS: { value: MenuSort; label: string }[] = [
-  { value: "recommended", label: "Recomandate" },
-  { value: "price-asc", label: "Preț crescător" },
-  { value: "price-desc", label: "Preț descrescător" },
-  { value: "name", label: "Nume (A–Z)" },
-  { value: "newest", label: "Cele mai noi" },
-];
-
-export const MENU_FILTERS: { value: MenuFilter; label: string }[] = [
-  { value: "all", label: "Toate" },
-  { value: "popular", label: "Populare" },
-  { value: "new", label: "Noi" },
-  { value: "sale", label: "Reduceri" },
-];
+// Labels live in the dictionaries (t.menu.sorts / t.menu.filters).
+export const MENU_SORTS: readonly MenuSort[] = ["recommended", "price-asc", "price-desc", "name", "newest"];
+export const MENU_FILTERS: readonly MenuFilter[] = ["all", "popular", "new", "sale"];
 
 export const DEFAULT_MENU_QUERY: MenuQuery = { q: "", category: "", filter: "all", sort: "recommended" };
 
 function first(value: string | string[] | undefined): string {
   return (Array.isArray(value) ? value[0] : value)?.trim() ?? "";
+}
+
+function isSort(value: string): value is MenuSort {
+  return (MENU_SORTS as readonly string[]).includes(value);
+}
+
+function isFilter(value: string): value is MenuFilter {
+  return (MENU_FILTERS as readonly string[]).includes(value);
 }
 
 /** Parses untrusted search params into a known-good query. */
@@ -40,8 +38,8 @@ export function parseMenuQuery(params: Record<string, string | string[] | undefi
   return {
     q: first(params.q).slice(0, 80),
     category: /^[a-z0-9-]{1,80}$/.test(category) ? category : "",
-    filter: MENU_FILTERS.some((f) => f.value === filter) ? (filter as MenuFilter) : "all",
-    sort: MENU_SORTS.some((s) => s.value === sort) ? (sort as MenuSort) : "recommended",
+    filter: isFilter(filter) ? filter : "all",
+    sort: isSort(sort) ? sort : "recommended",
   };
 }
 
@@ -60,10 +58,11 @@ export function menuQueryToSearch(query: MenuQuery): string {
 }
 
 /**
- * Searches name, descriptions and category name (diacritics-insensitive).
- * The menu is small enough that filtering the cached list in memory beats a DB round-trip.
+ * Searches name, descriptions and category name (diacritics-insensitive) in the
+ * language being displayed. The menu is small enough that filtering the cached list
+ * in memory beats a DB round-trip.
  */
-export function filterProducts(products: ProductCardData[], query: MenuQuery): ProductCardData[] {
+export function filterProducts(products: ProductCardData[], query: MenuQuery, locale: Locale = "ro"): ProductCardData[] {
   const terms = normalizeText(query.q).split(/\s+/).filter(Boolean);
 
   const result = products.filter((p) => {
@@ -82,7 +81,7 @@ export function filterProducts(products: ProductCardData[], query: MenuQuery): P
     case "price-desc":
       return result.sort((a, b) => b.price - a.price);
     case "name":
-      return result.sort((a, b) => a.name.localeCompare(b.name, "ro"));
+      return result.sort((a, b) => a.name.localeCompare(b.name, intlLocale[locale]));
     case "newest":
       return result.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     default:

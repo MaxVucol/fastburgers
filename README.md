@@ -61,10 +61,17 @@ Imaginile încărcate din admin merg în Vercel Blob când există `BLOB_READ_WR
 
 `next build` citește catalogul din baza de date pentru a pre-randa paginile, deci baza de date trebuie să fie accesibilă la build.
 
+## Limbi (RO / RU / EN)
+
+- Româna este limba implicită și nu are prefix în URL (`/menu`); rusa și engleza au `/ru/…` și `/en/…`. `proxy.ts` rescrie intern URL-urile fără prefix către `app/[lang]` și ține minte limba aleasă (cookie `NEXT_LOCALE`).
+- Textele interfeței: `lib/i18n/dictionaries/{ro,ru,en}.ts` (ru/en sunt verificate de TypeScript față de ro).
+- Baza de date rămâne în română. Traducerile RU/EN ale catalogului demo sunt în `lib/i18n/catalog-translations.ts`, după slug; un produs nou adăugat din admin apare în română pe /ru și /en până i se adaugă traducerea acolo.
+- Panoul de administrare este doar în română.
+
 ## Structură
 
 ```
-app/(site)/          pagini publice: /, /menu, /menu/[slug], /categorii/[slug], /checkout,
+app/[lang]/          pagini publice (ro fără prefix, /ru, /en): /, /menu, /menu/[slug], /categorii/[slug], /checkout,
                      /order/[number], /account, /about, /contact
 app/admin/           /admin/login și panoul (dashboard, comenzi, produse, categorii)
 app/media/[file]     servește imaginile încărcate din admin
@@ -73,7 +80,8 @@ services/            acces la date: catalog (cache-uit), comenzi, admin
 lib/                 prisma, auth (JWT + sesiune), validare (zod), prețuri, format, SEO, storage
 components/          ui/ (design system), layout/, cart/, product/, menu/, home/, checkout/, admin/
 prisma/              schema.prisma și seed.ts
-proxy.ts             protecție optimistă pentru /admin
+proxy.ts             limbă (rewrite/redirect) și protecție optimistă pentru /admin
+lib/i18n/            configurare limbi, dicționare, traduceri catalog
 ```
 
 ## Decizii importante

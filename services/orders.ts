@@ -3,10 +3,25 @@ import { randomInt } from "node:crypto";
 import { Prisma, type OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { computeDeliveryFee, MIN_DELIVERY_ORDER } from "@/lib/pricing";
-import { formatPrice } from "@/lib/format";
 import type { CheckoutData } from "@/lib/validation/checkout";
 
-export class OrderError extends Error {}
+/** Codes map to dictionary keys (t.errors[code]); the action translates them for the customer. */
+export type OrderErrorCode =
+  | "productUnavailable"
+  | "optionUnavailable"
+  | "minDelivery"
+  | "locationUnavailable"
+  | "onlinePayment"
+  | "saveFailed";
+
+export class OrderError extends Error {
+  constructor(
+    readonly code: OrderErrorCode,
+    readonly params: Record<string, string | number> = {},
+  ) {
+    super(code);
+  }
+}
 
 const ORDER_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"; // no 0/O/1/I/L
 
@@ -38,13 +53,13 @@ export async function createOrder(data: CheckoutData, userId?: string) {
   const items = data.items.map((item) => {
     const product = byId.get(item.productId);
     if (!product) {
-      throw new OrderError("Un produs din coș nu mai este disponibil. Actualizează coșul și încearcă din nou.");
+      throw new OrderError("productUnavailable");
     }
     const optionIds = [...new Set(item.optionIds)];
     const options = optionIds.map((id) => {
       const option = product.options.find((o) => o.id === id);
       if (!option) {
-        throw new OrderError(`O opțiune pentru „${product.name}” nu mai este disponibilă.`);
+        throw new OrderError("optionUnavailable", { name: product.name });
       }
       return { name: option.name, price: option.price };
     });
@@ -63,7 +78,7 @@ export async function createOrder(data: CheckoutData, userId?: string) {
 
   const subtotal = items.reduce((sum, i) => sum + i.total, 0);
   if (data.deliveryMethod === "DELIVERY" && subtotal < MIN_DELIVERY_ORDER) {
-    throw new OrderError(`Comanda minimă pentru livrare este ${formatPrice(MIN_DELIVERY_ORDER)}.`);
+    throw new OrderError("minDelivery", { min: MIN_DELIVERY_ORDER });
   }
 
   let locationId: string | null = null;
@@ -72,14 +87,14 @@ export async function createOrder(data: CheckoutData, userId?: string) {
       where: { id: data.locationId, active: true },
       select: { id: true },
     });
-    if (!location) throw new OrderError("Restaurantul selectat nu este disponibil.");
+    if (!location) throw new OrderError("locationUnavailable");
     locationId = location.id;
   }
 
   if (data.paymentMethod === "CARD_ONLINE") {
     // Integration point: create a payment intent with the provider (Stripe, Netopia…)
     // and keep the order in NEW until the webhook confirms the payment.
-    throw new OrderError("Plata online nu este încă disponibilă. Alege plata la livrare.");
+    throw new OrderError("onlinePayment");
   }
 
   const deliveryFee = computeDeliveryFee(data.deliveryMethod, subtotal);
@@ -111,7 +126,7 @@ export async function createOrder(data: CheckoutData, userId?: string) {
       if (!isNumberClash) throw error;
     }
   }
-  throw new OrderError("Nu am putut înregistra comanda. Te rugăm să încerci din nou.");
+  throw new OrderError("saveFailed");
 }
 
 /** Public order tracking: limited fields, no contact details. */

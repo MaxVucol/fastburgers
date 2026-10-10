@@ -1,8 +1,10 @@
 "use client";
 
-import { Check, Plus, ShoppingBag } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { buttonStyles } from "@/components/ui/button";
+import { fill } from "@/lib/i18n/config";
 import { cn } from "@/lib/utils";
 import { cartActions } from "./cart-store";
 
@@ -14,25 +16,27 @@ type QuickAddProduct = {
   price: number;
 };
 
-/** One-tap add from product cards (base configuration, no extras). */
+/** One-tap add from cards and the promo block (base configuration, no extras). */
 export function QuickAddButton({
   product,
   variant = "compact",
-  inverse = false,
+  tone = "light",
   className,
 }: {
   product: QuickAddProduct;
+  /** compact: "Add +" on cards · full: wide button with the full label. */
   variant?: "compact" | "full";
-  /** White button for use on the accent-coloured promo banner. */
-  inverse?: boolean;
+  /** dark: the button sits on a graphite surface. */
+  tone?: "light" | "dark";
   className?: string;
 }) {
+  const { t } = useI18n();
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
     if (!added) return;
-    const t = window.setTimeout(() => setAdded(false), 1400);
-    return () => window.clearTimeout(t);
+    const timer = window.setTimeout(() => setAdded(false), 1500);
+    return () => window.clearTimeout(timer);
   }, [added]);
 
   function handleClick() {
@@ -47,47 +51,22 @@ export function QuickAddButton({
     setAdded(true);
   }
 
-  const label = added ? "Adăugat" : "Adaugă în coș";
-
-  if (variant === "full") {
-    return (
-      <button
-        type="button"
-        onClick={handleClick}
-        className={
-          inverse
-            ? buttonStyles({
-                variant: added ? "dark" : "outline",
-                size: "md",
-                className: cn("w-full", !added && "border-white", className),
-              })
-            : buttonStyles({
-                variant: added ? "dark" : "primary",
-                size: "md",
-                className: cn("w-full", className),
-              })
-        }
-        aria-label={`${label}: ${product.name}`}
-      >
-        {added ? <Check className="size-4.5" aria-hidden /> : <ShoppingBag className="size-4.5" aria-hidden />}
-        <span aria-live="polite">{label}</span>
-      </button>
-    );
-  }
+  const doneVariant = tone === "dark" ? "light" : "dark";
+  const label = variant === "full" ? (added ? t.product.addedToCart : t.product.addToCart) : added ? t.product.added : t.product.add;
 
   return (
     <button
       type="button"
       onClick={handleClick}
       className={buttonStyles({
-        variant: added ? "dark" : "primary",
-        size: "sm",
-        className: cn("h-10 gap-1.5 px-3.5", className),
+        variant: added ? doneVariant : "primary",
+        size: variant === "full" ? "lg" : "sm",
+        className: cn(variant === "compact" ? "h-10 gap-1.5 pr-3.5 pl-4" : "w-full", className),
       })}
-      aria-label={`${label}: ${product.name}`}
+      aria-label={fill(added ? t.product.addedNamed : t.product.addToCartNamed, { name: product.name })}
     >
-      {added ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
-      <span aria-live="polite">{added ? "Adăugat" : "Adaugă"}</span>
+      <span aria-live="polite">{label}</span>
+      {added ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden strokeWidth={2.5} />}
     </button>
   );
 }

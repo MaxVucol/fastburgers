@@ -13,19 +13,19 @@ export function JsonLd({ data }: { data: { [key: string]: JsonLdValue } }) {
   );
 }
 
-export function restaurantJsonLd(): { [key: string]: JsonLdValue } {
+export function restaurantJsonLd(description: string, menuPath: string): { [key: string]: JsonLdValue } {
   return {
     "@context": "https://schema.org",
     "@type": "FastFoodRestaurant",
     name: siteConfig.name,
-    description: siteConfig.description,
+    description,
     url: siteConfig.url,
     telephone: siteConfig.phone,
     email: siteConfig.email,
     image: absoluteUrl("/images/hero/hero.webp"),
     servesCuisine: ["Burgers", "Pizza", "American"],
     priceRange: "$$",
-    hasMenu: absoluteUrl("/menu"),
+    hasMenu: absoluteUrl(menuPath),
     acceptsReservations: false,
     address: {
       "@type": "PostalAddress",
@@ -37,14 +37,14 @@ export function restaurantJsonLd(): { [key: string]: JsonLdValue } {
   };
 }
 
-export function productJsonLd(product: ProductDetail): { [key: string]: JsonLdValue } {
+export function productJsonLd(product: ProductDetail, path: string): { [key: string]: JsonLdValue } {
   return {
     "@context": "https://schema.org",
     "@type": "MenuItem",
     name: product.name,
     description: product.description,
     image: product.images.map((src) => absoluteUrl(src)),
-    url: absoluteUrl(`/menu/${product.slug}`),
+    url: absoluteUrl(path),
     offers: {
       "@type": "Offer",
       price: (product.price / 100).toFixed(2),

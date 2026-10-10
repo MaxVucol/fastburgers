@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
+    // Two root layouts (app/[lang] for the site, app/admin) → app/global-not-found.tsx.
+    globalNotFound: true,
     // Admin product forms upload images (main + gallery) through Server Actions.
     serverActions: {
       bodySizeLimit: "20mb",

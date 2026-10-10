@@ -3,11 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { splitLocale } from "@/lib/i18n/config";
 import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
+/** Compares locale-independent paths, so "/ru/menu" is active for the "/menu" item. */
 export function isActivePath(pathname: string, href: string) {
-  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  const path = splitLocale(pathname).path;
+  return href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
 }
 
 /**
@@ -28,24 +32,25 @@ function PathnameReader({ children }: { children: (pathname: string) => React.Re
 }
 
 function NavLinksView({ pathname }: { pathname: string }) {
+  const { t, href } = useI18n();
   return (
-    <ul className="flex items-center gap-1">
+    <ul className="flex items-center gap-1 xl:gap-3">
       {siteConfig.nav.map((item) => {
         const active = isActivePath(pathname, item.href);
         return (
           <li key={item.href}>
             <Link
-              href={item.href}
+              href={href(item.href)}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative rounded-lg px-3.5 py-2 text-[0.9375rem] font-semibold transition-colors",
-                active ? "text-ink" : "text-muted hover:text-ink",
+                "relative inline-flex h-10 items-center px-3 text-[0.9375rem] font-medium transition-colors duration-[var(--duration-fast)]",
+                "after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:origin-left after:bg-accent after:transition-transform after:duration-[var(--duration-base)]",
+                active
+                  ? "text-accent-ink after:scale-x-100"
+                  : "text-ink after:scale-x-0 hover:after:scale-x-100",
               )}
             >
-              {item.label}
-              {active && (
-                <span className="absolute inset-x-3.5 -bottom-0.5 h-0.5 rounded-full bg-accent" aria-hidden />
-              )}
+              {t.nav[item.key]}
             </Link>
           </li>
         );

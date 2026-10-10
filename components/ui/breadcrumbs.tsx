@@ -1,17 +1,20 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 
 export type Crumb = { href?: string; label: string };
 
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
+export function Breadcrumbs({ items, label = "Breadcrumb" }: { items: Crumb[]; label?: string }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-5 text-sm text-muted">
-      <ol className="flex flex-wrap items-center gap-1">
+    <nav aria-label={label} className="mb-6 text-sm text-muted">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
         {items.map((item, i) => (
-          <li key={`${item.label}-${i}`} className="flex items-center gap-1">
-            {i > 0 && <ChevronRight className="size-3.5" aria-hidden />}
+          <li key={`${item.label}-${i}`} className="flex items-center gap-2">
+            {i > 0 && (
+              <span className="text-line" aria-hidden>
+                /
+              </span>
+            )}
             {item.href ? (
-              <Link href={item.href} className="hover:text-ink">
+              <Link href={item.href} className="underline-offset-4 hover:text-ink hover:underline">
                 {item.label}
               </Link>
             ) : (

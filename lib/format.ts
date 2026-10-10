@@ -1,11 +1,20 @@
-const priceFormatter = new Intl.NumberFormat("ro-RO", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+import { intlLocale, type Locale } from "@/lib/i18n/config";
 
-/** Formats a price stored in bani (1/100 RON). */
-export function formatPrice(bani: number): string {
-  return `${priceFormatter.format(bani / 100)} lei`;
+const CURRENCY: Record<Locale, string> = { ro: "lei", ru: "лей", en: "lei" };
+
+const priceFormatters = new Map<Locale, Intl.NumberFormat>();
+function priceFormatter(locale: Locale) {
+  let formatter = priceFormatters.get(locale);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(intlLocale[locale], { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    priceFormatters.set(locale, formatter);
+  }
+  return formatter;
+}
+
+/** Formats a price stored in bani (1/100 RON): "32,90 lei", "32,90 лей", "32.90 lei". */
+export function formatPrice(bani: number, locale: Locale = "ro"): string {
+  return `${priceFormatter(locale).format(bani / 100)} ${CURRENCY[locale]}`;
 }
 
 /** Converts a user-entered "32,90" / "32.90" into bani. Returns NaN on invalid input. */
@@ -20,25 +29,22 @@ export function baniToInput(bani: number | null | undefined): string {
   return (bani / 100).toFixed(2);
 }
 
-const dateFormatter = new Intl.DateTimeFormat("ro-RO", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
-const dateTimeFormatter = new Intl.DateTimeFormat("ro-RO", {
-  day: "2-digit",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "Europe/Bucharest",
-});
-
-export function formatDate(date: Date): string {
-  return dateFormatter.format(date);
+export function formatDate(date: Date, locale: Locale = "ro"): string {
+  return new Intl.DateTimeFormat(intlLocale[locale], { day: "numeric", month: "long", year: "numeric" }).format(date);
 }
 
-export function formatDateTime(date: Date): string {
-  return dateTimeFormatter.format(date);
+export function formatDateTime(date: Date, locale: Locale = "ro"): string {
+  return new Intl.DateTimeFormat(intlLocale[locale], {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Bucharest",
+  }).format(date);
+}
+
+export function formatNumber(value: number, locale: Locale = "ro", maximumFractionDigits = 1): string {
+  return value.toLocaleString(intlLocale[locale], { maximumFractionDigits });
 }
 
 export function discountPercent(price: number, oldPrice: number | null): number | null {

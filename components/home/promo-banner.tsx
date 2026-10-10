@@ -1,51 +1,74 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { QuickAddButton } from "@/components/cart/add-to-cart-button";
+import { Spark } from "@/components/ui/brand";
 import { discountPercent, formatPrice } from "@/lib/format";
+import { fill } from "@/lib/i18n/config";
+import { getI18n } from "@/lib/i18n/server";
 import type { ProductCardData } from "@/types/catalog";
 
-export function PromoBanner({ product }: { product: ProductCardData }) {
+/** The page's one big contrast moment: full-bleed graphite, photo bleeding off the left edge. */
+export async function PromoBanner({ product }: { product: ProductCardData }) {
+  const { locale, t, href } = await getI18n();
   const discount = discountPercent(product.price, product.oldPrice);
+
   return (
-    <section aria-labelledby="promo-title" className="container-page py-10 sm:py-14">
-      <div className="reveal grid overflow-hidden rounded-[1.75rem] bg-accent text-white lg:grid-cols-2">
-        <div className="relative aspect-[16/10] lg:order-2 lg:aspect-auto lg:min-h-[22rem]">
+    <section aria-labelledby="promo-title" className="bg-graphite text-on-dark">
+      <div className="grid lg:grid-cols-2">
+        <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[34rem]">
           <Image
             src="/images/promo/promo.webp"
-            alt="Burger cu vită, cheddar, salată și roșii pe chiflă cu susan"
+            alt={t.promo.imageAlt}
             fill
-            sizes="(min-width: 1024px) 640px, 100vw"
+            sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-cover"
           />
           {discount && (
-            <span className="absolute top-4 right-4 grid size-20 rotate-6 place-items-center rounded-full bg-mustard text-center font-display leading-none font-extrabold text-ink shadow-lg sm:size-24">
+            <p className="absolute top-5 right-5 grid size-24 rotate-[8deg] place-items-center rounded-full bg-accent text-center text-ink sm:size-28 lg:top-8 lg:-right-14 lg:size-32">
               <span>
-                <span className="block text-2xl sm:text-3xl">-{discount}%</span>
-                <span className="text-[0.65rem] tracking-wider uppercase">ofertă</span>
+                <span className="block font-display text-3xl leading-none font-bold sm:text-4xl">−{discount}%</span>
+                <span className="type-eyebrow mt-1 block text-[0.625rem]">{t.promo.badge}</span>
               </span>
-            </span>
+            </p>
           )}
         </div>
-        <div className="flex flex-col justify-center gap-5 p-6 sm:p-10 lg:p-12">
-          <p className="text-xs font-bold tracking-[0.2em] text-white/80 uppercase">Oferta săptămânii</p>
-          <h2 id="promo-title" className="text-3xl leading-[1.05] font-extrabold sm:text-5xl">
-            {product.name}: burger, cartofi și băutură.
+
+        <div className="flex w-full max-w-[42rem] flex-col justify-center px-[var(--gutter)] py-12 sm:py-14 lg:py-16 lg:pl-24 xl:pl-28">
+          <p className="type-eyebrow flex items-center gap-2 text-flame">
+            <Spark className="size-3.5" />
+            {t.promo.eyebrow}
+          </p>
+          <h2 id="promo-title" className="type-h2 mt-4 max-w-lg">
+            {t.promo.title}
           </h2>
-          <p className="max-w-md text-white/90">{product.description}</p>
-          <div className="flex items-baseline gap-3">
-            <span className="font-display text-4xl font-extrabold tabular-nums">{formatPrice(product.price)}</span>
-            {product.oldPrice && (
-              <span className="text-lg text-white/70 line-through tabular-nums">
-                <span className="sr-only">în loc de </span>
-                {formatPrice(product.oldPrice)}
+          <p className="mt-5 max-w-md leading-relaxed text-muted-on-dark">
+            <span className="font-semibold text-on-dark">{product.name}.</span> {product.shortDescription}
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-end gap-x-5 gap-y-2">
+            <span className="font-display text-5xl leading-none font-semibold text-flame tabular-nums">
+              {formatPrice(product.price, locale)}
+            </span>
+            {product.oldPrice && product.oldPrice > product.price && (
+              <span className="pb-1 text-muted-on-dark">
+                <span className="line-through tabular-nums">
+                  <span className="sr-only">{t.product.oldPrice} </span>
+                  {formatPrice(product.oldPrice, locale)}
+                </span>
+                <span className="ml-2 font-semibold text-on-dark">
+                  {fill(t.promo.save, { amount: formatPrice(product.oldPrice - product.price, locale) })}
+                </span>
               </span>
             )}
           </div>
-          <div className="flex flex-wrap gap-3">
-            <div className="w-full min-[400px]:w-auto">
+
+          <div className="mt-8 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-center">
+            <div className="min-[420px]:w-auto">
               <QuickAddButton
                 variant="full"
-                inverse
+                tone="dark"
+                className="px-8"
                 product={{
                   id: product.id,
                   slug: product.slug,
@@ -56,10 +79,11 @@ export function PromoBanner({ product }: { product: ProductCardData }) {
               />
             </div>
             <Link
-              href={`/menu/${product.slug}`}
-              className="inline-flex h-11 items-center rounded-xl px-4 font-semibold text-white ring-1 ring-white/40 hover:bg-white/10"
+              href={href(`/menu/${product.slug}`)}
+              className="group inline-flex h-13 items-center justify-center gap-1.5 rounded-full border-[1.5px] border-on-dark/40 px-6 font-semibold transition-colors hover:border-on-dark hover:bg-on-dark hover:text-ink"
             >
-              Personalizează
+              {t.promo.customize}
+              <ArrowUpRight className="size-4" aria-hidden />
             </Link>
           </div>
         </div>

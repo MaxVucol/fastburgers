@@ -2,11 +2,16 @@ import { z } from "zod";
 import { MAX_ITEM_QUANTITY } from "@/lib/pricing";
 import { objectIdSchema } from "./common";
 
+// Messages are dictionary keys (t.errors[key]) so the action can answer in the
+// customer's language. Anything else falls back to t.errors.invalid.
+export const CHECKOUT_ERROR_KEYS = ["name", "phone", "email", "address", "location", "notes", "cartEmpty"] as const;
+export type CheckoutErrorKey = (typeof CHECKOUT_ERROR_KEYS)[number];
+
 const phoneSchema = z
   .string()
   .trim()
   .transform((v) => v.replace(/[\s().-]/g, ""))
-  .pipe(z.string().regex(/^\+?\d{9,15}$/, "Introdu un număr de telefon valid"));
+  .pipe(z.string().regex(/^\+?\d{9,15}$/, "phone"));
 
 export const checkoutItemSchema = z.object({
   productId: objectIdSchema,
@@ -16,26 +21,22 @@ export const checkoutItemSchema = z.object({
 
 export const checkoutSchema = z
   .object({
-    customerName: z.string().trim().min(2, "Introdu numele complet").max(80),
+    customerName: z.string().trim().min(2, "name").max(80, "name"),
     customerPhone: phoneSchema,
-    customerEmail: z.email("Introdu o adresă de email validă").max(120),
+    customerEmail: z.email("email").max(120, "email"),
     deliveryMethod: z.enum(["DELIVERY", "PICKUP"]),
-    deliveryAddress: z.string().trim().max(200).optional().default(""),
+    deliveryAddress: z.string().trim().max(200, "address").optional().default(""),
     locationId: z.string().optional().default(""),
     paymentMethod: z.enum(["CASH", "CARD_ON_DELIVERY", "CARD_ONLINE"]),
-    notes: z.string().trim().max(500, "Maxim 500 de caractere").optional().default(""),
-    items: z.array(checkoutItemSchema).min(1, "Coșul este gol").max(50),
+    notes: z.string().trim().max(500, "notes").optional().default(""),
+    items: z.array(checkoutItemSchema).min(1, "cartEmpty").max(50),
   })
   .superRefine((data, ctx) => {
     if (data.deliveryMethod === "DELIVERY" && data.deliveryAddress.length < 8) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["deliveryAddress"],
-        message: "Introdu adresa completă (stradă, număr, bloc, apartament)",
-      });
+      ctx.addIssue({ code: "custom", path: ["deliveryAddress"], message: "address" });
     }
     if (data.deliveryMethod === "PICKUP" && !/^[a-f0-9]{24}$/i.test(data.locationId)) {
-      ctx.addIssue({ code: "custom", path: ["locationId"], message: "Alege restaurantul" });
+      ctx.addIssue({ code: "custom", path: ["locationId"], message: "location" });
     }
   });
 

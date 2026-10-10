@@ -1,91 +1,99 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChefHat, Clock, Truck } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Clock } from "lucide-react";
+import { Spark, Strokes, Swash } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
-import { FREE_DELIVERY_THRESHOLD } from "@/lib/pricing";
+import { getI18n } from "@/lib/i18n/server";
 import type { ProductCardData } from "@/types/catalog";
 
-export function Hero({ spotlight }: { spotlight: ProductCardData | null }) {
+export async function Hero({ spotlight }: { spotlight: ProductCardData | null }) {
+  const { locale, t, href } = await getI18n();
+  const [lineOne, lineTwo] = t.hero.titleLines;
+
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden">
-      <div className="container-page grid items-center gap-7 pt-5 pb-9 sm:pt-10 lg:grid-cols-[1fr_1.08fr] lg:gap-12 lg:pt-12 lg:pb-14">
-        <div className="animate-fade-up">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-ink-soft shadow-[var(--shadow-soft)] ring-1 ring-line sm:text-sm">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-herb opacity-60 motion-reduce:hidden" />
-              <span className="relative inline-flex size-2 rounded-full bg-herb" />
-            </span>
-            Deschis acum · livrare în ~30 de minute
+      <div className="container-page grid items-center gap-y-10 pt-8 pb-14 sm:pt-12 lg:min-h-[min(46rem,calc(100svh-var(--header-h)-var(--topbar-h)))] lg:grid-cols-[1.04fr_1fr] lg:gap-x-6 lg:py-12 xl:gap-x-12">
+        {/* ── Copy ───────────────────────────────────────── */}
+        <div className="relative z-10">
+          <p className="enter type-eyebrow flex items-center gap-2 tracking-[0.1em] text-ink-soft sm:tracking-[0.16em]">
+            <Spark className="size-3.5 text-accent" />
+            {t.hero.eyebrow}
           </p>
-          <h1
-            id="hero-title"
-            className="mt-4 text-[2.5rem] leading-[0.98] font-extrabold text-ink min-[400px]:text-5xl sm:text-6xl xl:text-[4.25rem]"
-          >
-            Smash burgers <span className="text-accent">făcute ca la carte.</span>
+
+          <h1 id="hero-title" className="enter type-hero mt-5 text-ink [--enter-step:1]">
+            <span className="block">{lineOne}</span>
+            <span className="block">{lineTwo}</span>
           </h1>
-          <p className="mt-4 max-w-lg text-base leading-relaxed text-muted sm:mt-5 sm:text-lg">
-            Vită Angus presată pe plită încinsă, pizza cu blat crescut 48 de ore și pui crocant marinat
-            peste noapte. Gătit la comandă, livrat fierbinte.
+          <p
+            aria-hidden
+            className="enter type-script mt-1 ml-[18%] inline-block -rotate-[5deg] text-[3.25rem] text-accent [--enter-step:2] before:content-[attr(data-text)] sm:text-[4rem] lg:text-[4.5rem]"
+            data-text={t.hero.script}
+          />
+
+          <p className="enter mt-4 max-w-[30rem] text-[1.0625rem] leading-relaxed text-ink-soft [--enter-step:3] sm:text-lg">
+            {t.hero.lead}
           </p>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-7 sm:flex">
-            <ButtonLink href="/menu" size="lg" className="px-4 sm:px-7">
-              Vezi meniul
+
+          <div className="enter mt-8 flex flex-wrap items-center gap-3 [--enter-step:4]">
+            {/* Fastest path to an order: the house favourites right below, each with one-tap add. */}
+            <ButtonLink href="#hituri" size="lg" className="flex-1 sm:flex-none">
+              {t.hero.primary}
               <ArrowRight className="size-4.5" aria-hidden />
             </ButtonLink>
-            <ButtonLink href="#populare" size="lg" variant="outline" className="px-4 sm:px-7">
-              Comandă acum
+            <ButtonLink href={href("/menu")} size="lg" variant="outline" className="flex-1 sm:flex-none">
+              {t.hero.secondary}
             </ButtonLink>
+            <p className="flex items-center gap-3 pl-1 sm:ml-2">
+              <span className="grid size-11 place-items-center rounded-full border-[1.5px] border-line">
+                <Clock className="size-5 text-accent-ink" aria-hidden />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-xs text-muted">{t.hero.delivery}</span>
+                <span className="block font-display text-lg font-semibold">{t.hero.deliveryValue}</span>
+              </span>
+            </p>
           </div>
-          <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2.5 text-sm text-ink-soft sm:mt-8">
-            <li className="flex items-center gap-2">
-              <ChefHat className="size-4 text-mustard" aria-hidden />
-              Gătit la comandă, nimic ținut la cald
-            </li>
-            <li className="flex items-center gap-2">
-              <Truck className="size-4 text-herb" aria-hidden />
-              Livrare gratuită peste {formatPrice(FREE_DELIVERY_THRESHOLD)}
-            </li>
-            <li className="hidden items-center gap-2 sm:flex">
-              <Clock className="size-4 text-accent" aria-hidden />
-              Zilnic 11:00 – 23:00
-            </li>
-          </ul>
         </div>
 
-        <div className="relative">
-          <div className="relative aspect-[16/11] overflow-hidden rounded-[1.75rem] bg-sand shadow-[var(--shadow-lift)] sm:aspect-[4/3] lg:aspect-[5/4]">
+        {/* ── Visual: photo "sticker" over a flame disc ─────────── */}
+        <div className="relative mx-auto aspect-square w-full max-w-[25rem] sm:max-w-[34rem] lg:max-w-[40rem]">
+          <div className="enter absolute top-0 right-0 aspect-square w-[86%] rounded-full bg-accent [--enter-step:1]" aria-hidden />
+          <div className="enter absolute bottom-[2%] left-0 aspect-square w-[84%] overflow-hidden rounded-full border-[10px] border-cream bg-ink [--enter-step:2] sm:border-[14px]">
             <Image
               src="/images/hero/hero.webp"
-              alt="Burger smash dublu cu cheddar topit, servit cu cartofi prăjiți crocanți pe un platou de lemn"
+              alt={t.hero.imageAlt}
               fill
               preload
-              sizes="(min-width: 1280px) 620px, (min-width: 1024px) 52vw, 100vw"
-              className="object-cover"
+              sizes="(min-width: 1024px) 560px, (min-width: 640px) 460px, 86vw"
+              className="object-cover object-[80%_55%]"
             />
           </div>
 
+          <Strokes className="absolute top-[18%] -left-[3%] size-14 -rotate-12 text-accent sm:size-20" />
+          <p
+            aria-hidden
+            className="type-script absolute top-[3%] -left-[2%] -rotate-[8deg] text-[1.75rem] text-ink sm:top-[6%] sm:left-[2%] sm:text-[2.25rem]"
+          >
+            {t.hero.note}
+            <Swash className="h-2.5 w-24 text-accent" />
+          </p>
+
           {spotlight && (
             <Link
-              href={`/menu/${spotlight.slug}`}
-              className="group absolute -bottom-5 left-3 flex max-w-[calc(100%-1.5rem)] items-center gap-3 rounded-2xl bg-white/95 p-2.5 pr-4 shadow-[var(--shadow-lift)] ring-1 ring-line backdrop-blur sm:left-6 sm:p-3 sm:pr-5"
+              href={href(`/menu/${spotlight.slug}`)}
+              className="group absolute right-0 bottom-[5%] flex max-w-[17.5rem] items-center gap-3 rounded-[var(--radius-card)] bg-ink py-3 pr-4 pl-3 text-on-dark shadow-[var(--shadow-lift)] transition-transform duration-[var(--duration-base)] hover:-translate-y-0.5 sm:right-[2%] sm:bottom-[8%]"
             >
-              <span className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-sand sm:size-16">
-                <Image src={spotlight.image} alt="" fill sizes="64px" className="object-cover" />
+              <span className="relative size-12 shrink-0 overflow-hidden rounded-[var(--radius-sm)] bg-graphite">
+                <Image src={spotlight.image} alt="" fill sizes="48px" className="object-cover" />
               </span>
               <span className="min-w-0">
-                <span className="block text-[0.7rem] font-bold tracking-wider text-accent uppercase">
-                  Cel mai comandat
-                </span>
-                <span className="block truncate font-display text-lg leading-tight font-extrabold">
-                  {spotlight.name}
-                </span>
-                <span className="text-sm font-semibold text-muted tabular-nums">
-                  {formatPrice(spotlight.price)}
-                </span>
+                <span className="type-eyebrow block text-[0.625rem] text-flame">{t.hero.spotlight}</span>
+                <span className="block truncate font-display text-lg leading-tight font-semibold">{spotlight.name}</span>
+                <span className="text-sm text-muted-on-dark tabular-nums">{formatPrice(spotlight.price, locale)}</span>
               </span>
-              <ArrowRight
-                className="ml-1 size-5 shrink-0 text-ink transition-transform group-hover:translate-x-0.5"
+              <ArrowUpRight
+                className="size-5 shrink-0 text-flame transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 aria-hidden
               />
             </Link>

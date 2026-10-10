@@ -21,7 +21,7 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
 };
 
 export const ORDER_STATUS_TONE: Record<OrderStatus, string> = {
-  NEW: "bg-accent-soft text-accent",
+  NEW: "bg-accent-soft text-accent-ink",
   CONFIRMED: "bg-mustard-soft text-[#8a5a00]",
   PREPARING: "bg-mustard-soft text-[#8a5a00]",
   READY: "bg-herb-soft text-herb",

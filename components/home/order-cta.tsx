@@ -1,37 +1,34 @@
-import Image from "next/image";
-import { Phone } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
+import { Strokes } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
+import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
 
-export function OrderCta() {
+/** Closing band in flame orange — the only full orange surface on the site. */
+export async function OrderCta() {
+  const { t, href } = await getI18n();
+  const [lineOne, lineTwo] = t.cta.titleLines;
+
   return (
-    <section aria-labelledby="cta-title" className="container-page pb-16 sm:pb-24">
-      <div className="reveal relative grid items-center gap-6 overflow-hidden rounded-[1.75rem] bg-sand p-6 ring-1 ring-line sm:p-10 md:grid-cols-[1.2fr_1fr] lg:p-14">
+    <section aria-labelledby="cta-title" className="relative overflow-hidden bg-accent text-ink">
+      <Strokes className="absolute top-8 right-[6%] hidden size-24 rotate-[100deg] text-ink/85 md:block" />
+      <div className="container-page grid items-end gap-8 py-16 sm:py-20 lg:grid-cols-[1fr_auto] lg:py-24">
         <div>
-          <h2 id="cta-title" className="text-3xl leading-[1.05] font-extrabold sm:text-5xl">
-            Ți-e foame? <br className="hidden sm:block" />
-            Comandă în două minute.
+          <h2 id="cta-title" className="type-h1">
+            <span className="block">{lineOne}</span>
+            <span className="block">{lineTwo}</span>
           </h2>
-          <p className="mt-4 max-w-md text-muted">
-            Alege din meniu, plătești la livrare sau la ridicare și urmărești comanda în timp real.
-          </p>
-          <div className="mt-7 flex flex-col gap-3 min-[400px]:flex-row">
-            <ButtonLink href="/menu" size="lg">
-              Comandă acum
-            </ButtonLink>
-            <ButtonLink href={siteConfig.phoneHref} size="lg" variant="outline">
-              <Phone className="size-4.5" aria-hidden /> {siteConfig.phone}
-            </ButtonLink>
-          </div>
+          <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink">{t.cta.text}</p>
         </div>
-        <div className="relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-full ring-8 ring-ivory md:max-w-sm">
-          <Image
-            src="/images/products/classic-fries/main.webp"
-            alt="Cartofi prăjiți crocanți într-un bol"
-            fill
-            sizes="(min-width: 768px) 384px, 320px"
-            className="object-cover"
-          />
+        <div className="flex flex-col gap-3 min-[420px]:flex-row lg:flex-col xl:flex-row">
+          <ButtonLink href={href("/menu")} size="lg" variant="dark">
+            {t.cta.primary}
+            <ArrowRight className="size-4.5" aria-hidden />
+          </ButtonLink>
+          <ButtonLink href={siteConfig.phoneHref} size="lg" variant="outline">
+            <Phone className="size-4.5" aria-hidden />
+            {siteConfig.phone}
+          </ButtonLink>
         </div>
       </div>
     </section>

@@ -2,22 +2,27 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "dark" | "outline" | "ghost" | "soft";
+type Variant = "primary" | "dark" | "outline" | "light" | "ghost" | "soft";
 type Size = "sm" | "md" | "lg" | "icon";
 
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-xl font-semibold whitespace-nowrap transition-[background-color,color,box-shadow,transform,border-color] duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 select-none";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap select-none " +
+  "transition-[background-color,color,border-color,transform] duration-[var(--duration-base)] ease-[var(--ease-out-brand)] " +
+  "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 [&_svg]:shrink-0";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-white shadow-[0_6px_16px_-6px_rgb(199_51_21/0.5)] hover:bg-accent-hover",
-  dark: "bg-ink text-white hover:bg-ink-soft",
-  outline: "border border-line bg-ivory text-ink hover:border-ink/25 hover:bg-white",
+  // Orange with dark text: 5.1:1 contrast (white on this orange would fail AA).
+  primary: "bg-accent text-ink hover:bg-accent-hover",
+  dark: "bg-ink text-on-dark hover:bg-graphite-soft",
+  outline: "border-[1.5px] border-ink/85 text-ink hover:bg-ink hover:text-on-dark",
+  // For dark sections.
+  light: "bg-cream text-ink hover:bg-paper",
   ghost: "text-ink hover:bg-sand",
   soft: "bg-sand text-ink hover:bg-oat",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-sm",
+  sm: "h-9 px-4 text-sm",
   md: "h-11 px-5 text-[0.9375rem]",
   lg: "h-13 px-7 text-base",
   icon: "size-11",

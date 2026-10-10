@@ -1,11 +1,14 @@
 "use client";
 
-import { Check, ShoppingBag } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cartActions } from "@/components/cart/cart-store";
 import { QuantityStepper } from "@/components/cart/quantity-stepper";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
+import { optionName } from "@/lib/i18n/catalog";
+import { fill } from "@/lib/i18n/config";
 import { cn } from "@/lib/utils";
 import type { ProductOptionView } from "@/types/catalog";
 
@@ -21,14 +24,15 @@ export function ProductConfigurator({
     options: ProductOptionView[];
   };
 }) {
+  const { locale, t } = useI18n();
   const [selected, setSelected] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
     if (!added) return;
-    const t = window.setTimeout(() => setAdded(false), 1600);
-    return () => window.clearTimeout(t);
+    const timer = window.setTimeout(() => setAdded(false), 1600);
+    return () => window.clearTimeout(timer);
   }, [added]);
 
   const chosen = product.options.filter((o) => selected.includes(o.id));
@@ -47,6 +51,7 @@ export function ProductConfigurator({
         name: product.name,
         image: product.image,
         basePrice: product.price,
+        // Stored with the canonical (Romanian) name; displayed translated.
         options: chosen.map((o) => ({ id: o.id, name: o.name, price: o.price })),
       },
       quantity,
@@ -58,10 +63,10 @@ export function ProductConfigurator({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {product.options.length > 0 && (
         <fieldset>
-          <legend className="mb-3 text-sm font-bold tracking-wider text-ink uppercase">Extra-uri și opțiuni</legend>
+          <legend className="type-eyebrow mb-3 text-ink">{t.product.extras}</legend>
           <ul className="grid gap-2 sm:grid-cols-2">
             {product.options.map((option) => {
               const checked = selected.includes(option.id);
@@ -69,19 +74,24 @@ export function ProductConfigurator({
                 <li key={option.id}>
                   <label
                     className={cn(
-                      "flex min-h-13 cursor-pointer items-center gap-3 rounded-xl border bg-white px-3.5 py-2.5 transition-colors",
-                      checked ? "border-accent bg-accent-soft/50" : "border-line hover:border-ink/20",
+                      "flex min-h-14 cursor-pointer items-center gap-3 rounded-[var(--radius-sm)] border-[1.5px] px-3.5 py-2.5 transition-colors duration-[var(--duration-fast)]",
+                      "has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-accent/25",
+                      checked ? "border-ink bg-paper" : "border-line hover:border-ink/35",
                     )}
                   >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggle(option.id)}
-                      className="size-5 shrink-0 cursor-pointer accent-accent"
-                    />
-                    <span className="flex-1 text-sm font-semibold">{option.name}</span>
-                    <span className="text-sm font-semibold text-muted tabular-nums">
-                      {option.price > 0 ? `+${formatPrice(option.price)}` : "gratuit"}
+                    <input type="checkbox" checked={checked} onChange={() => toggle(option.id)} className="peer sr-only" />
+                    <span
+                      className={cn(
+                        "grid size-5 shrink-0 place-items-center rounded-[0.3rem] border-[1.5px] transition-colors",
+                        checked ? "border-accent bg-accent text-ink" : "border-oat bg-paper",
+                      )}
+                      aria-hidden
+                    >
+                      {checked && <Check className="size-3.5" strokeWidth={3} />}
+                    </span>
+                    <span className="flex-1 text-sm font-semibold">{optionName(option.name, t.options)}</span>
+                    <span className="text-sm text-muted tabular-nums">
+                      {option.price > 0 ? `+${formatPrice(option.price, locale)}` : t.product.optionFree}
                     </span>
                   </label>
                 </li>
@@ -91,25 +101,25 @@ export function ProductConfigurator({
         </fieldset>
       )}
 
-      <div className="rounded-2xl bg-white p-4 ring-1 ring-line sm:p-5">
+      <div className="rounded-[var(--radius-card)] bg-ink p-4 text-on-dark sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <QuantityStepper value={quantity} onChange={setQuantity} label={product.name} />
+          <QuantityStepper value={quantity} onChange={setQuantity} label={product.name} tone="dark" />
           <div className="text-right">
-            <p className="text-xs font-semibold text-muted">Total</p>
-            <p className="font-display text-3xl font-extrabold tabular-nums" aria-live="polite">
-              {formatPrice(total)}
+            <p className="text-xs font-semibold text-muted-on-dark">{t.common.total}</p>
+            <p className="font-display text-3xl leading-none font-semibold text-flame tabular-nums" aria-live="polite">
+              {formatPrice(total, locale)}
             </p>
           </div>
         </div>
         <Button
           size="lg"
-          variant={added ? "dark" : "primary"}
+          variant={added ? "light" : "primary"}
           onClick={addToCart}
           className="mt-4 w-full px-4 whitespace-normal"
         >
-          {added ? <Check className="size-5" aria-hidden /> : <ShoppingBag className="size-5" aria-hidden />}
+          {added ? <Check className="size-5" aria-hidden /> : <Plus className="size-5" aria-hidden strokeWidth={2.5} />}
           <span aria-live="polite">
-            {added ? "Adăugat în coș" : `Adaugă în coș · ${formatPrice(total)}`}
+            {added ? t.product.addedToCart : fill(t.product.addWithTotal, { total: formatPrice(total, locale) })}
           </span>
         </Button>
       </div>

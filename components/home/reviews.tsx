@@ -1,10 +1,10 @@
-import { Quote } from "lucide-react";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { Spark } from "@/components/ui/brand";
 import { Stars } from "@/components/ui/stars";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatNumber } from "@/lib/format";
+import { fill } from "@/lib/i18n/config";
+import { getI18n } from "@/lib/i18n/server";
+import { cn } from "@/lib/utils";
 import type { Review } from "@/types/catalog";
-
-const AVATAR_TONES = ["bg-accent-soft text-accent", "bg-mustard-soft text-[#8a5a00]", "bg-herb-soft text-herb"];
 
 function initials(name: string) {
   return name
@@ -15,45 +15,81 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-export function Reviews({ reviews }: { reviews: Review[] }) {
+/**
+ * Real reviews from the database. Layout: the average score as a large figure on the left,
+ * quotes flowing in columns on the right — no carousel, nothing hidden.
+ */
+export async function Reviews({ reviews }: { reviews: Review[] }) {
+  const { locale, t } = await getI18n();
   if (reviews.length === 0) return null;
   const average = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
 
   return (
-    <section aria-labelledby="reviews-title" className="container-page py-14 sm:py-20">
-      <SectionHeading
-        id="reviews-title"
-        eyebrow="Recenzii"
-        title="Ce spun clienții noștri"
-        description={`Nota medie ${average.toLocaleString("ro-RO", { maximumFractionDigits: 1 })} din 5, din recenzii verificate după livrare.`}
-      />
-      <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {reviews.map((review, i) => (
-          <li key={review.id} className="reveal">
-            <figure className="flex h-full flex-col rounded-2xl bg-white p-5 ring-1 ring-line/70 sm:p-6">
-              <div className="flex items-center justify-between">
-                <Stars rating={review.rating} />
-                <Quote className="size-6 text-oat" aria-hidden />
-              </div>
-              <blockquote className="mt-4 flex-1 leading-relaxed text-ink-soft">„{review.text}”</blockquote>
-              <figcaption className="mt-5 flex items-center gap-3">
-                <span
-                  className={`grid size-10 place-items-center rounded-full text-sm font-bold ${AVATAR_TONES[i % AVATAR_TONES.length]}`}
-                  aria-hidden
-                >
-                  {initials(review.name)}
-                </span>
-                <span>
-                  <span className="block font-semibold">{review.name}</span>
-                  <time dateTime={review.createdAt.toISOString()} className="text-xs text-muted">
-                    {formatDate(review.createdAt)}
-                  </time>
-                </span>
-              </figcaption>
-            </figure>
-          </li>
-        ))}
-      </ul>
+    <section aria-labelledby="reviews-title" className="bg-sand">
+      <div className="container-page section-y grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-16">
+        <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:self-start">
+          <h2 id="reviews-title" className="type-h2 flex items-start gap-3">
+            <Spark className="mt-[0.12em] size-[0.62em] shrink-0 text-accent" />
+            {t.reviews.title}
+          </h2>
+          <p className="mt-6 flex items-end gap-3">
+            <span className="font-display text-[5.5rem] leading-[0.8] font-semibold tabular-nums">
+              {formatNumber(average, locale)}
+            </span>
+            <span className="pb-1">
+              <Stars rating={Math.round(average)} label={fill(t.reviews.stars, { rating: formatNumber(average, locale) })} />
+              <span className="mt-1 block text-sm text-muted">/ 5</span>
+            </span>
+          </p>
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
+            {fill(t.reviews.lead, { average: formatNumber(average, locale) })}
+          </p>
+          {t.reviews.originalLanguage && (
+            <p className="mt-2 max-w-xs text-xs text-muted">{t.reviews.originalLanguage}</p>
+          )}
+        </div>
+
+        <ul className="columns-1 gap-4 md:columns-2 [&>li]:mb-4 [&>li]:break-inside-avoid">
+          {reviews.map((review, i) => (
+            <li key={review.id} className="reveal">
+              <figure
+                className={cn(
+                  "rounded-[var(--radius-card)] p-6 sm:p-7",
+                  i % 3 === 0 ? "bg-ink text-on-dark" : "bg-ivory",
+                )}
+              >
+                <Stars
+                  rating={review.rating}
+                  label={fill(t.reviews.stars, { rating: review.rating })}
+                />
+                <blockquote lang="ro" className={cn("mt-4 text-[1.0625rem] leading-relaxed", i % 3 === 0 ? "text-on-dark" : "text-ink-soft")}>
+                  “{review.text}”
+                </blockquote>
+                <figcaption className="mt-6 flex items-center gap-3">
+                  <span
+                    className={cn(
+                      "grid size-10 place-items-center rounded-full text-sm font-bold",
+                      i % 3 === 0 ? "bg-accent text-ink" : "bg-sand text-ink",
+                    )}
+                    aria-hidden
+                  >
+                    {initials(review.name)}
+                  </span>
+                  <span>
+                    <span className="block font-semibold">{review.name}</span>
+                    <time
+                      dateTime={review.createdAt.toISOString()}
+                      className={cn("text-xs", i % 3 === 0 ? "text-muted-on-dark" : "text-muted")}
+                    >
+                      {formatDate(review.createdAt, locale)}
+                    </time>
+                  </span>
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }
