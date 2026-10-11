@@ -11,13 +11,15 @@ const base =
   "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 [&_svg]:shrink-0";
 
 const variants: Record<Variant, string> = {
-  // Orange with dark text: 5.1:1 contrast (white on this orange would fail AA).
-  primary: "bg-accent text-ink hover:bg-accent-hover",
-  dark: "bg-ink text-on-dark hover:bg-graphite-soft",
-  outline: "border-[1.5px] border-ink/85 text-ink hover:bg-ink hover:text-on-dark",
+  // Orange with dark text (on-accent): 5.1:1 contrast (white on this orange would fail AA).
+  primary: "bg-accent text-on-accent hover:bg-accent-hover",
+  // Inverted fill: graphite in the light theme, near-white in the dark one.
+  dark: "bg-ink text-on-ink hover:bg-ink-soft",
+  outline: "border-[1.5px] border-ink/85 text-ink hover:bg-ink hover:text-on-ink",
   // For dark sections.
   "outline-light": "border-[1.5px] border-on-dark/35 text-on-dark hover:border-on-dark hover:bg-on-dark/5",
-  light: "bg-cream text-ink hover:bg-paper",
+  // Light pill on the always-dark blocks (both themes).
+  light: "bg-on-dark text-graphite hover:bg-on-dark/85",
   ghost: "text-ink hover:bg-sand",
   soft: "bg-sand text-ink hover:bg-oat",
 };

@@ -47,7 +47,7 @@ export async function Hits({ products }: { products: ProductCardData[] }) {
                 className="group flex w-full flex-col justify-between gap-6 rounded-[var(--radius-card)] border border-line-dark p-5 transition-colors hover:border-flame focus-visible:border-flame sm:p-6"
               >
                 <span className="font-display text-lg leading-tight font-extrabold tracking-[-0.02em] sm:text-xl lg:text-2xl">{t.hits.viewAll}</span>
-                <span className="grid size-11 place-items-center rounded-full border-[1.5px] border-on-dark/40 transition-[translate,border-color,background-color] duration-[var(--duration-base)] group-hover:translate-x-1 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+                <span className="grid size-11 place-items-center rounded-full border-[1.5px] border-on-dark/40 transition-[translate,border-color,background-color] duration-[var(--duration-base)] group-hover:translate-x-1 group-hover:border-accent group-hover:bg-accent group-hover:text-on-accent">
                   <ArrowRight className="size-5" aria-hidden />
                 </span>
               </Link>

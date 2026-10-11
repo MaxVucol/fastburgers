@@ -83,7 +83,7 @@ export function ProductConfigurator({
                     <span
                       className={cn(
                         "grid size-5 shrink-0 place-items-center rounded-[0.3rem] border-[1.5px] transition-colors",
-                        checked ? "border-accent bg-accent text-ink" : "border-oat bg-paper",
+                        checked ? "border-accent bg-accent text-on-accent" : "border-oat bg-paper",
                       )}
                       aria-hidden
                     >
@@ -101,7 +101,7 @@ export function ProductConfigurator({
         </fieldset>
       )}
 
-      <div className="rounded-[var(--radius-card)] bg-ink p-4 text-on-dark sm:p-5">
+      <div className="rounded-[var(--radius-card)] bg-graphite p-4 text-on-dark sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <QuantityStepper value={quantity} onChange={setQuantity} label={product.name} tone="dark" />
           <div className="text-right">
@@ -118,10 +118,12 @@ export function ProductConfigurator({
           className="mt-4 w-full px-4 whitespace-normal"
         >
           {added ? <Check className="size-5" aria-hidden /> : <Plus className="size-5" aria-hidden strokeWidth={2.5} />}
-          <span aria-live="polite">
-            {added ? t.product.addedToCart : fill(t.product.addWithTotal, { total: formatPrice(total, locale) })}
-          </span>
+          <span>{added ? t.product.addedToCart : fill(t.product.addWithTotal, { total: formatPrice(total, locale) })}</span>
         </Button>
+        {/* Announces only the confirmation; the new total is announced by the total above. */}
+        <span className="sr-only" aria-live="polite">
+          {added ? t.product.addedToCart : ""}
+        </span>
       </div>
     </div>
   );

@@ -73,7 +73,7 @@ export async function PromoBanner({ product }: { product: ProductCardData }) {
             />
           </div>
           {discount && (
-            <p className="absolute top-[34%] left-[3%] -rotate-6 rounded-xl bg-accent px-3.5 py-1.5 text-center font-display text-xl leading-none font-extrabold tracking-[-0.03em] text-ink shadow-[var(--shadow-lift)] sm:text-2xl">
+            <p className="absolute top-[34%] left-[3%] -rotate-6 rounded-xl bg-accent px-3.5 py-1.5 text-center font-display text-xl leading-none font-extrabold tracking-[-0.03em] text-on-accent shadow-[var(--shadow-lift)] sm:text-2xl">
               −{discount}%<span className="sr-only"> {t.promo.badge}</span>
             </p>
           )}

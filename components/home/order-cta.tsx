@@ -17,7 +17,7 @@ export async function OrderCta() {
   return (
     <section
       aria-labelledby="cta-title"
-      className="bg-[linear-gradient(100deg,var(--color-cream)_25%,#ffd2b9)] text-ink"
+      className="bg-[linear-gradient(100deg,var(--color-cream)_25%,var(--color-peach))] text-ink"
     >
       <div className="container-page grid items-center gap-x-10 gap-y-5 py-12 sm:py-14 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:py-16">
         <p className="type-script -rotate-3 text-[1.75rem] text-accent-ink sm:text-[2.25rem]">{t.cta.note}</p>
@@ -29,7 +29,7 @@ export async function OrderCta() {
             {words.join(" ")}
             {last && <span className="text-accent-ink"> {last}</span>}
             {/* Inline, so it stays on the last line however the phrase wraps. */}
-            <span className="ml-[0.25em] inline-grid size-[0.62em] place-items-center rounded-full bg-accent align-[-0.06em] text-ink transition-transform duration-[var(--duration-base)] group-hover:translate-x-1">
+            <span className="ml-[0.25em] inline-grid size-[0.62em] place-items-center rounded-full bg-accent align-[-0.06em] text-on-accent transition-transform duration-[var(--duration-base)] group-hover:translate-x-1">
               <ArrowRight className="size-[0.4em]" aria-hidden strokeWidth={2.4} />
             </span>
           </Link>

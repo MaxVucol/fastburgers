@@ -33,7 +33,7 @@ export function MobileMenu() {
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
         }}
-        className="drawer-left fixed inset-y-0 right-auto left-0 m-0 h-dvh max-h-dvh w-full max-w-md bg-ink p-0 text-on-dark"
+        className="drawer-left fixed inset-y-0 right-auto left-0 m-0 h-dvh max-h-dvh w-full max-w-md bg-graphite p-0 text-on-dark"
       >
         <div className="flex h-full flex-col">
           <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line-dark px-5">
@@ -102,7 +102,7 @@ export function MobileMenu() {
             <Link
               href={href("/menu")}
               onClick={close}
-              className="mt-7 flex h-13 items-center justify-center gap-2 rounded-full bg-accent font-semibold text-ink hover:bg-accent-hover"
+              className="mt-7 flex h-13 items-center justify-center gap-2 rounded-full bg-accent font-semibold text-on-accent hover:bg-accent-hover"
             >
               {t.common.orderNow}
               <ArrowRight className="size-4" aria-hidden />

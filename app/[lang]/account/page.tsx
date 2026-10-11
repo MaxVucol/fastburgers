@@ -37,7 +37,7 @@ export default async function AccountPage() {
         </section>
 
         <aside className="flex flex-col gap-4">
-          <div className="rounded-[var(--radius-card)] bg-ink p-6 text-on-dark sm:p-7">
+          <div className="rounded-[var(--radius-card)] bg-graphite p-6 text-on-dark sm:p-7">
             <h2 className="font-display text-xl font-extrabold tracking-[-0.02em]">{t.account.helpTitle}</h2>
             <p className="mt-1 text-sm text-muted-on-dark">{t.account.helpText}</p>
             <a href={siteConfig.phoneHref} className="mt-4 inline-block font-display text-3xl font-semibold text-flame hover:underline">

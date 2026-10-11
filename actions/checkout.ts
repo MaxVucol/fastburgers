@@ -1,22 +1,31 @@
 "use server";
 
+import { headers } from "next/headers";
+import { clientIp } from "@/lib/client-ip";
 import { formatPrice } from "@/lib/format";
 import { defaultLocale, fill, isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { CHECKOUT_ERROR_KEYS, checkoutSchema, type CheckoutErrorKey } from "@/lib/validation/checkout";
 import { toFieldErrors, type ActionResult, type FieldErrors } from "@/lib/validation/common";
-import { createOrder, OrderError } from "@/services/orders";
+import { createOrder, OrderError, type PriceUpdate, type UnavailableItem } from "@/services/orders";
+
+export type CheckoutResult =
+  | ActionResult<{ number: string }>
+  | { ok: false; error: string; prices?: PriceUpdate[]; unavailable?: UnavailableItem[] };
 
 function isCheckoutKey(value: string | undefined): value is CheckoutErrorKey {
   return value != null && (CHECKOUT_ERROR_KEYS as readonly string[]).includes(value);
 }
+
+/** Orders are tagged as demo orders unless ORDER_MODE=live (see .env.example). */
+const isDemo = () => process.env.ORDER_MODE?.trim() !== "live";
 
 /**
  * Places an order. Input comes from the browser, so it is treated as untrusted:
  * it is validated with zod and every price is recomputed from the database.
  * `locale` only selects the language of the error messages.
  */
-export async function placeOrder(input: unknown, locale?: string): Promise<ActionResult<{ number: string }>> {
+export async function placeOrder(input: unknown, locale?: string): Promise<CheckoutResult> {
   const lang = isLocale(locale) ? locale : defaultLocale;
   const t = getDictionary(lang);
 
@@ -30,13 +39,17 @@ export async function placeOrder(input: unknown, locale?: string): Promise<Actio
   }
 
   try {
-    const order = await createOrder(parsed.data);
+    const order = await createOrder(parsed.data, {
+      idempotencyKey: parsed.data.idempotencyKey,
+      ip: clientIp(await headers()),
+      demo: isDemo(),
+    });
     return { ok: true, data: { number: order.number } };
   } catch (error) {
     if (error instanceof OrderError) {
       const params = { ...error.params };
       if (typeof params.min === "number") params.min = formatPrice(params.min, lang);
-      return { ok: false, error: fill(t.errors[error.code], params) };
+      return { ok: false, error: fill(t.errors[error.code], params), ...error.detail };
     }
     console.error("placeOrder failed", error);
     return { ok: false, error: t.errors.unexpected };

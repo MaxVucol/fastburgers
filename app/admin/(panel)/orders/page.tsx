@@ -47,7 +47,10 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                   href={`/admin/orders/${o.id}`}
                   className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-4 hover:bg-cream md:grid-cols-[8.5rem_1fr_10rem_7rem_6.5rem]"
                 >
-                  <span className="font-mono text-sm font-semibold">{o.number}</span>
+                  <span className="font-mono text-sm font-semibold">
+                    {o.number}
+                    {o.demo && <span className="ml-2 rounded-full bg-sand px-2 py-0.5 font-sans text-[0.6875rem] font-semibold text-muted">demo</span>}
+                  </span>
                   <span className="text-right md:order-last">
                     <span className="font-semibold tabular-nums">{formatPrice(o.total)}</span>
                   </span>

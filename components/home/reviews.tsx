@@ -58,7 +58,7 @@ export async function Reviews({ reviews }: { reviews: Review[] }) {
               <figure
                 className={cn(
                   "rounded-[var(--radius-card)] p-6 sm:p-7",
-                  i % 3 === 0 ? "bg-ink text-on-dark" : "border border-line bg-paper",
+                  i % 3 === 0 ? "bg-graphite text-on-dark" : "border border-line bg-paper",
                 )}
               >
                 <Stars
@@ -72,7 +72,7 @@ export async function Reviews({ reviews }: { reviews: Review[] }) {
                   <span
                     className={cn(
                       "grid size-10 place-items-center rounded-full text-sm font-bold",
-                      i % 3 === 0 ? "bg-accent text-ink" : "bg-sand text-ink",
+                      i % 3 === 0 ? "bg-accent text-on-accent" : "bg-sand text-ink",
                     )}
                     aria-hidden
                   >

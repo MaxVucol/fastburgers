@@ -60,7 +60,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section aria-label={t.about.statsLabel} className="bg-ink text-on-dark">
+      <section aria-label={t.about.statsLabel} className="bg-graphite text-on-dark">
         <dl className="container-page grid grid-cols-2 lg:grid-cols-4">
           {t.about.stats.map((s, i) => (
             <div

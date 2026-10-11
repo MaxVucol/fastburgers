@@ -22,7 +22,7 @@ export default function GlobalNotFound() {
         <p className="mt-2 text-muted">Эту страницу уже съели. · This page has been eaten.</p>
         <Link
           href="/"
-          className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-7 font-semibold text-ink hover:bg-accent-hover"
+          className="mt-8 inline-flex h-12 items-center rounded-full bg-accent px-7 font-semibold text-on-accent hover:bg-accent-hover"
         >
           BUNIQ
         </Link>

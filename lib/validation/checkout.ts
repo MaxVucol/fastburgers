@@ -17,6 +17,8 @@ export const checkoutItemSchema = z.object({
   productId: objectIdSchema,
   quantity: z.number().int().min(1).max(MAX_ITEM_QUANTITY),
   optionIds: z.array(objectIdSchema).max(12),
+  /** Unit price (bani) the customer was shown; only compared with the server price, never charged. */
+  unitPrice: z.number().int().min(0).max(10_000_000).optional(),
 });
 
 export const checkoutSchema = z
@@ -30,6 +32,8 @@ export const checkoutSchema = z
     paymentMethod: z.enum(["CASH", "CARD_ON_DELIVERY", "CARD_ONLINE"]),
     notes: z.string().trim().max(500, "notes").optional().default(""),
     items: z.array(checkoutItemSchema).min(1, "cartEmpty").max(50),
+    /** Random id of this checkout attempt (crypto.randomUUID in the browser). */
+    idempotencyKey: z.string().regex(/^[A-Za-z0-9_-]{16,64}$/).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.deliveryMethod === "DELIVERY" && data.deliveryAddress.length < 8) {

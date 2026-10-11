@@ -146,11 +146,27 @@ model Order {
   deliveryFee     Int
   total           Int
   notes           String?
+  /// Placed while the site runs as a demo (ORDER_MODE ≠ "live"); unset on older orders.
+  demo            Boolean?
   items           OrderItem[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
   @@index([status, createdAt])
+  @@index([createdAt])
+}
+
+/// One checkout attempt that created an order. The unique key makes retries of the same attempt
+/// (lost response, timeout, second tab) return that order instead of creating another one.
+model OrderRequest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// Random id generated in the browser for one attempt.
+  key         String   @unique
+  /// Hash of what was ordered; a replay must match it.
+  fingerprint String
+  orderId     String   @db.ObjectId
+  createdAt   DateTime @default(now())
+
   @@index([createdAt])
 }
 

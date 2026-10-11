@@ -100,6 +100,15 @@ export function lineKey(productId: string, options: CartOption[]) {
   return [productId, ...options.map((o) => o.id).sort()].join(":");
 }
 
+/**
+ * Accessible name of a cart line: the dish plus its extras, so two lines of the same dish
+ * (with and without extras) get distinct "remove" / quantity button names.
+ * `optionLabel` translates the stored (canonical) option names.
+ */
+export function lineLabel(line: Pick<CartLine, "name" | "options">, optionLabel: (name: string) => string) {
+  return line.options.length > 0 ? `${line.name} (+ ${line.options.map((o) => optionLabel(o.name)).join(", ")})` : line.name;
+}
+
 export function lineUnitPrice(line: Pick<CartLine, "basePrice" | "options">) {
   return line.basePrice + line.options.reduce((sum, o) => sum + o.price, 0);
 }
@@ -123,6 +132,41 @@ export const cartActions = {
         ? state.lines.filter((l) => l.key !== key)
         : state.lines.map((l) => (l.key === key ? { ...l, quantity: q } : l));
     setState({ lines });
+  },
+  /** Updates line prices from the server's current ones (after a "prices changed" checkout answer). */
+  reprice(updates: { productId: string; price: number; options: { id: string; price: number }[] }[]) {
+    const byId = new Map(updates.map((u) => [u.productId, u]));
+    const lines = state.lines.map((l) => {
+      const u = byId.get(l.productId);
+      if (!u) return l;
+      return {
+        ...l,
+        basePrice: u.price,
+        options: l.options.map((o) => ({ ...o, price: u.options.find((x) => x.id === o.id)?.price ?? o.price })),
+      };
+    });
+    setState({ lines });
+  },
+  /**
+   * Removes what the server reported as no longer orderable — whole products, or single options
+   * (the line keeps the dish without them, merged with an identical line if there is one).
+   * Only called when the customer asks for it.
+   */
+  removeUnavailable(items: { productId: string; optionId?: string }[]) {
+    const gone = new Set(items.filter((i) => !i.optionId).map((i) => i.productId));
+    const merged = new Map<string, CartLine>();
+    for (const line of state.lines) {
+      if (gone.has(line.productId)) continue;
+      const drop = new Set(items.filter((i) => i.productId === line.productId && i.optionId).map((i) => i.optionId));
+      const options = drop.size > 0 ? line.options.filter((o) => !drop.has(o.id)) : line.options;
+      const key = lineKey(line.productId, options);
+      const same = merged.get(key);
+      merged.set(
+        key,
+        same ? { ...same, quantity: Math.min(MAX_ITEM_QUANTITY, same.quantity + line.quantity) } : { ...line, key, options },
+      );
+    }
+    setState({ lines: [...merged.values()] });
   },
   remove(key: string) {
     setState({ lines: state.lines.filter((l) => l.key !== key) });

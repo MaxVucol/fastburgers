@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* `dark:` utilities follow the site theme switch, not the OS setting directly. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ═══════════════════════════ BUNIQ design tokens ═══════════════════════════
    Burgers & More: warm cream base, soft graphite (#242424) for text and a few dark
    blocks, one saturated orange for actions, a touch of sage for "fresh" details.
@@ -11,6 +14,14 @@
    - accent-ink on cream 5.2:1, on sand 4.7:1, on white 5.8:1 (small orange text on light)
    - flame on graphite 6.0:1 · accent on graphite 5.5:1 (orange text on dark surfaces)
    - muted-on-dark on graphite 6.3:1 · ink on sage 7.4:1 · sage-ink on sage-soft 5.7:1
+   Two themes share these names: the original light one (below) and Dark Premium
+   (`:root[data-theme="dark"]`, further down), which only swaps values. Semantics:
+   - cream/sand/oat/ivory/paper/line: page surfaces, flip with the theme;
+   - ink/ink-soft/muted/accent-ink: text on those surfaces, flip with the theme;
+   - graphite/night/line-dark/on-dark/muted-on-dark: the always-dark blocks (header,
+     first screen, hits, combo, footer, summaries) — dark in both themes;
+   - on-accent: text on orange (dark in both themes); on-ink: text on an ink-filled
+     (inverted) control — light in the light theme, near-black in the dark one.
    ═══════════════════════════════════════════════════════════════════════════ */
 @theme {
   /* Light surfaces */
@@ -34,6 +45,8 @@
   --color-muted: #615c54;
   --color-on-dark: #f6f3ea;
   --color-muted-on-dark: #aaa49a;
+  --color-on-accent: #242424; /* text on orange fills, both themes */
+  --color-on-ink: #f6f3ea; /* text on ink fills (inverted controls) */
 
   /* Accent — BUNIQ orange. Fills, graphics, large type. */
   --color-accent: #ff6b2e;
@@ -41,6 +54,7 @@
   --color-accent-ink: #b83a0a;
   --color-flame: #ff7a45;
   --color-accent-soft: #ffe7dc;
+  --color-peach: #ffd2b9; /* warm glow of the closing call-to-action band */
 
   /* Sage — secondary, natural accent ("new", fresh, quiet highlights) */
   --color-sage: #a7b8a4;
@@ -94,6 +108,54 @@
   }
 }
 
+/* ═════════════════════════ Dark Premium theme ═════════════════════════
+   Set by the inline script in app/[lang]/layout.tsx (saved choice, else the system theme)
+   and by the header switch. Layered near-blacks instead of pure black: page #0b0d0f,
+   dark blocks #0f1316, cards #151a1e, raised #1c2228; orange stays the one accent.
+   Contrast checked: ink on cream 17.8:1 · muted on cream 8.6:1, on paper 7.7:1, on sand 7.6:1 ·
+   accent-ink on cream 8.4:1, on paper 7.5:1 · on-accent on accent 6.5:1 · flame on graphite 6.8:1 ·
+   sage-ink on sage-soft 8.5:1 · herb on herb-soft 6.4:1.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-cream: #0b0d0f;
+  --color-sand: #161b20;
+  --color-oat: #242b32;
+  --color-ivory: #12161a;
+  --color-paper: #151a1e;
+  --color-line: #262d34;
+
+  --color-ink: #f5f5f3;
+  --color-ink-soft: #d3d7db;
+  --color-muted: #a6adb4;
+  --color-on-ink: #0b0d0f;
+
+  --color-graphite: #151a1e;
+  --color-graphite-soft: #1c2228;
+  --color-line-dark: #283038;
+  --color-night: #0f1316;
+  --color-on-dark: #f5f5f3;
+  --color-muted-on-dark: #a6adb4;
+
+  --color-accent-hover: #ff854a;
+  --color-accent-ink: #ff8a57;
+  --color-accent-soft: #2e1a10;
+  --color-on-accent: #141414;
+  --color-peach: #2c1910;
+
+  --color-sage-soft: #1a231c;
+  --color-sage-ink: #a9c4a3;
+  --color-mustard-soft: #2e2510;
+  --color-herb: #5fb683;
+  --color-herb-soft: #13261a;
+
+  --shadow-soft: 0 1px 0 rgb(0 0 0 / 0.2), 0 12px 28px -20px rgb(0 0 0 / 0.7);
+  --shadow-lift: 0 1px 0 rgb(0 0 0 / 0.25), 0 26px 50px -30px rgb(0 0 0 / 0.85);
+}
+
 /* ───────────────────────── Base ───────────────────────── */
 @layer base {
   :root {
@@ -143,7 +205,7 @@
 
   ::selection {
     background: var(--color-accent);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
   }
 
   dialog {
@@ -151,6 +213,9 @@
   }
   dialog::backdrop {
     background: rgb(36 36 36 / 0.55);
+  }
+  :root[data-theme="dark"] dialog::backdrop {
+    background: rgb(0 0 0 / 0.7);
   }
 }
 
@@ -299,7 +364,9 @@ dialog[open]::backdrop {
 }
 
 /* Home category index: on desktop the photo beside the list follows the hovered or focused row
-   (the first category while none is). Each row carries its own photo, positioned on the panel. */
+   (the first category while none is). Each row carries its own photo, positioned on the panel;
+   the row whose photo is shown is marked active (orange name, filled arrow), so the panel always
+   reads as "this category". The photo settles from a slight zoom as it fades in. */
 .cat-index .cat-photo {
   opacity: 0;
 }
@@ -309,6 +376,39 @@ dialog[open]::backdrop {
 }
 .cat-index:has(li:is(:hover, :focus-within)) li:first-child:not(:hover, :focus-within) .cat-photo {
   opacity: 0;
+}
+@media (width >= 64rem) {
+  .cat-index li:is(:first-child, :hover, :focus-within) .cat-name {
+    color: var(--color-accent-ink);
+    translate: 0.375rem 0;
+  }
+  .cat-index li:is(:first-child, :hover, :focus-within) .cat-arrow {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+  .cat-index:has(li:is(:hover, :focus-within)) li:first-child:not(:hover, :focus-within) .cat-name {
+    color: var(--color-ink);
+    translate: none;
+  }
+  .cat-index:has(li:is(:hover, :focus-within)) li:first-child:not(:hover, :focus-within) .cat-arrow {
+    border-color: var(--color-line);
+    background: transparent;
+    color: var(--color-ink);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cat-index .cat-photo img {
+    scale: 1.04;
+    transition: scale 700ms var(--ease-out-brand);
+  }
+  .cat-index li:first-child .cat-photo img,
+  .cat-index li:is(:hover, :focus-within) .cat-photo img {
+    scale: 1;
+  }
+  .cat-index:has(li:is(:hover, :focus-within)) li:first-child:not(:hover, :focus-within) .cat-photo img {
+    scale: 1.04;
+  }
 }
 
 /* A photo shot on a dark background that should run straight into a dark stage: wide, soft fades

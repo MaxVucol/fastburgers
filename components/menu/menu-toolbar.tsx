@@ -56,7 +56,7 @@ export function MenuToolbar({
   const tab = (active: boolean) =>
     cn(
       "inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
-      active ? "border-accent bg-accent text-ink" : "border-line bg-paper text-ink-soft hover:border-ink/30 hover:text-ink",
+      active ? "border-accent bg-accent text-on-accent" : "border-line bg-paper text-ink-soft hover:border-ink/30 hover:text-ink",
     );
 
   return (
@@ -134,7 +134,7 @@ export function MenuToolbar({
                 onClick={() => navigate({ filter: f })}
                 className={cn(
                   "h-9 shrink-0 rounded-full px-3.5 text-sm font-semibold whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
-                  query.filter === f ? "bg-accent text-ink" : "text-ink-soft hover:bg-sand",
+                  query.filter === f ? "bg-accent text-on-accent" : "text-ink-soft hover:bg-sand",
                 )}
               >
                 {t.menu.filters[f]}

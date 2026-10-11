@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-transform-types --no-warnings --import ./tests/setup/register.mjs --test \"tests/*.test.ts\"",
     "db": "node scripts/dev-db.mjs",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",

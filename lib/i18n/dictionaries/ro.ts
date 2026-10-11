@@ -67,6 +67,7 @@ export const ro = {
     closeMenu: "Închide meniul",
     navigation: "Navigare",
     open: "Deschis zilnic de la 11:00",
+    darkTheme: "Temă întunecată",
   },
 
   search: {
@@ -249,6 +250,8 @@ export const ro = {
   },
 
   checkout: {
+    unavailableItems: "Nu mai pot fi comandate: {items}.",
+    removeUnavailable: "Scoate-le din coș",
     title: "Finalizează comanda",
     loading: "Se încarcă coșul",
     emptyTitle: "Coșul tău este gol",
@@ -304,6 +307,9 @@ export const ro = {
     invalid: "Date invalide",
     productUnavailable: "Un produs din coș nu mai este disponibil. Actualizează coșul și încearcă din nou.",
     optionUnavailable: "O opțiune pentru „{name}” nu mai este disponibilă.",
+    priceChanged: "Prețul unor produse s-a schimbat între timp. Am actualizat totalul: verifică-l și apasă din nou „Plasează comanda”.",
+    tooManyOrders: "Prea multe comenzi într-un timp scurt. Încearcă din nou peste {minutes} min sau sună-ne.",
+    attemptMismatch: "Comanda s-a schimbat față de încercarea anterioară. Reîncarcă pagina și verifică totul înainte de a trimite din nou.",
     minDelivery: "Comanda minimă pentru livrare este {min}.",
     locationUnavailable: "Restaurantul selectat nu este disponibil.",
     onlinePayment: "Plata online nu este încă disponibilă. Alege plata la livrare.",

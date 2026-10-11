@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 type Tone = "accent" | "dark" | "light" | "herb" | "sage";
 
 const tones: Record<Tone, string> = {
-  accent: "bg-accent text-ink",
-  dark: "bg-ink text-on-dark",
+  accent: "bg-accent text-on-accent",
+  dark: "bg-graphite text-on-dark",
   light: "bg-paper text-ink",
-  herb: "bg-herb text-white",
-  sage: "bg-sage text-ink",
+  herb: "bg-herb text-on-ink",
+  sage: "bg-sage text-on-accent",
 };
 
 /** Small pill label on photos and in lists; never interactive. */

@@ -57,7 +57,7 @@ export function ScrollRail({
   }
 
   const button =
-    "grid size-12 place-items-center rounded-full border-[1.5px] border-ink/80 text-ink transition-colors duration-[var(--duration-fast)] hover:bg-ink hover:text-on-dark active:scale-95 disabled:pointer-events-none disabled:opacity-30";
+    "grid size-12 place-items-center rounded-full border-[1.5px] border-ink/80 text-ink transition-colors duration-[var(--duration-fast)] hover:bg-ink hover:text-on-ink active:scale-95 disabled:pointer-events-none disabled:opacity-30";
 
   return (
     <div className={className}>

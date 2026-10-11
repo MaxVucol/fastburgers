@@ -25,7 +25,7 @@ export function CartButton() {
       {filled && (
         <span
           key={bump}
-          className="absolute top-0.5 right-0 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-accent px-1 text-[0.6875rem] leading-none font-bold text-ink tabular-nums ring-2 ring-night"
+          className="absolute top-0.5 right-0 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-accent px-1 text-[0.6875rem] leading-none font-bold text-on-accent tabular-nums ring-2 ring-night"
           aria-hidden
         >
           {count > 99 ? "99+" : count}

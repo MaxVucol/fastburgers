@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { AlertCircle, ArrowRight, Banknote, Bike, CreditCard, Loader2, Lock, ShoppingBag, Store } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { placeOrder } from "@/actions/checkout";
-import { cartActions, lineUnitPrice, useCart, useHydrated } from "@/components/cart/cart-store";
+import { cartActions, lineLabel, lineUnitPrice, useCart, useHydrated } from "@/components/cart/cart-store";
 import { QuantityStepper } from "@/components/cart/quantity-stepper";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -17,9 +17,16 @@ import { fill } from "@/lib/i18n/config";
 import { computeDeliveryFee, FREE_DELIVERY_THRESHOLD, MIN_DELIVERY_ORDER } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import type { FieldErrors } from "@/lib/validation/common";
+import type { UnavailableItem } from "@/services/orders";
 import type { PickupLocation } from "@/types/catalog";
 
 type Delivery = "DELIVERY" | "PICKUP";
+
+/** Random id for one checkout attempt (randomUUID needs a secure context; fall back otherwise). */
+function newAttemptKey(): string {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  return Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join("");
+}
 type Payment = "CASH" | "CARD_ON_DELIVERY" | "CARD_ONLINE";
 
 function ChoiceCard({
@@ -94,6 +101,29 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Bumped when an error without a field to point at comes back: the message gets focus once rendered
+  // (on phones it is far above the order button).
+  const [errorFocus, setErrorFocus] = useState(0);
+
+  useEffect(() => {
+    if (errorFocus > 0) document.getElementById("checkout-error")?.focus();
+  }, [errorFocus]);
+  // What the server could no longer sell, kept so the customer can remove it in one click.
+  const [unavailable, setUnavailable] = useState<UnavailableItem[]>([]);
+
+  // One id per checkout attempt, sent with the order: retrying the same attempt (lost answer, second
+  // click, another tab) can only ever create one order. Any change to what is ordered — items,
+  // quantities, prices (e.g. after "prices changed"), delivery or payment — starts a new attempt.
+  const attemptKey = useRef<string | null>(null);
+  const attemptSignature = JSON.stringify([
+    lines.map((l) => [l.key, l.quantity, lineUnitPrice(l)]),
+    delivery,
+    delivery === "PICKUP" ? locationId : "",
+    payment,
+  ]);
+  useEffect(() => {
+    attemptKey.current = null;
+  }, [attemptSignature]);
 
   const deliveryFee = computeDeliveryFee(delivery, subtotal);
   const total = subtotal + deliveryFee;
@@ -126,7 +156,10 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
     const text = (key: string) => String(data.get(key) ?? "");
 
     setFormError(null);
+    attemptKey.current ??= newAttemptKey();
+    const idempotencyKey = attemptKey.current;
     startTransition(async () => {
+      // A failed request (offline, server down) must not take the filled-in form away.
       const result = await placeOrder(
         {
           customerName: text("customerName"),
@@ -141,21 +174,54 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
             productId: l.productId,
             quantity: l.quantity,
             optionIds: l.options.map((o) => o.id),
+            unitPrice: lineUnitPrice(l),
           })),
+          idempotencyKey,
         },
         locale,
-      );
+      ).catch(() => ({ ok: false as const, error: t.errors.unexpected }));
 
       if (result.ok) {
         cartActions.clear();
         router.push(href(`/order/${result.data.number}?nou=1`));
         return;
       }
-      setErrors(result.fieldErrors ?? {});
-      setFormError(result.error);
-      const firstField = Object.keys(result.fieldErrors ?? {})[0];
+      if ("prices" in result && result.prices) cartActions.reprice(result.prices);
+      const gone = "unavailable" in result ? (result.unavailable ?? []) : [];
+      setUnavailable(gone);
+      const fieldErrors = "fieldErrors" in result ? (result.fieldErrors ?? {}) : {};
+      setErrors(fieldErrors);
+      // Name what can no longer be ordered with the names the customer sees in the cart.
+      const names = unavailableNames(gone);
+      setFormError(names.length > 0 ? fill(t.checkout.unavailableItems, { items: names.join(", ") }) : result.error);
+      // Move to the problem: the first invalid field, else the message.
+      const firstField = Object.keys(fieldErrors)[0];
       if (firstField) document.getElementById(firstField)?.focus();
+      else setErrorFocus((n) => n + 1);
     });
+  }
+
+  function unavailableNames(items: UnavailableItem[]) {
+    const names: string[] = [];
+    for (const item of items) {
+      for (const line of lines) {
+        if (line.productId !== item.productId) continue;
+        if (!item.optionId) {
+          if (!names.includes(line.name)) names.push(line.name);
+          continue;
+        }
+        const option = line.options.find((o) => o.id === item.optionId);
+        const name = option && `${line.name} (+ ${optionName(option.name, t.options)})`;
+        if (name && !names.includes(name)) names.push(name);
+      }
+    }
+    return names;
+  }
+
+  function removeUnavailable() {
+    cartActions.removeUnavailable(unavailable);
+    setUnavailable([]);
+    setFormError(null);
   }
 
   const err = (key: string) => errors[key];
@@ -166,9 +232,16 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
     <form onSubmit={handleSubmit} noValidate className="grid items-start gap-10 lg:grid-cols-[1fr_25rem] xl:grid-cols-[1fr_27rem] xl:gap-14">
       <div className="space-y-10">
         {formError && (
-          <div role="alert" className="flex items-start gap-3 rounded-[var(--radius-sm)] border-l-4 border-accent bg-accent-soft p-4 text-sm font-medium text-ink">
+          <div id="checkout-error" role="alert" tabIndex={-1} className="flex items-start gap-3 rounded-[var(--radius-sm)] border-l-4 border-accent bg-accent-soft p-4 text-sm font-medium text-ink">
             <AlertCircle className="mt-0.5 size-5 shrink-0 text-accent-ink" aria-hidden />
-            {formError}
+            <div className="min-w-0">
+              {formError}
+              {unavailable.length > 0 && (
+                <Button type="button" variant="outline" size="sm" className="mt-3 flex" onClick={removeUnavailable}>
+                  {t.checkout.removeUnavailable}
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
@@ -244,7 +317,7 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
       </div>
 
       <aside
-        className="overflow-hidden rounded-[var(--radius-panel)] bg-ink text-on-dark lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]"
+        className="overflow-hidden rounded-[var(--radius-panel)] bg-graphite text-on-dark lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]"
         aria-labelledby="summary-title"
       >
         <h2 id="summary-title" className="border-b border-line-dark px-5 py-4 font-display text-2xl font-extrabold tracking-[-0.02em] sm:px-6">
@@ -262,7 +335,7 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
                   <p className="text-xs text-muted-on-dark">+ {line.options.map((o) => optionName(o.name, t.options)).join(", ")}</p>
                 )}
                 <div className="mt-2 flex items-center justify-between gap-2">
-                  <QuantityStepper size="sm" tone="dark" min={0} value={line.quantity} label={line.name} onChange={(q) => cartActions.setQuantity(line.key, q)} />
+                  <QuantityStepper size="sm" tone="dark" min={0} value={line.quantity} label={lineLabel(line, (n) => optionName(n, t.options))} onChange={(q) => cartActions.setQuantity(line.key, q)} />
                   <span className="text-sm font-semibold tabular-nums">{price(lineUnitPrice(line) * line.quantity)}</span>
                 </div>
               </div>

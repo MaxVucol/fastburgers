@@ -60,6 +60,7 @@ export const en: Dictionary = {
     closeMenu: "Close menu",
     navigation: "Navigation",
     open: "Open daily from 11:00",
+    darkTheme: "Dark theme",
   },
 
   search: {
@@ -241,6 +242,8 @@ export const en: Dictionary = {
   },
 
   checkout: {
+    unavailableItems: "No longer available: {items}.",
+    removeUnavailable: "Remove from cart",
     title: "Checkout",
     loading: "Loading your cart",
     emptyTitle: "Your cart is empty",
@@ -296,6 +299,9 @@ export const en: Dictionary = {
     invalid: "Invalid details",
     productUnavailable: "An item in your cart is no longer available. Update your cart and try again.",
     optionUnavailable: "An option for “{name}” is no longer available.",
+    priceChanged: "Some prices have changed in the meantime. We have updated your total: check it and place the order again.",
+    tooManyOrders: "Too many orders in a short time. Please try again in {minutes} min or call us.",
+    attemptMismatch: "Your order changed since the previous attempt. Reload the page and check it before sending it again.",
     minDelivery: "The minimum order for delivery is {min}.",
     locationUnavailable: "The selected restaurant is not available.",
     onlinePayment: "Online payment is not available yet. Please choose to pay on delivery.",

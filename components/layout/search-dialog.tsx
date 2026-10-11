@@ -32,7 +32,7 @@ export function SearchDialog({ triggerClassName }: { triggerClassName?: string }
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
         }}
-        className="sheet mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-2xl rounded-[var(--radius-panel)] bg-cream p-0 shadow-[var(--shadow-lift)]"
+        className="sheet mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-2xl rounded-[var(--radius-panel)] bg-cream p-0 shadow-[var(--shadow-lift)] dark:border dark:border-line dark:bg-paper"
       >
         <Form action={href("/menu")} onSubmit={close} className="p-5 sm:p-7">
           <div className="flex items-center gap-3 border-b-2 border-ink pb-2">
@@ -62,7 +62,7 @@ export function SearchDialog({ triggerClassName }: { triggerClassName?: string }
                 <Link
                   href={href(`/menu?q=${encodeURIComponent(s)}`)}
                   onClick={close}
-                  className="group inline-flex items-center gap-1 rounded-[var(--radius-xs)] bg-sand px-3 py-2 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-on-dark"
+                  className="group inline-flex items-center gap-1 rounded-[var(--radius-xs)] bg-sand px-3 py-2 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-on-ink"
                 >
                   {s}
                   <ArrowUpRight className="size-3.5 opacity-50 group-hover:opacity-100" aria-hidden />

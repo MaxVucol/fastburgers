@@ -70,10 +70,10 @@ function NewsPill({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="group flex h-12 items-center justify-between gap-6 rounded-full bg-on-dark pr-1.5 pl-5 text-[0.9375rem] font-semibold text-ink transition-colors hover:bg-paper"
+      className="group flex h-12 items-center justify-between gap-6 rounded-full bg-on-dark pr-1.5 pl-5 text-[0.9375rem] font-semibold text-graphite transition-colors hover:bg-on-dark/85"
     >
       {label}
-      <span className="grid size-9 place-items-center rounded-full bg-accent transition-transform duration-[var(--duration-fast)] group-hover:translate-x-0.5">
+      <span className="grid size-9 place-items-center rounded-full bg-accent text-on-accent transition-transform duration-[var(--duration-fast)] group-hover:translate-x-0.5">
         <ArrowRight className="size-5" aria-hidden />
       </span>
     </Link>
@@ -107,7 +107,7 @@ export async function Footer() {
   ].filter((s) => s.href !== "");
 
   return (
-    <footer className="relative mt-auto overflow-hidden bg-ink text-on-dark">
+    <footer className="relative mt-auto overflow-hidden bg-graphite text-on-dark">
       {/* What's new — there is no newsletter backend, so instead of a sign-up form that would
           go nowhere this links to the menu's real "new" and "on offer" filters. Hidden in the
           menu and the order flow (see NewsSlot). */}
@@ -128,7 +128,7 @@ export async function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={fill(t.footer.social, { name: siteConfig.name, network: s.label })}
-                    className="grid size-10 place-items-center rounded-full border border-line-dark text-on-dark transition-colors duration-[var(--duration-fast)] hover:border-accent hover:bg-accent hover:text-ink"
+                    className="grid size-10 place-items-center rounded-full border border-line-dark text-on-dark transition-colors duration-[var(--duration-fast)] hover:border-accent hover:bg-accent hover:text-on-accent"
                   >
                     {s.icon}
                   </a>

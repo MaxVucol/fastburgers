@@ -74,7 +74,7 @@ async function CategoryContent({ params }: { params: PageProps<"/[lang]/categori
               className={cn(
                 "inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors",
                 c.slug === slug
-                  ? "border-accent bg-accent text-ink"
+                  ? "border-accent bg-accent text-on-accent"
                   : "border-line bg-paper text-ink-soft hover:border-ink/30 hover:text-ink",
               )}
             >

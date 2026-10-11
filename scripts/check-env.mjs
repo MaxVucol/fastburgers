@@ -58,6 +58,13 @@ if (onVercel && !process.env.BLOB_READ_WRITE_TOKEN) {
   );
 }
 
+// Warnings only: they never block a deploy.
+if (onVercel && process.env.VERCEL_ENV === "production" && process.env.ORDER_MODE?.trim() !== "live") {
+  warnings.push('ORDER_MODE is not "live": orders on this deployment are tagged as demo orders.');
+}
+if (onVercel && process.env.VERCEL_ENV === "preview" && process.env.ORDER_MODE?.trim() === "live") {
+  warnings.push('ORDER_MODE is "live" on a Preview deployment: preview orders would look like real ones. Give Preview its own database.');
+}
 if (onVercel && !process.env.NEXT_PUBLIC_SITE_URL) {
   warnings.push("NEXT_PUBLIC_SITE_URL is not set: canonical URLs and the sitemap will use the Vercel production domain.");
 }

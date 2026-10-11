@@ -7,10 +7,11 @@ import { Logo } from "./logo";
 import { MobileMenu } from "./mobile-menu";
 import { NavLinks } from "./nav-links";
 import { SearchDialog } from "./search-dialog";
+import { ThemeToggle } from "./theme-toggle";
 
 /**
  * Phones: menu · centred logo · cart. Desktop: logo · centred navigation · languages,
- * search, cart and the order button. Sticky, near-black like the first screen; the logo uses
+ * theme switch, search, cart and the order button (phones keep the theme switch beside the cart). Sticky, near-black like the first screen; the logo uses
  * its own dark-background variant (`tone="dark"`), the mark itself is unchanged.
  */
 export async function Header() {
@@ -34,6 +35,7 @@ export async function Header() {
             <LanguageSwitcher tone="dark" />
             <span className="h-6 w-px bg-line-dark" aria-hidden />
           </div>
+          <ThemeToggle />
           <SearchDialog triggerClassName="hidden sm:grid" />
           <CartButton />
           {/* Desktop only; the wrapper hides it (the button's own display class would win over `hidden`). */}

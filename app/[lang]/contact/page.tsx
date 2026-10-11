@@ -27,7 +27,7 @@ export default async function ContactPage() {
       <h1 className="type-h1 mt-4 max-w-3xl">{t.contact.title}</h1>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-14">
-        <section aria-labelledby="contact-title" className="rounded-[var(--radius-panel)] bg-ink p-6 text-on-dark sm:p-8">
+        <section aria-labelledby="contact-title" className="rounded-[var(--radius-panel)] bg-graphite p-6 text-on-dark sm:p-8">
           <h2 id="contact-title" className="type-eyebrow text-muted-on-dark">{t.contact.ordersTitle}</h2>
           <a
             href={siteConfig.phoneHref}
@@ -72,7 +72,7 @@ export default async function ContactPage() {
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.address)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-1.5 self-start rounded-full border-[1.5px] border-ink/85 px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-on-dark"
+                  className="group inline-flex items-center gap-1.5 self-start rounded-full border-[1.5px] border-ink/85 px-4 py-2 text-sm font-semibold transition-colors hover:bg-ink hover:text-on-iark"
                 >
                   {t.contact.maps}
                   <ArrowUpRight className="size-4" aria-hidden />

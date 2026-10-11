@@ -11,7 +11,7 @@ import { optionName } from "@/lib/i18n/catalog";
 import { fill } from "@/lib/i18n/config";
 import { richFill } from "@/lib/i18n/rich";
 import { FREE_DELIVERY_THRESHOLD } from "@/lib/pricing";
-import { cartActions, lineUnitPrice, useCart } from "./cart-store";
+import { cartActions, lineLabel, lineUnitPrice, useCart } from "./cart-store";
 import { QuantityStepper } from "./quantity-stepper";
 
 export function CartDrawer() {
@@ -38,7 +38,7 @@ export function CartDrawer() {
       onClick={(e) => {
         if (e.target === e.currentTarget) close();
       }}
-      className="drawer fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-dvh w-full max-w-[28rem] bg-cream p-0 shadow-[var(--shadow-drawer)]"
+      className="drawer fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-dvh w-full max-w-[28rem] bg-cream p-0 shadow-[var(--shadow-drawer)] dark:border-l dark:border-line"
     >
       <div className="flex h-full flex-col">
         <header className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line px-5 sm:px-6">
@@ -116,7 +116,7 @@ export function CartDrawer() {
                         type="button"
                         onClick={() => cartActions.remove(line.key)}
                         className="-mt-1 -mr-2 grid size-8 shrink-0 place-items-center rounded-full text-muted hover:bg-sand hover:text-ink"
-                        aria-label={fill(t.cart.remove, { name: line.name })}
+                        aria-label={fill(t.cart.remove, { name: lineLabel(line, (n) => optionName(n, t.options)) })}
                       >
                         <X className="size-4" aria-hidden />
                       </button>
@@ -131,7 +131,7 @@ export function CartDrawer() {
                         size="sm"
                         min={0}
                         value={line.quantity}
-                        label={line.name}
+                        label={lineLabel(line, (n) => optionName(n, t.options))}
                         onChange={(q) => cartActions.setQuantity(line.key, q)}
                       />
                       <span className="font-semibold tabular-nums">

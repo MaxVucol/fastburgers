@@ -68,7 +68,7 @@ async function OrderDetails({
         <p className="mt-3 text-muted">{fill(t.order.placed, { date: formatDateTime(order.createdAt, locale) })}</p>
       </header>
 
-      <section aria-labelledby="status-title" className="mt-10 rounded-[var(--radius-panel)] bg-ink p-6 text-on-dark sm:p-8">
+      <section aria-labelledby="status-title" className="mt-10 rounded-[var(--radius-panel)] bg-graphite p-6 text-on-dark sm:p-8">
         <h2 id="status-title" className="sr-only">{t.order.status}</h2>
         {cancelled ? (
           <p className="flex items-center gap-3 font-semibold">
@@ -88,7 +88,7 @@ async function OrderDetails({
                   <span
                     className={cn(
                       "grid size-9 shrink-0 place-items-center rounded-full text-sm font-bold",
-                      done ? "bg-accent text-ink" : "border-[1.5px] border-line-dark text-muted-on-dark",
+                      done ? "bg-accent text-on-accent" : "border-[1.5px] border-line-dark text-muted-on-dark",
                       current && "ring-4 ring-accent/30",
                     )}
                   >
