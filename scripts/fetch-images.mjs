@@ -66,14 +66,15 @@ const IMAGES = {
   "products/lemonade/main.webp": "1621263764928-df1444c5e859",
   "products/milkshake/main.webp": "1579954115545-a95591f28bfc",
   // ── Category tiles (each its own shot, never a product photo) ──
-  "categories/burgeri.webp": ["1571091655789-405eb7a3a3a8", { position: "centre" }], // @ilya-mashkov
-  "categories/pizza.webp": ["1541745537411-b8046dc6d66c", { position: "centre" }], // @fatima-akram
-  "categories/chicken.webp": ["1767065703579-bf0b36885349", { position: "centre" }], // @diego-arenas-de-rodrigo
-  "categories/wraps.webp": ["1671572578870-1fcac451899b", { position: "centre" }], // @parker-hilton
-  "categories/cartofi.webp": ["1665117861973-fffa50c1afec", { position: "centre" }], // @wahid-sadiq
-  "categories/combo.webp": ["1631533633021-0a0a3e1ed34b", { position: "centre" }], // @kwon-junho
-  "categories/deserturi.webp": ["1642220618391-72214d19711c", { position: "centre" }], // @tai-s-captures
-  "categories/bauturi.webp": ["1676159434854-2f7f860a18cd", { position: "centre" }], // @hogir-saeed
+  // categories/burgeri.webp is supplied by the project owner, not fetched: their 1448×1086 shot set on a
+  // slightly taller (0.69:1) backdrop, so the burger fills the tall desktop panel like the other category shots.
+  // categories/pizza.webp is supplied by the project owner (1122×1402, converted as is), not fetched.
+  // categories/chicken.webp is supplied by the project owner (1122×1402, converted as is), not fetched.
+  // categories/wraps.webp is supplied by the project owner (1122×1402, converted as is), not fetched.
+  // categories/cartofi.webp is supplied by the project owner (1122×1402, converted as is), not fetched.
+  // categories/combo.webp is supplied by the project owner (1122×1402, converted as is), not fetched.
+  // categories/deserturi.webp is supplied by the project owner (1024×1536, converted as is), not fetched.
+  // categories/bauturi.webp is supplied by the project owner (1024×1536, converted as is), not fetched.
   // ── Campaign ──────────────────────────────────────────────
   // Full width of the original (5000×7336), 0.9:1 so the whole burger fits every panel shape from phones
   // (≈1.1:1) to 1920px desktops (≈1.35:1); 2400px wide covers the 1–2x desktop panel without upscaling.
