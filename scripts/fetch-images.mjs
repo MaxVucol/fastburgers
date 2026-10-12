@@ -33,8 +33,8 @@ const IMAGES = {
   // ── Pizza ─────────────────────────────────────────────────
   "products/margherita/main.webp": "1574071318508-1cdbab80d002",
   "products/pepperoni/main.webp": "1628840042765-356cda07504e",
-  // products/bbq-chicken-pizza/main.webp is a drawn placeholder, not fetched: the only photo found
-  // (1565299624946-b28f40a0ae38) shows pineapple, which this pizza does not have.
+  // products/bbq-chicken-pizza/main.webp is supplied by the project owner (1448×1086, converted as is),
+  // not fetched: the only stock photo found (1565299624946-b28f40a0ae38) shows pineapple.
   "products/four-cheese/main.webp": "1513104890138-7c749659a591",
   // ── Chicken ───────────────────────────────────────────────
   // Close-up of breaded strips around a creamy herb dip — sharp, no third-party packaging in frame.

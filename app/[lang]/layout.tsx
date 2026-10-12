@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { InlineScript } from "@/components/inline-script";
 import { I18nProvider } from "@/components/i18n/i18n-provider";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -55,7 +56,7 @@ export default async function SiteRootLayout({ children }: LayoutProps<"/[lang]"
     // suppressHydrationWarning lets React keep that attribute.
     <html lang={intlLocale[locale]} className={`${fontVariables} h-full antialiased`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <InlineScript html={themeInitScript} />
       </head>
       <body className="flex min-h-full flex-col">
         <I18nProvider locale={locale} dictionary={t}>
