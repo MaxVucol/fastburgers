@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductList } from "@/components/product/product-card";
+import { FavoriteButton } from "@/components/product/favorite-button";
 import { ProductConfigurator } from "@/components/product/product-configurator";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductBadges } from "@/components/ui/badge";
@@ -86,12 +87,17 @@ async function ProductContent({ params }: { params: PageProps<"/[lang]/menu/[slu
               popular={product.popular}
               isNew={product.isNew}
               featured={product.featured}
+              spicy={product.spicy}
+              soldOut={product.soldOut}
               discount={discount}
-              labels={{ isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest }}
+              labels={{ isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest, spicy: t.product.badgeSpicy, soldOut: t.product.soldOut }}
               className="mb-4"
             />
             <p className="type-eyebrow text-muted">{product.categoryName}</p>
-            <h1 className="type-h1 mt-2">{product.name}</h1>
+            <div className="mt-2 flex items-start justify-between gap-4">
+              <h1 className="type-h1">{product.name}</h1>
+              <FavoriteButton productId={product.id} className="mt-1" />
+            </div>
             <Price
               price={product.price}
               oldPrice={product.oldPrice}
@@ -123,6 +129,7 @@ async function ProductContent({ params }: { params: PageProps<"/[lang]/menu/[slu
                   image: product.image,
                   price: product.price,
                   options: product.options,
+                  soldOut: product.soldOut,
                 }}
               />
             </div>

@@ -3,6 +3,7 @@
 import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
+import { audit } from "@/services/audit";
 import { prisma } from "@/lib/prisma";
 import { deleteImage, isUploadedFile, saveImage, UploadError } from "@/lib/storage";
 import { isObjectId } from "@/lib/utils";
@@ -19,7 +20,7 @@ function invalidate() {
 
 
 export async function saveCategory(_prev: CategoryFormState, formData: FormData): Promise<CategoryFormState> {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   const id = String(formData.get("id") ?? "");
   if (id && !isObjectId(id)) return { error: "Categorie invalidă." };
@@ -54,22 +55,25 @@ export async function saveCategory(_prev: CategoryFormState, formData: FormData)
   if (existing) {
     await prisma.category.update({ where: { id: existing.id }, data: { ...parsed.data, image } });
     if (existing.image && existing.image !== image) await deleteImage(existing.image);
+    await audit(admin, "category.update", "category", existing.id, `${parsed.data.name}${parsed.data.active ? "" : " (ascunsă)"}`);
   } else {
     const last = await prisma.category.findFirst({ orderBy: { order: "desc" }, select: { order: true } });
-    await prisma.category.create({ data: { ...parsed.data, image, order: (last?.order ?? -1) + 1 } });
+    const created = await prisma.category.create({ data: { ...parsed.data, image, order: (last?.order ?? -1) + 1 }, select: { id: true } });
+    await audit(admin, "category.create", "category", created.id, parsed.data.name);
   }
   invalidate();
   redirect("/admin/categories?saved=1");
 }
 
 export async function deleteCategory(id: string): Promise<{ error?: string }> {
-  await requireAdmin();
+  const admin = await requireAdmin();
   if (!isObjectId(id)) return { error: "Categorie invalidă." };
   const productCount = await prisma.product.count({ where: { categoryId: id } });
   if (productCount > 0) {
     return { error: `Categoria are ${productCount} produse. Mută-le sau șterge-le întâi.` };
   }
-  const category = await prisma.category.delete({ where: { id }, select: { image: true } });
+  const category = await prisma.category.delete({ where: { id }, select: { image: true, name: true } });
+  await audit(admin, "category.delete", "category", id, category.name);
   if (category.image) await deleteImage(category.image);
   invalidate();
   refresh();
@@ -77,15 +81,16 @@ export async function deleteCategory(id: string): Promise<{ error?: string }> {
 }
 
 export async function setCategoryActive(id: string, active: boolean) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   if (!isObjectId(id) || typeof active !== "boolean") return;
-  await prisma.category.update({ where: { id }, data: { active } });
+  const category = await prisma.category.update({ where: { id }, data: { active }, select: { name: true } });
+  await audit(admin, "category.visibility", "category", id, `${category.name}: ${active ? "vizibilă" : "ascunsă"}`);
   invalidate();
 }
 
 /** Moves a category one position up or down by swapping `order` with its neighbour. */
 export async function moveCategory(id: string, direction: "up" | "down") {
-  await requireAdmin();
+  const admin = await requireAdmin();
   if (!isObjectId(id) || (direction !== "up" && direction !== "down")) return;
 
   const all = await prisma.category.findMany({ orderBy: { order: "asc" }, select: { id: true } });
@@ -96,6 +101,7 @@ export async function moveCategory(id: string, direction: "up" | "down") {
   [all[index], all[target]] = [all[target], all[index]];
   // Normalise to 0..n so gaps from deletions disappear.
   await prisma.$transaction(all.map((c, order) => prisma.category.update({ where: { id: c.id }, data: { order } })));
+  await audit(admin, "category.order", "category", id, direction === "up" ? "mutată mai sus" : "mutată mai jos");
   invalidate();
   refresh();
 }

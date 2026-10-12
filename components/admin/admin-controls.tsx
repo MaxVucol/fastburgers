@@ -2,11 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { ArrowDown, ArrowUp, Loader2, Trash2 } from "lucide-react";
-import type { OrderStatus } from "@prisma/client";
+import type { DeliveryMethod, OrderStatus } from "@prisma/client";
 import { deleteCategory, moveCategory, setCategoryActive } from "@/actions/admin/categories";
 import { updateOrderStatus } from "@/actions/admin/orders";
 import { deleteProduct, setProductFlag } from "@/actions/admin/products";
-import { ORDER_STATUSES, ORDER_STATUS_LABEL } from "@/lib/order-status";
+import { nextStatuses, ORDER_STATUS_LABEL } from "@/lib/order-status";
 import { cn } from "@/lib/utils";
 
 function Switch({
@@ -45,28 +45,44 @@ export function ProductFlagSwitch({
   label,
 }: {
   id: string;
-  flag: "active" | "popular" | "isNew" | "featured";
+  flag: "active" | "popular" | "isNew" | "featured" | "spicy" | "soldOut";
   value: boolean;
   label: string;
 }) {
   const [optimistic, setOptimistic] = useState(value);
   const [prev, setPrev] = useState(value);
+  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   if (value !== prev) {
     setPrev(value);
     setOptimistic(value);
   }
   return (
-    <Switch
-      checked={optimistic}
-      pending={pending}
-      label={label}
-      onToggle={() => {
-        const next = !optimistic;
-        setOptimistic(next);
-        startTransition(() => setProductFlag(id, flag, next));
-      }}
-    />
+    <span className="inline-flex flex-col items-start">
+      <Switch
+        checked={optimistic}
+        pending={pending}
+        label={label}
+        onToggle={() => {
+          const next = !optimistic;
+          setOptimistic(next);
+          setError(null);
+          startTransition(async () => {
+            const result = await setProductFlag(id, flag, next);
+            if (result.error) {
+              // Refused on the server (e.g. publishing a draft): show why and put the switch back.
+              setOptimistic(!next);
+              setError(result.error);
+            }
+          });
+        }}
+      />
+      {error && (
+        <span role="alert" className="mt-1 max-w-48 text-xs font-medium normal-case text-accent-ink">
+          {error}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -112,12 +128,8 @@ export function DeleteButton({
           if (!window.confirm(`Ștergi definitiv „${name}”? Acțiunea nu poate fi anulată.`)) return;
           setError(null);
           startTransition(async () => {
-            if (kind === "product") {
-              await deleteProduct(id);
-            } else {
-              const result = await deleteCategory(id);
-              if (result.error) setError(result.error);
-            }
+            const result = kind === "product" ? await deleteProduct(id) : await deleteCategory(id);
+            if (result.error) setError(result.error);
           });
         }}
         className="grid size-9 place-items-center rounded-lg text-muted hover:bg-accent-soft hover:text-accent-ink disabled:opacity-50"
@@ -149,7 +161,8 @@ export function MoveButtons({ id, isFirst, isLast, name }: { id: string; isFirst
   );
 }
 
-export function OrderStatusSelect({ id, status }: { id: string; status: OrderStatus }) {
+/** Only the transitions allowed from the current status are offered (the server checks them again). */
+export function OrderStatusSelect({ id, status, method }: { id: string; status: OrderStatus; method: DeliveryMethod }) {
   const [value, setValue] = useState<OrderStatus>(status);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -178,14 +191,15 @@ export function OrderStatusSelect({ id, status }: { id: string; status: OrderSta
           }}
           className="h-11 flex-1 cursor-pointer rounded-xl border border-line bg-white px-3 font-semibold focus:border-accent focus:outline-none"
         >
-          {ORDER_STATUSES.map((s) => (
+          {[status, ...nextStatuses(status, method)].map((s) => (
             <option key={s} value={s}>
-              {ORDER_STATUS_LABEL[s]}
+              {s === status ? `${ORDER_STATUS_LABEL[s]} (actual)` : `→ ${ORDER_STATUS_LABEL[s]}`}
             </option>
           ))}
         </select>
         {pending && <Loader2 className="size-5 animate-spin text-muted" aria-label="Se salvează" />}
       </div>
+      {nextStatuses(status, method).length === 0 && <p className="text-xs text-muted">Status final: nu mai poate fi schimbat.</p>}
       {error && <p role="alert" className="text-sm text-accent-ink">{error}</p>}
     </div>
   );

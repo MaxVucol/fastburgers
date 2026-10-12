@@ -89,7 +89,7 @@ export async function PromoBanner({ product }: { product: ProductCardData }) {
             <QuickAddButton
               variant="icon"
               tone="dark"
-              product={{ id: product.id, slug: product.slug, name: product.name, image: product.image, price: product.price }}
+              product={{ id: product.id, slug: product.slug, name: product.name, image: product.image, price: product.price, soldOut: product.soldOut }}
             />
             <Link
               href={href(`/menu/${product.slug}`)}

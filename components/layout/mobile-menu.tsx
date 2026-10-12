@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Form from "next/form";
-import { ArrowRight, Clock, Menu, PackageSearch, Phone, Search, X } from "lucide-react";
+import { ArrowRight, CircleUserRound, Clock, Menu, PackageSearch, Phone, Search, X } from "lucide-react";
 import { useRef } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { siteConfig } from "@/lib/site";
@@ -94,7 +94,14 @@ export function MobileMenu() {
             <Link
               href={href("/account")}
               onClick={close}
-              className="mt-5 flex items-center gap-2.5 text-sm font-semibold text-on-dark hover:text-flame"
+              className="mt-5 flex min-h-11 items-center gap-2.5 text-sm font-semibold text-on-dark hover:text-flame"
+            >
+              <CircleUserRound className="size-5" aria-hidden /> {t.me.link}
+            </Link>
+            <Link
+              href={href("/account")}
+              onClick={close}
+              className="flex min-h-11 items-center gap-2.5 text-sm font-semibold text-on-dark hover:text-flame"
             >
               <PackageSearch className="size-5" aria-hidden /> {t.nav.track}
             </Link>

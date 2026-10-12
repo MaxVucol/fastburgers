@@ -1,20 +1,16 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "@/lib/auth/session";
 import { clientIp } from "@/lib/client-ip";
-import { prisma } from "@/lib/prisma";
 import { consumeAll, RATE_LIMITS, resetLimit } from "@/lib/rate-limit";
 import { loginSchema } from "@/lib/validation/admin";
+import { authenticate } from "@/services/accounts";
 
 export type LoginState = { error?: string; email?: string };
 
-// Constant-time-ish failure path: always run a bcrypt compare so response timing
-// does not reveal whether the email exists.
-const DUMMY_HASH = bcrypt.hashSync("timing-equaliser-not-a-real-password", 12);
-
+/** Staff sign-in (/admin/login): administrators only. */
 export async function login(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const parsed = loginSchema.safeParse({
     email: String(formData.get("email") ?? "").trim().toLowerCase(),
@@ -35,17 +31,11 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: `Prea multe încercări de autentificare. Încearcă din nou peste ${minutes} min.`, email };
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: parsed.data.email },
-    select: { id: true, role: true, passwordHash: true },
-  });
-  const valid = await bcrypt.compare(parsed.data.password, user?.passwordHash ?? DUMMY_HASH);
-  if (!user || !valid || user.role !== "ADMIN") {
-    return { error: "Email sau parolă incorectă.", email };
-  }
+  const user = await authenticate(parsed.data.email, parsed.data.password, ["ADMIN"]);
+  if (!user) return { error: "Email sau parolă incorectă.", email };
 
   await resetLimit(RATE_LIMITS.loginAccount, parsed.data.email);
-  await createSession(user.id, "ADMIN");
+  await createSession(user.id, "ADMIN", user.sessionVersion);
   redirect("/admin");
 }
 

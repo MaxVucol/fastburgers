@@ -26,6 +26,7 @@ const ru: CatalogCopy = {
     combo: { name: "Комбо", description: "Бургер, картофель и напиток по более выгодной цене." },
     deserturi: { name: "Десерты", description: "Печём сами каждое утро." },
     bauturi: { name: "Напитки", description: "Холодные напитки, домашний лимонад и милкшейки." },
+    gustari: { name: "Закуски", description: "Луковые кольца, моцарелла-стики и другие хрустящие закуски, чтобы разделить на компанию." },
   },
   products: {
     "classic-smash": {
@@ -190,6 +191,81 @@ const ru: CatalogCopy = {
         "Ванильное мороженое ручной работы, взбитое с цельным молоком и свежей клубникой, со взбитыми сливками и целой ягодой сверху. 400 мл удовольствия.",
       ingredients: ["Ванильное мороженое", "Цельное молоко", "Клубника", "Взбитые сливки"],
     },
+    "cheeseburger": {
+      short: "Одна смэш-котлета из говядины Ангус, чеддер, маринованные огурцы, лук, кетчуп и горчица.",
+      description: "Самый простой бургер в меню: одна хрустящая смэш-котлета из говядины Ангус, расплавленный чеддер, маринованные огурцы, рубленый белый лук, кетчуп и горчица в обжаренной булочке бриошь.",
+      ingredients: ["Булочка бриошь", "Говядина Ангус 1 × 90 г", "Чеддер", "Маринованные огурцы", "Белый лук", "Кетчуп", "Горчица"],
+    },
+    "mushroom-swiss": {
+      short: "Две смэш-котлеты из говядины, швейцарский сыр, жареные шампиньоны и чесночный майонез.",
+      description: "Две смэш-котлеты из говядины Ангус с расплавленным швейцарским сыром, шампиньонами, обжаренными на сливочном масле с тимьяном, карамелизированным луком и чесночным майонезом в булочке бриошь.",
+      ingredients: ["Булочка бриошь", "Говядина Ангус 2 × 80 г", "Швейцарский сыр", "Шампиньоны", "Карамелизированный лук", "Чесночный майонез"],
+    },
+    "spicy-chicken-burger": {
+      short: "Хрустящее куриное бедро в острой панировке, халапеньо, коул-слоу и майонез чипотле.",
+      description: "Куриное бедро, маринованное в пахте с острым перцем, в пряной панировке, обжаренное до хруста, с халапеньо, коул-слоу и майонезом чипотле в булочке бриошь.",
+      ingredients: ["Булочка бриошь", "Куриное бедро 160 г", "Острая панировка", "Халапеньо", "Коул-слоу", "Майонез чипотле"],
+    },
+    "chicken-nuggets": {
+      short: "Девять кусочков куриной грудки в хрустящей панировке и соус на выбор.",
+      description: "Крупно рубленная куриная грудка в форме наггетсов, в хрустящей панировке, обжаренная до золотистого цвета. Девять штук и соус на выбор.",
+      ingredients: ["Куриная грудка", "Хрустящая панировка", "Соус на выбор"],
+    },
+    "chicken-caesar-wrap": {
+      short: "Курица гриль, салат романо, пармезан, гренки и соус «Цезарь» в тортилье.",
+      description: "Нарезанная куриная грудка гриль, салат романо, тёртый пармезан, гренки и соус «Цезарь», плотно свёрнутые в тёплую пшеничную тортилью.",
+      ingredients: ["Тортилья", "Куриная грудка гриль", "Салат романо", "Пармезан", "Гренки", "Соус «Цезарь»"],
+    },
+    "spicy-chicken-wrap": {
+      short: "Хрустящие полоски курицы в острой панировке, халапеньо, салат, томаты и майонез чипотле.",
+      description: "Хрустящие полоски курицы в острой панировке, салат айсберг, томаты, халапеньо и майонез чипотле, свёрнутые в тёплую тортилью.",
+      ingredients: ["Тортилья", "Полоски курицы в острой панировке", "Салат айсберг", "Томаты", "Халапеньо", "Майонез чипотле"],
+    },
+    "diavola": {
+      short: "Острая салями, моцарелла, томатный соус и масло с чили.",
+      description: "Тесто 48-часовой выдержки, томатный соус, моцарелла и острая салями, а после печи — немного масла с чили.",
+      ingredients: ["Тесто на закваске", "Томатный соус", "Моцарелла", "Острая салями", "Масло с чили"],
+    },
+    "potato-wedges": {
+      short: "Толстые дольки картофеля с кожурой, со специями, запечённые до хруста.",
+      description: "Картофель, нарезанный толстыми дольками с кожурой, с копчёной паприкой и чесноком, обжаренный до хрустящей корочки и мягкий внутри.",
+      ingredients: ["Картофель", "Копчёная паприка", "Гранулированный чеснок", "Соль"],
+    },
+    "onion-rings": {
+      short: "Луковые кольца в хрустящем кляре с соусом BBQ.",
+      description: "Толстые кольца сладкого лука в хрустящем кляре, обжаренные до золотистого цвета. Подаём с соусом BBQ.",
+      ingredients: ["Лук", "Хрустящий кляр", "Соус BBQ"],
+    },
+    "mozzarella-sticks": {
+      short: "Палочки моцареллы в панировке с соусом маринара.",
+      description: "Палочки моцареллы в пряной панировке, обжаренные так, что сыр внутри тянется. Подаём с соусом маринара.",
+      ingredients: ["Моцарелла", "Пряная панировка", "Соус маринара"],
+    },
+    "combo-for-two": {
+      short: "Два Classic Smash, две порции классического картофеля и два напитка по 0,33 л.",
+      description: "Для вечера вдвоём: два бургера Classic Smash, две порции классического картофеля и два напитка по 0,33 л на выбор.",
+      ingredients: ["2 × Classic Smash", "2 × Классический картофель", "2 × Напиток 0,33 л"],
+    },
+    "family-box": {
+      short: "Четыре бургера (2 Classic Smash, 2 Crispy Chicken), четыре порции картофеля и четыре напитка.",
+      description: "Для всей семьи: два Classic Smash, два Crispy Chicken, четыре порции классического картофеля и четыре напитка по 0,33 л на выбор.",
+      ingredients: ["2 × Classic Smash", "2 × Crispy Chicken", "4 × Классический картофель", "4 × Напиток 0,33 л"],
+    },
+    "chocolate-cake": {
+      short: "Кусочек торта с какао-бисквитом, шоколадным кремом и глазурью.",
+      description: "Кусочек торта с какао-бисквитом, кремом из тёмного шоколада и глянцевой глазурью, со свежими ягодами.",
+      ingredients: ["Какао-бисквит", "Крем из тёмного шоколада", "Шоколадная глазурь", "Ягоды"],
+    },
+    "iced-tea": {
+      short: "Домашний чёрный чай холодного заваривания с персиком и лимоном.",
+      description: "Чёрный чай, заваренный холодным способом за ночь, с пюре из персика, лимоном и небольшим количеством сахара. Делаем сами, подаём со льдом.",
+      ingredients: ["Чёрный чай", "Пюре из персика", "Лимон", "Сахар", "Лёд"],
+    },
+    "still-water": {
+      short: "Негазированная минеральная вода, 0,5 л.",
+      description: "Негазированная минеральная вода в бутылке 0,5 л, подаём охлаждённой.",
+      ingredients: ["Минеральная вода без газа 0,5 л"],
+    },
   },
   allergens: {
     Gluten: "Глютен",
@@ -240,6 +316,7 @@ const en: CatalogCopy = {
     combo: { name: "Combos", description: "Burger, fries and a drink, for a better price." },
     deserturi: { name: "Desserts", description: "Baked in-house every morning." },
     bauturi: { name: "Drinks", description: "Cold soft drinks, house lemonade and milkshakes." },
+    gustari: { name: "Snacks", description: "Onion rings, mozzarella sticks and other crunchy snacks to share." },
   },
   products: {
     "classic-smash": {
@@ -403,6 +480,81 @@ const en: CatalogCopy = {
       description:
         "Artisan vanilla ice cream blended with whole milk and fresh strawberries, topped with whipped cream and a whole strawberry. 400 ml of treat.",
       ingredients: ["Vanilla ice cream", "Whole milk", "Strawberries", "Whipped cream"],
+    },
+    "cheeseburger": {
+      short: "One Angus smash patty, cheddar, pickles, onion, ketchup and mustard.",
+      description: "The simplest burger on the menu: one crispy Angus smash patty, melted cheddar, pickles, chopped white onion, ketchup and mustard in a toasted brioche bun.",
+      ingredients: ["Brioche bun", "Angus beef 1 × 90 g", "Cheddar", "Pickles", "White onion", "Ketchup", "Mustard"],
+    },
+    "mushroom-swiss": {
+      short: "Two beef smash patties, Swiss cheese, pan-fried mushrooms and garlic mayo.",
+      description: "Two Angus smash patties with melted Swiss cheese, button mushrooms pan-fried in butter and thyme, caramelised onion and garlic mayo in a brioche bun.",
+      ingredients: ["Brioche bun", "Angus beef 2 × 80 g", "Swiss cheese", "Button mushrooms", "Caramelised onion", "Garlic mayo"],
+    },
+    "spicy-chicken-burger": {
+      short: "Crispy chicken thigh in a spicy coating, jalapeño, slaw and chipotle mayo.",
+      description: "Chicken thigh marinated in buttermilk and chilli, dredged in a spiced coating and fried crisp, with jalapeño, slaw and chipotle mayo in a brioche bun.",
+      ingredients: ["Brioche bun", "Chicken thigh 160 g", "Spicy coating", "Jalapeño", "Coleslaw", "Chipotle mayo"],
+    },
+    "chicken-nuggets": {
+      short: "Nine pieces of chicken breast in a crispy coating, with a dip of your choice.",
+      description: "Coarsely chopped chicken breast shaped into nuggets, coated and fried golden. Nine pieces, served with a dip of your choice.",
+      ingredients: ["Chicken breast", "Crispy coating", "Dip of your choice"],
+    },
+    "chicken-caesar-wrap": {
+      short: "Grilled chicken, romaine, Parmesan, croutons and Caesar dressing in a tortilla.",
+      description: "Sliced grilled chicken breast, romaine lettuce, grated Parmesan, croutons and Caesar dressing, rolled tight in a warm wheat tortilla.",
+      ingredients: ["Tortilla", "Grilled chicken breast", "Romaine lettuce", "Parmesan", "Croutons", "Caesar dressing"],
+    },
+    "spicy-chicken-wrap": {
+      short: "Crispy spicy chicken strips, jalapeño, lettuce, tomato and chipotle mayo.",
+      description: "Crispy chicken strips in a spicy coating, iceberg lettuce, tomato, jalapeño and chipotle mayo, rolled in a warm tortilla.",
+      ingredients: ["Tortilla", "Spicy chicken strips", "Iceberg lettuce", "Tomato", "Jalapeño", "Chipotle mayo"],
+    },
+    "diavola": {
+      short: "Spicy salami, mozzarella, tomato sauce and chilli oil.",
+      description: "48-hour dough, tomato sauce, mozzarella and spicy salami, finished with a drizzle of chilli oil after the oven.",
+      ingredients: ["Sourdough base", "Tomato sauce", "Mozzarella", "Spicy salami", "Chilli oil"],
+    },
+    "potato-wedges": {
+      short: "Thick skin-on potato wedges, seasoned and baked crisp.",
+      description: "Potatoes cut into thick skin-on wedges, seasoned with smoked paprika and garlic, fried crisp outside and soft inside.",
+      ingredients: ["Potatoes", "Smoked paprika", "Granulated garlic", "Salt"],
+    },
+    "onion-rings": {
+      short: "Onion rings in a crispy batter, with BBQ sauce.",
+      description: "Thick rings of sweet onion in a crispy batter, fried golden. Served with BBQ sauce.",
+      ingredients: ["Onion", "Crispy batter", "BBQ sauce"],
+    },
+    "mozzarella-sticks": {
+      short: "Breaded mozzarella sticks with marinara sauce.",
+      description: "Mozzarella sticks in seasoned breadcrumbs, fried until the cheese melts inside. Served with marinara sauce.",
+      ingredients: ["Mozzarella", "Seasoned breadcrumbs", "Marinara sauce"],
+    },
+    "combo-for-two": {
+      short: "Two Classic Smash, two classic fries and two 0.33 l drinks.",
+      description: "For a night in for two: two Classic Smash burgers, two portions of classic fries and two 0.33 l drinks of your choice.",
+      ingredients: ["2 × Classic Smash", "2 × Classic fries", "2 × Drink 0.33 l"],
+    },
+    "family-box": {
+      short: "Four burgers (2 Classic Smash, 2 Crispy Chicken), four fries and four drinks.",
+      description: "For the whole family: two Classic Smash, two Crispy Chicken, four portions of classic fries and four 0.33 l drinks of your choice.",
+      ingredients: ["2 × Classic Smash", "2 × Crispy Chicken", "4 × Classic fries", "4 × Drink 0.33 l"],
+    },
+    "chocolate-cake": {
+      short: "A slice of cake with cocoa sponge, chocolate cream and glaze.",
+      description: "A slice of cake with cocoa sponge, dark chocolate cream and a glossy glaze, with fresh berries.",
+      ingredients: ["Cocoa sponge", "Dark chocolate cream", "Chocolate glaze", "Berries"],
+    },
+    "iced-tea": {
+      short: "House-made cold-brew black tea with peach and lemon.",
+      description: "Black tea cold-brewed overnight with peach purée, lemon and a little sugar. Made in house, served over ice.",
+      ingredients: ["Black tea", "Peach purée", "Lemon", "Sugar", "Ice"],
+    },
+    "still-water": {
+      short: "Still mineral water, 0.5 l.",
+      description: "Still mineral water in a 0.5 l bottle, served cold.",
+      ingredients: ["Still mineral water 0.5 l"],
     },
   },
   allergens: {

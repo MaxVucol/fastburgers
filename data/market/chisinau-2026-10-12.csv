@@ -1,0 +1,57 @@
+restaurant,item,category,price_mdl,size,offer_type,source_type,source_url,checked_at,notes,buniq_slug
+Mozza,Burger Beef,Burgeri,89.00,380 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,,classic-smash
+Mozza,Burger Crispy&Chicken,Burgeri,89.00,395 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,,crispy-chicken
+Mozza,Burger Chicken,Burgeri,89.00,370 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,Pui la grătar: fără echivalent direct BUNIQ,
+Mozza,The Best Wrap Chicken,Wraps,85.00,380 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,,crispy-chicken-wrap
+Mozza,Crispy Chicken Nuggets,Pui,70.00,150 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,,chicken-nuggets
+Mozza,Mozzarella Sticks,Gustări,62.00,140 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,,mozzarella-sticks
+Mozza,Ceapă Crispy,Gustări,35.00,310 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,Gramaj publicat 310 g pentru 35 MDL: neplauzibil față de restul pieței; nelegat,
+Mozza,Cartofi Pai,Cartofi,39.00,110 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,Porție mai mică (110 g) decât Classic Fries (200 g); nelegat,
+Mozza,Cartofi Crocanți,Cartofi,52.00,200 g,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,Același gramaj ca Classic Fries,classic-fries
+Mozza,Pizza Margherita,Pizza,120.00,,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"Preț ""de la"", dimensiunea nu e publicată; nelegat",
+Mozza,Pizza Pepperoni,Pizza,125.00,,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"Preț ""de la"", dimensiunea nu e publicată; nelegat",
+Mozza,Pizza Quattro Formaggi,Pizza,130.00,,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"Preț ""de la"", dimensiunea nu e publicată; nelegat",
+Mozza,Pizza Quattro Salami,Pizza,125.00,,SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"Preț ""de la"", dimensiunea nu e publicată; nelegat",
+Mozza,Burger Beef + Cartofi pai + Coca-Cola,Combo,125.00,,COMBO,RESTAURANT_SITE,https://mozza.md/,2026-10-12,Meniu: burger + cartofi + Coca-Cola,classic-combo
+Mozza,Burger Crispy Chicken + Cartofi pai + Coca-Cola,Combo,120.00,,COMBO,RESTAURANT_SITE,https://mozza.md/,2026-10-12,Meniu: burger + cartofi + Coca-Cola,chicken-combo
+Mozza,Burger Basic (Solo Burger),Combo,170.00,,COMBO,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"1 burger, 1 cartofi, 1 ketchup, 1 Cola",classic-combo
+Mozza,Burger Fest în Trei,Combo,430.00,,COMBO,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"3 burgeri, 3 cartofi, 3 sosuri, 3 Cola: altă componență decât combo-ul pentru doi; nelegat",
+Mozza,Family Burger Box,Combo,570.00,,COMBO,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"4 burgeri, 4 cartofi, 4 sosuri, 4 Cola (cadou)",family-box
+Mozza,"Coca-Cola 0,5",Băuturi,25.00,"0,5 l",SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"0,5 l față de 0,33 l BUNIQ; nelegat",
+Mozza,"Fuzetea 0,5",Băuturi,25.00,"0,5 l",SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,"Ceai rece îmbuteliat, 0,5 l",iced-tea
+Mozza,"Apă Dorna 0,5",Băuturi,20.00,"0,5 l",SINGLE,RESTAURANT_SITE,https://mozza.md/,2026-10-12,,still-water
+Pizzart,Margherita,Pizza,250.00,750 g,SINGLE,RESTAURANT_SITE,https://pizzart.md/product-category/sp_pizza/,2026-10-12,Pizza de 750 g față de 450 g BUNIQ; nelegat,
+Pizzart,4 Formaggi,Pizza,290.00,750 g,SINGLE,RESTAURANT_SITE,https://pizzart.md/product-category/sp_pizza/,2026-10-12,Pizza de 750 g față de 480 g BUNIQ; nelegat,
+Pizzart,Diavola,Pizza,280.00,800 g,SINGLE,RESTAURANT_SITE,https://pizzart.md/product-category/sp_pizza/,2026-10-12,Pizza de 800 g față de 500 g propus; nelegat,
+Pizzart,Ceai rece Fuze Tea,Băuturi,20.00,500 ml,SINGLE,RESTAURANT_SITE,https://pizzart.md/,2026-10-12,Ceai rece îmbuteliat,iced-tea
+Pizzart,Coca-Cola (doză),Băuturi,15.00,250 ml,SINGLE,RESTAURANT_SITE,https://pizzart.md/,2026-10-12,"0,25 l față de 0,33 l BUNIQ; nelegat",
+McDonald's Chișinău,Big Mac,Burgeri,90.00,204 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Preț Glovo (poate diferi de restaurant),classic-smash
+McDonald's Chișinău,Cheeseburger,Burgeri,38.00,113 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Mai mic decât cheeseburgerul propus (190 g),cheeseburger
+McDonald's Chișinău,Big Tasty,Burgeri,125.00,321 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,mushroom-swiss
+McDonald's Chișinău,Dublu Big Tasty,Burgeri,162.00,456 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,double-cheese
+McDonald's Chișinău,Dublu McRoyal,Burgeri,122.00,303 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,double-cheese
+McDonald's Chișinău,Big Tasty Bacon,Burgeri,140.00,331 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,bbq-bacon
+McDonald's Chișinău,McRoyal Bacon,Burgeri,110.00,210 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,bbq-bacon
+McDonald's Chișinău,Dublu Cheeseburger,Burgeri,77.00,165 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Porție mult mai mică decât Classic Smash (260 g); nelegat,
+McDonald's Chișinău,McChicken,Burgeri,85.00,181 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Pui în pané clasic; porție mai mică; nelegat,
+McDonald's Chișinău,McCrispy (slab picant),Burgeri,95.00,,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Gramajul nu e publicat,crispy-chicken
+McDonald's Chișinău,McCrispy Deluxe (slab picant),Burgeri,105.00,,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Gramajul nu e publicat,spicy-chicken-burger
+McDonald's Chișinău,Chicken McNuggets 9 buc.,Pui,115.00,"9 buc., 161 g",SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,chicken-nuggets
+McDonald's Chișinău,Chicken Strips 6 buc. (slab picante),Pui,127.00,"6 buc., 204 g",SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Gramaj din oferta bucket (6 strips 204 g),crispy-tenders
+McDonald's Chișinău,Aripi de Pui 8 buc. (picante),Pui,132.00,"8 buc., 270 g",SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,hot-wings
+McDonald's Chișinău,Chicken McWrap,Wraps,95.00,265 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,crispy-chicken-wrap
+McDonald's Chișinău,Beef McWrap,Wraps,95.00,217 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,bbq-beef-wrap
+McDonald's Chișinău,Cartofi prăjiți porție mare,Cartofi,58.00,150 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,150 g față de 200 g BUNIQ,classic-fries
+McDonald's Chișinău,Cartofi Wedges,Cartofi,58.00,160 g,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,potato-wedges
+McDonald's Chișinău,Shake de Vanilie,Băuturi,50.00,400 ml,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,milkshake
+McDonald's Chișinău,Fuzetea Ceai Negru Piersici și Hibiscus,Băuturi,42.00,500 ml,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Ceai rece îmbuteliat,iced-tea
+McDonald's Chișinău,Coca-Cola,Băuturi,42.00,500 ml,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,"0,5 l față de 0,33 l BUNIQ; nelegat",
+McDonald's Chișinău,Apă minerală plată,Băuturi,35.00,500 ml,SINGLE,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,,still-water
+McDonald's Chișinău,Family Menu,Combo,570.00,,COMBO,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,"McNuggets, Big Mac, McChicken, Cheeseburger, plăcintă, cartofi, băuturi: altă componență; nelegat",
+McDonald's Chișinău,Share Menu,Combo,420.00,,COMBO,AGGREGATOR,https://glovoapp.com/md/en/chisinau/mcdonalds-ksn/,2026-10-12,Componența nu e detaliată pe pagină; nelegat,
+Velgar,Aripioare de pui,Pui,170.00,310 g,SINGLE,AGGREGATOR,https://glovoapp.com/ro/md/chisinau/stores/velgarksn,2026-10-12,Restaurant-berărie; magazin închis la verificare (preț afișat),hot-wings
+Velgar,Nughete de pui,Pui,140.00,200 g,SINGLE,AGGREGATOR,https://glovoapp.com/ro/md/chisinau/stores/velgarksn,2026-10-12,Restaurant-berărie; magazin închis la verificare (preț afișat),chicken-nuggets
+Velgar,Ineluse de ceapă pane,Gustări,90.00,150/30 g,SINGLE,AGGREGATOR,https://glovoapp.com/ro/md/chisinau/stores/velgarksn,2026-10-12,Restaurant-berărie; magazin închis la verificare (preț afișat),onion-rings
+Velgar,Cartofi pai,Cartofi,75.00,150 g,SINGLE,AGGREGATOR,https://glovoapp.com/ro/md/chisinau/stores/velgarksn,2026-10-12,Restaurant-berărie; 150 g față de 200 g BUNIQ,classic-fries
+Velgar,Cheesecake,Deserturi,120.00,150/50 g,SINGLE,AGGREGATOR,https://glovoapp.com/ro/md/chisinau/stores/velgarksn,2026-10-12,Restaurant-berărie; magazin închis la verificare (preț afișat),cheesecake
+Velgar,Cheeseburger (meniu),Combo,115.00,430 g,COMBO,AGGREGATOR,https://glovoapp.com/ro/md/chisinau/stores/velgarksn,2026-10-12,"Secțiunea ""Meniuri burgeri"": burger cu cartofi și sos; nelegat",

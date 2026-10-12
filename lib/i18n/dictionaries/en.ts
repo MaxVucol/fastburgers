@@ -1,3 +1,4 @@
+import { meEn } from "./me-en";
 import type { Dictionary } from "./ro";
 
 export const en: Dictionary = {
@@ -99,7 +100,7 @@ export const en: Dictionary = {
   categories: {
     eyebrow: "What are you craving",
     title: "The menu, by category",
-    lead: "Eight categories, one standard: everything is cooked after you order.",
+    lead: "Every category, one standard: everything is cooked after you order.",
     count: { one: "{count} item", other: "{count} items" },
     viewAll: "See the full menu",
   },
@@ -164,6 +165,8 @@ export const en: Dictionary = {
     addedNamed: "Added to cart: {name}",
     oldPrice: "Previous price:",
     badgeNew: "New",
+    badgeSpicy: "Spicy",
+    soldOut: "Not available right now",
     badgePopular: "Popular",
     badgeBest: "Best seller",
     weight: "Weight",
@@ -358,6 +361,8 @@ export const en: Dictionary = {
     staffTitle: "Restaurant staff",
     staffText: "Sign in to the admin panel",
   },
+
+  me: meEn,
 
   about: {
     eyebrow: "About us",

@@ -44,9 +44,109 @@ model User {
   phone        String?
   passwordHash String?
   role         Role     @default(CUSTOMER)
+  /// Bumped on password change, block or "sign out everywhere": older session cookies stop working.
+  sessionVersion  Int?
+  /// Set when an administrator blocks the account (no sign-in, sessions revoked).
+  blockedAt       DateTime?
+  emailVerifiedAt DateTime?
   orders       Order[]
+  addresses    Address[]
+  favorites    Favorite[]
+  authTokens   AuthToken[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+/// Saved delivery address of a customer (offered at checkout).
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  address   String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// A dish a customer marked as favourite.
+model Favorite {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+enum AuthTokenType {
+  PASSWORD_RESET
+  EMAIL_VERIFY
+}
+
+/// One-time token (password reset, e-mail verification). Only its SHA-256 hash is stored.
+model AuthToken {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String        @db.ObjectId
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      AuthTokenType
+  tokenHash String        @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  @@index([userId, type])
+}
+
+/// Administrative actions: who changed what and when. Never holds passwords, tokens or secrets.
+model AuditLog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  actorId    String?  @db.ObjectId
+  actorEmail String
+  /// e.g. product.update, product.price, order.status, user.role
+  action     String
+  entity     String
+  entityId   String?
+  summary    String
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity, entityId])
+}
+
+enum OfferType {
+  SINGLE
+  COMBO
+}
+
+enum PriceSourceType {
+  RESTAURANT_SITE
+  AGGREGATOR
+}
+
+/// A competitor's published price, entered or imported by an administrator. Internal only.
+model CompetitorPrice {
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  restaurant String
+  itemName   String
+  category   String
+  /// MDL in bani (1/100 leu), like BUNIQ prices.
+  price      Int
+  /// Free text as published: "380 g", "9 buc., 161 g", "0,5 l".
+  size       String?
+  offerType  OfferType
+  sourceType PriceSourceType
+  sourceUrl  String
+  checkedAt  DateTime
+  notes      String?
+  /// The BUNIQ product this offer is genuinely comparable with, if any.
+  productId  String?         @db.ObjectId
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@index([productId])
+  @@index([checkedAt])
 }
 
 model Category {
@@ -70,7 +170,7 @@ model Product {
   slug             String            @unique
   description      String
   shortDescription String
-  /// Prices are stored in bani (1/100 RON) to avoid floating point errors.
+  /// Prices are stored in bani (1/100 MDL, Moldovan leu) to avoid floating point errors.
   price            Int
   oldPrice         Int?
   image            String
@@ -87,6 +187,12 @@ model Product {
   popular          Boolean           @default(false)
   featured         Boolean           @default(false)
   isNew            Boolean           @default(false)
+  /// Shown with a "spicy" badge.
+  spicy            Boolean?
+  /// Listed but temporarily not orderable.
+  soldOut          Boolean?
+  /// Recipe not approved yet: never published while set.
+  draft            Boolean?
   active           Boolean           @default(true)
   sortOrder        Int               @default(0)
   createdAt        DateTime          @default(now())

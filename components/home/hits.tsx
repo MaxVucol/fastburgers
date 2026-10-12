@@ -13,7 +13,7 @@ const STRETCHED_LINK =
   "after:absolute after:inset-0 after:z-0 after:content-[''] focus-visible:outline-none group-has-[a:focus-visible]:underline";
 
 function quickAdd(p: ProductCardData) {
-  return { id: p.id, slug: p.slug, name: p.name, image: p.image, price: p.price };
+  return { id: p.id, slug: p.slug, name: p.name, image: p.image, price: p.price, soldOut: p.soldOut };
 }
 
 /**
@@ -75,8 +75,10 @@ async function FeatureCard({ product }: { product: ProductCardData }) {
           popular={product.popular}
           isNew={product.isNew}
           featured={product.featured}
+          spicy={product.spicy}
+          soldOut={product.soldOut}
           discount={discountPercent(product.price, product.oldPrice)}
-          labels={{ isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest }}
+          labels={{ isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest, spicy: t.product.badgeSpicy, soldOut: t.product.soldOut }}
           className="absolute top-4 left-4"
         />
       </div>

@@ -1,0 +1,167 @@
+import "server-only";
+import { createHash, randomBytes } from "node:crypto";
+import bcrypt from "bcryptjs";
+import type { AuthTokenType, Role } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { audit, type AuditActor } from "@/services/audit";
+
+// Account rules shared by the customer pages and the admin panel. Server actions only parse
+// input, check the caller and call these; the rules themselves live (and are tested) here.
+
+const BCRYPT_COST = 12;
+// Always run one bcrypt comparison so timing does not reveal whether an e-mail is registered.
+const DUMMY_HASH = bcrypt.hashSync("timing-equaliser-not-a-real-password", BCRYPT_COST);
+
+export const TOKEN_TTL_MS: Record<AuthTokenType, number> = {
+  PASSWORD_RESET: 60 * 60 * 1000, // 1 hour
+  EMAIL_VERIFY: 48 * 60 * 60 * 1000, // 2 days
+};
+
+export class AccountError extends Error {
+  constructor(readonly code: "emailTaken" | "invalidToken" | "wrongPassword" | "self" | "lastAdmin" | "notFound") {
+    super(code);
+  }
+}
+
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+/** MongoDB: "not set" covers both a stored null and a missing field (older documents). */
+const unset = <T extends string>(field: T) => ({ OR: [{ [field]: null }, { [field]: { isSet: false } }] }) as Record<"OR", object[]>;
+const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
+
+export async function hashPassword(password: string) {
+  return bcrypt.hash(password, BCRYPT_COST);
+}
+
+export async function registerCustomer(input: { name: string; email: string; password: string; phone?: string | null }) {
+  const email = normalizeEmail(input.email);
+  const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+  if (existing) throw new AccountError("emailTaken");
+  try {
+    return await prisma.user.create({
+      data: {
+        name: input.name.trim(),
+        email,
+        phone: input.phone?.trim() || null,
+        passwordHash: await hashPassword(input.password),
+        role: "CUSTOMER",
+        sessionVersion: 0,
+      },
+      select: { id: true, name: true, email: true, role: true, sessionVersion: true },
+    });
+  } catch (error) {
+    // Two registrations racing for one e-mail: the unique index rejects the second.
+    if (error instanceof Error && "code" in error && error.code === "P2002") throw new AccountError("emailTaken");
+    throw error;
+  }
+}
+
+/** The user for these credentials, or null (wrong e-mail, wrong password or blocked — same answer). */
+export async function authenticate(emailInput: string, password: string, roles: Role[] = ["CUSTOMER", "ADMIN"]) {
+  const user = await prisma.user.findUnique({
+    where: { email: normalizeEmail(emailInput) },
+    select: { id: true, role: true, passwordHash: true, blockedAt: true, sessionVersion: true },
+  });
+  const valid = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
+  if (!user || !user.passwordHash || !valid || user.blockedAt || !roles.includes(user.role)) return null;
+  return { id: user.id, role: user.role, sessionVersion: user.sessionVersion ?? 0 };
+}
+
+/** New one-time token for `userId` (earlier unused ones of the type are revoked). Returns the raw token. */
+export async function issueToken(userId: string, type: AuthTokenType, now = Date.now()) {
+  const token = randomBytes(32).toString("base64url");
+  await prisma.$transaction([
+    prisma.authToken.updateMany({ where: { userId, type, ...unset("usedAt") }, data: { usedAt: new Date(now) } }),
+    prisma.authToken.create({
+      data: { userId, type, tokenHash: hashToken(token), expiresAt: new Date(now + TOKEN_TTL_MS[type]), usedAt: null },
+    }),
+  ]);
+  return token;
+}
+
+/**
+ * Uses a token once: a single atomic update marks it used only if it is unused and unexpired,
+ * so two parallel requests cannot both succeed. Returns the user id, or throws invalidToken.
+ */
+export async function consumeToken(token: string, type: AuthTokenType, now = Date.now()) {
+  if (!/^[A-Za-z0-9_-]{20,100}$/.test(token)) throw new AccountError("invalidToken");
+  const tokenHash = hashToken(token);
+  const { count } = await prisma.authToken.updateMany({
+    where: { tokenHash, type, expiresAt: { gt: new Date(now) }, ...unset("usedAt") },
+    data: { usedAt: new Date(now) },
+  });
+  if (count !== 1) throw new AccountError("invalidToken");
+  const row = await prisma.authToken.findUnique({ where: { tokenHash }, select: { userId: true } });
+  if (!row) throw new AccountError("invalidToken");
+  return row.userId;
+}
+
+/** Revokes every session of the user (cookies carry the old version). Returns the new version. */
+export async function bumpSessionVersion(userId: string) {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { sessionVersion: { increment: 1 } },
+    select: { sessionVersion: true },
+  });
+  return user.sessionVersion ?? 1;
+}
+
+/** Sets a new password from a reset link; all existing sessions end. */
+export async function resetPasswordWithToken(token: string, password: string) {
+  const userId = await consumeToken(token, "PASSWORD_RESET");
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash: await hashPassword(password), sessionVersion: { increment: 1 } },
+    select: { id: true, role: true, sessionVersion: true, blockedAt: true },
+  });
+  return user;
+}
+
+export async function verifyEmailWithToken(token: string) {
+  const userId = await consumeToken(token, "EMAIL_VERIFY");
+  await prisma.user.update({ where: { id: userId }, data: { emailVerifiedAt: new Date() } });
+  return userId;
+}
+
+/** Changes the password (current one required); other sessions end, the new version is returned. */
+export async function changePassword(userId: string, current: string, next: string) {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { passwordHash: true } });
+  if (!user?.passwordHash || !(await bcrypt.compare(current, user.passwordHash))) throw new AccountError("wrongPassword");
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash: await hashPassword(next), sessionVersion: { increment: 1 } },
+    select: { sessionVersion: true },
+  });
+  return updated.sessionVersion ?? 1;
+}
+
+async function activeAdminCount(excludeId?: string) {
+  return prisma.user.count({ where: { role: "ADMIN", ...unset("blockedAt"), NOT: excludeId ? { id: excludeId } : undefined } });
+}
+
+/**
+ * Changes a user's role. Only callable by an administrator (checked by the caller); never on
+ * oneself, and never removing the last active administrator. The user's sessions end.
+ */
+export async function setUserRole(actor: AuditActor, targetId: string, role: Role) {
+  if (actor.id === targetId) throw new AccountError("self");
+  const target = await prisma.user.findUnique({ where: { id: targetId }, select: { role: true, email: true, blockedAt: true } });
+  if (!target) throw new AccountError("notFound");
+  if (target.role === role) return;
+  if (target.role === "ADMIN" && !target.blockedAt && (await activeAdminCount(targetId)) === 0) throw new AccountError("lastAdmin");
+  await prisma.user.update({ where: { id: targetId }, data: { role, sessionVersion: { increment: 1 } } });
+  await audit(actor, "user.role", "user", targetId, `${target.email}: ${target.role} → ${role}`);
+}
+
+/** Blocks / unblocks a user (not oneself, not the last active administrator); sessions end. */
+export async function setUserBlocked(actor: AuditActor, targetId: string, blocked: boolean) {
+  if (actor.id === targetId) throw new AccountError("self");
+  const target = await prisma.user.findUnique({ where: { id: targetId }, select: { role: true, email: true, blockedAt: true } });
+  if (!target) throw new AccountError("notFound");
+  if (Boolean(target.blockedAt) === blocked) return;
+  if (blocked && target.role === "ADMIN" && (await activeAdminCount(targetId)) === 0) throw new AccountError("lastAdmin");
+  await prisma.user.update({
+    where: { id: targetId },
+    data: { blockedAt: blocked ? new Date() : null, sessionVersion: { increment: 1 } },
+  });
+  await audit(actor, blocked ? "user.block" : "user.unblock", "user", targetId, target.email);
+}

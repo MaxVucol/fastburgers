@@ -22,6 +22,8 @@ export function ProductConfigurator({
     image: string;
     price: number;
     options: ProductOptionView[];
+    /** Temporarily not orderable: the add button is disabled. */
+    soldOut?: boolean;
   };
 }) {
   const { locale, t } = useI18n();
@@ -115,10 +117,13 @@ export function ProductConfigurator({
           size="lg"
           variant={added ? "light" : "primary"}
           onClick={addToCart}
+          disabled={product.soldOut}
           className="mt-4 w-full px-4 whitespace-normal"
         >
           {added ? <Check className="size-5" aria-hidden /> : <Plus className="size-5" aria-hidden strokeWidth={2.5} />}
-          <span>{added ? t.product.addedToCart : fill(t.product.addWithTotal, { total: formatPrice(total, locale) })}</span>
+          <span>
+            {product.soldOut ? t.product.soldOut : added ? t.product.addedToCart : fill(t.product.addWithTotal, { total: formatPrice(total, locale) })}
+          </span>
         </Button>
         {/* Announces only the confirmation; the new total is announced by the total above. */}
         <span className="sr-only" aria-live="polite">

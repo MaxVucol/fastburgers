@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { AlertCircle, ArrowRight, Banknote, Bike, CreditCard, Loader2, Lock, ShoppingBag, Store } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { placeOrder } from "@/actions/checkout";
+import { checkoutProfileAction } from "@/actions/customer";
 import { cartActions, lineLabel, lineUnitPrice, useCart, useHydrated } from "@/components/cart/cart-store";
 import { QuantityStepper } from "@/components/cart/quantity-stepper";
 import { useI18n } from "@/components/i18n/i18n-provider";
@@ -21,6 +22,7 @@ import type { UnavailableItem } from "@/services/orders";
 import type { PickupLocation } from "@/types/catalog";
 
 type Delivery = "DELIVERY" | "PICKUP";
+type CheckoutProfile = NonNullable<Awaited<ReturnType<typeof checkoutProfileAction>>>;
 
 /** Random id for one checkout attempt (randomUUID needs a secure context; fall back otherwise). */
 function newAttemptKey(): string {
@@ -110,6 +112,35 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
   }, [errorFocus]);
   // What the server could no longer sell, kept so the customer can remove it in one click.
   const [unavailable, setUnavailable] = useState<UnavailableItem[]>([]);
+
+  // Signed-in customers: fill the empty contact fields from the profile and offer saved addresses
+  // (the order itself is tied to the account on the server, from the session).
+  const [profile, setProfile] = useState<CheckoutProfile | null>(null);
+  const formReady = hydrated && lines.length > 0;
+  useEffect(() => {
+    if (!formReady) return;
+    let cancelled = false;
+    checkoutProfileAction()
+      .then((p) => {
+        if (cancelled || !p) return;
+        setProfile(p);
+        for (const [id, value] of [["customerName", p.name], ["customerPhone", p.phone], ["customerEmail", p.email]] as const) {
+          const input = document.getElementById(id) as HTMLInputElement | null;
+          if (input && !input.value && value) input.value = value;
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [formReady]);
+
+  function fillSavedAddress(address: string) {
+    const field = document.getElementById("deliveryAddress") as HTMLTextAreaElement | null;
+    if (!field) return;
+    field.value = address;
+    field.focus();
+  }
 
   // One id per checkout attempt, sent with the order: retrying the same attempt (lost answer, second
   // click, another tab) can only ever create one order. Any change to what is ordered — items,
@@ -245,6 +276,16 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
           </div>
         )}
 
+        <p className="text-sm text-muted">
+          {profile ? (
+            fill(t.me.checkout.signedInAs, { name: profile.name })
+          ) : (
+            <a href={href(`/account/login?next=${encodeURIComponent(href("/checkout"))}`)} className="font-semibold text-accent-ink underline-offset-4 hover:underline">
+              {t.me.checkout.signInPrompt}
+            </a>
+          )}
+        </p>
+
         <Step step={1} title={t.checkout.stepContact}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={t.checkout.name} htmlFor="customerName" error={err("customerName")} required className="sm:col-span-2">
@@ -268,6 +309,24 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
             </div>
           </fieldset>
 
+          {delivery === "DELIVERY" && profile && profile.addresses.length > 0 && (
+            <div className="mt-5">
+              <p className="mb-2 text-sm font-semibold">{t.me.checkout.savedAddresses}</p>
+              <div className="flex flex-wrap gap-2">
+                {profile.addresses.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => fillSavedAddress(a.address)}
+                    className="min-h-11 max-w-full rounded-full border-[1.5px] border-line px-4 py-2 text-left text-sm transition-colors hover:border-ink/35"
+                  >
+                    <span className="font-semibold">{a.label}</span>
+                    <span className="block truncate text-xs text-muted sm:max-w-[22rem]">{a.address}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {delivery === "DELIVERY" ? (
             <Field label={t.checkout.address} htmlFor="deliveryAddress" error={err("deliveryAddress")} hint={t.checkout.addressHint} required className="mt-5">
               <Textarea id="deliveryAddress" name="deliveryAddress" autoComplete="street-address" rows={2} className="min-h-20" required aria-invalid={invalid("deliveryAddress")} aria-describedby={describedBy("deliveryAddress")} />

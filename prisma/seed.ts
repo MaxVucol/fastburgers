@@ -1,6 +1,7 @@
 /* Demo data. Run with `npm run db:seed` — WARNING: it resets catalog, orders and reviews. */
 import { PrismaClient, type OrderStatus, type DeliveryMethod, type PaymentMethod } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { draftCategories, draftProducts } from "./menu-drafts";
 
 const prisma = new PrismaClient();
 
@@ -436,6 +437,14 @@ async function main() {
     categoryIds.set(c.slug, created.id);
   }
 
+  // Proposed dishes: drafts, hidden, no photo — see prisma/menu-drafts.ts.
+  for (const c of draftCategories) {
+    const created = await prisma.category.create({
+      data: { ...c, image: null, order: categories.length + draftCategories.indexOf(c), active: false },
+    });
+    categoryIds.set(c.slug, created.id);
+  }
+
   const productIds = new Map<string, { id: string; price: number; name: string; image: string }>();
   for (const [index, p] of products.entries()) {
     const categoryId = categoryIds.get(p.category);
@@ -466,6 +475,30 @@ async function main() {
       },
     });
     productIds.set(p.slug, { id: created.id, price: created.price, name: created.name, image });
+  }
+  for (const [index, d] of draftProducts.entries()) {
+    const categoryId = categoryIds.get(d.category);
+    if (!categoryId) throw new Error(`Unknown category ${d.category}`);
+    await prisma.product.create({
+      data: {
+        name: d.name,
+        slug: d.slug,
+        description: d.description,
+        shortDescription: d.shortDescription,
+        price: d.price,
+        image: "",
+        images: [],
+        ingredients: d.ingredients,
+        allergens: [],
+        weight: d.weight,
+        weightUnit: d.weightUnit ?? "g",
+        categoryId,
+        spicy: d.spicy ?? false,
+        draft: true,
+        active: false,
+        sortOrder: products.length + index,
+      },
+    });
   }
 
   const createdLocations = [];

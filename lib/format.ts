@@ -12,7 +12,7 @@ function priceFormatter(locale: Locale) {
   return formatter;
 }
 
-/** Formats a price stored in bani (1/100 RON): "32,90 lei", "32,90 лей", "32.90 lei". */
+/** Formats a price stored in bani (1/100 MDL, Moldovan leu): "32,90 lei", "32,90 лей", "32.90 lei". */
 export function formatPrice(bani: number, locale: Locale = "ro"): string {
   return `${priceFormatter(locale).format(bani / 100)} ${CURRENCY[locale]}`;
 }

@@ -3,12 +3,13 @@
 import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
-import { parsePriceToBani } from "@/lib/format";
+import { formatPrice, parsePriceToBani } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { deleteImage, isUploadedFile, saveImage, UploadError } from "@/lib/storage";
 import { isObjectId } from "@/lib/utils";
 import { productInputSchema } from "@/lib/validation/admin";
 import { toFieldErrors, type FieldErrors } from "@/lib/validation/common";
+import { audit } from "@/services/audit";
 import { CATALOG_TAGS } from "@/services/catalog";
 
 export type ProductFormState = { error?: string; fieldErrors?: FieldErrors };
@@ -50,12 +51,12 @@ function parseOptions(raw: FormDataEntryValue | null) {
 }
 
 export async function saveProduct(_prev: ProductFormState, formData: FormData): Promise<ProductFormState> {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   const id = String(formData.get("id") ?? "");
   if (id && !isObjectId(id)) return { error: "Produs invalid." };
   const existing = id
-    ? await prisma.product.findUnique({ where: { id }, select: { id: true, slug: true, image: true, images: true } })
+    ? await prisma.product.findUnique({ where: { id }, select: { id: true, slug: true, image: true, images: true, price: true, active: true, soldOut: true } })
     : null;
   if (id && !existing) return { error: "Produsul nu mai există." };
 
@@ -76,13 +77,25 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
     popular: formData.get("popular") === "on",
     featured: formData.get("featured") === "on",
     isNew: formData.get("isNew") === "on",
-    active: formData.get("active") === "on",
+    // A draft (recipe not approved) is never published.
+    active: formData.get("active") === "on" && formData.get("draft") !== "on",
     options: parseOptions(formData.get("options")),
   });
   if (!parsed.success) {
     return { error: "Verifică câmpurile marcate.", fieldErrors: toFieldErrors(parsed.error) };
   }
   const data = parsed.data;
+  const draft = formData.get("draft") === "on";
+  const spicy = formData.get("spicy") === "on";
+  const soldOut = formData.get("soldOut") === "on";
+
+  // A price change on an existing dish must be confirmed for exactly the new value.
+  if (existing && data.price !== existing.price && formData.get("confirmPrice") !== String(data.price)) {
+    return {
+      error: `Confirmă schimbarea prețului: ${formatPrice(existing.price)} → ${formatPrice(data.price)}.`,
+      fieldErrors: { price: "Bifează confirmarea noului preț" },
+    };
+  }
 
   const [slugTaken, category] = await Promise.all([
     prisma.product.findFirst({ where: { slug: data.slug, NOT: id ? { id } : undefined }, select: { id: true } }),
@@ -133,6 +146,9 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
     popular: data.popular,
     featured: data.featured,
     isNew: data.isNew,
+    spicy,
+    soldOut,
+    draft,
     active: data.active,
     image,
     images,
@@ -158,41 +174,75 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
     const removed = [existing.image, ...existing.images].filter((src) => !images.includes(src));
     await Promise.all(removed.map(deleteImage));
     invalidateCatalog(existing.slug, data.slug);
+    const changes = [
+      data.price !== existing.price && `preț ${formatPrice(existing.price)} → ${formatPrice(data.price)}`,
+      data.active !== existing.active && (data.active ? "publicat" : "ascuns"),
+      soldOut !== Boolean(existing.soldOut) && (soldOut ? "indisponibil temporar" : "din nou disponibil"),
+    ].filter(Boolean);
+    await audit(admin, data.price !== existing.price ? "product.price" : "product.update", "product", existing.id, `${data.name}${changes.length ? `: ${changes.join(", ")}` : ""}`);
   } else {
     const count = await prisma.product.count();
-    await prisma.product.create({
+    const created = await prisma.product.create({
       data: {
         ...productData,
         sortOrder: count,
         options: { create: data.options.map((o) => ({ name: o.name, price: o.price, active: o.active })) },
       },
+      select: { id: true },
     });
     invalidateCatalog(data.slug);
+    await audit(admin, "product.create", "product", created.id, `${data.name} · ${formatPrice(data.price)}${draft ? " · ciornă" : ""}`);
   }
 
   redirect("/admin/products?saved=1");
 }
 
-export async function deleteProduct(id: string) {
-  await requireAdmin();
-  if (!isObjectId(id)) return;
-  const product = await prisma.product.findUnique({ where: { id }, select: { slug: true, image: true, images: true } });
-  if (!product) return;
+/**
+ * Deletes a dish that was never ordered. Ordered dishes stay (hide them instead): order lines keep
+ * their own snapshot, but the dish's history and statistics would lose their reference.
+ */
+export async function deleteProduct(id: string): Promise<{ error?: string }> {
+  const admin = await requireAdmin();
+  if (!isObjectId(id)) return { error: "Produs invalid." };
+  const product = await prisma.product.findUnique({ where: { id }, select: { slug: true, name: true, image: true, images: true } });
+  if (!product) return {};
+  if ((await prisma.orderItem.count({ where: { productId: id } })) > 0) {
+    return { error: `„${product.name}” apare în comenzi și nu poate fi șters. Ascunde-l din meniu.` };
+  }
   await prisma.$transaction([
     prisma.productOption.deleteMany({ where: { productId: id } }),
+    prisma.favorite.deleteMany({ where: { productId: id } }),
+    prisma.competitorPrice.updateMany({ where: { productId: id }, data: { productId: null } }),
     prisma.product.delete({ where: { id } }),
   ]);
-  await Promise.all([product.image, ...product.images].map(deleteImage));
+  await Promise.all([product.image, ...product.images].filter(Boolean).map(deleteImage));
   invalidateCatalog(product.slug);
+  await audit(admin, "product.delete", "product", id, product.name);
   refresh();
+  return {};
 }
 
-const FLAGS = ["active", "popular", "isNew", "featured"] as const;
+const FLAGS = ["active", "popular", "isNew", "featured", "spicy", "soldOut"] as const;
 type ProductFlag = (typeof FLAGS)[number];
+const FLAG_LABEL: Record<ProductFlag, string> = {
+  active: "vizibil",
+  popular: "popular",
+  isNew: "nou",
+  featured: "recomandat",
+  spicy: "picant",
+  soldOut: "indisponibil temporar",
+};
 
-export async function setProductFlag(id: string, flag: ProductFlag, value: boolean) {
-  await requireAdmin();
-  if (!isObjectId(id) || !FLAGS.includes(flag) || typeof value !== "boolean") return;
-  const product = await prisma.product.update({ where: { id }, data: { [flag]: value }, select: { slug: true } });
+export async function setProductFlag(id: string, flag: ProductFlag, value: boolean): Promise<{ error?: string }> {
+  const admin = await requireAdmin();
+  if (!isObjectId(id) || !FLAGS.includes(flag) || typeof value !== "boolean") return { error: "Cerere invalidă." };
+  if (flag === "active" && value) {
+    const current = await prisma.product.findUnique({ where: { id }, select: { draft: true, image: true } });
+    if (current?.draft) return { error: "Produsul este ciornă: aprobă rețeta înainte de publicare." };
+    if (!current?.image) return { error: "Adaugă o fotografie înainte de publicare." };
+  }
+  const product = await prisma.product.update({ where: { id }, data: { [flag]: value }, select: { slug: true, name: true } });
   invalidateCatalog(product.slug);
+  await audit(admin, "product.flag", "product", id, `${product.name}: ${FLAG_LABEL[flag]} ${value ? "da" : "nu"}`);
+  return {};
 }

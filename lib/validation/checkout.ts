@@ -7,7 +7,7 @@ import { objectIdSchema } from "./common";
 export const CHECKOUT_ERROR_KEYS = ["name", "phone", "email", "address", "location", "notes", "cartEmpty"] as const;
 export type CheckoutErrorKey = (typeof CHECKOUT_ERROR_KEYS)[number];
 
-const phoneSchema = z
+export const phoneSchema = z
   .string()
   .trim()
   .transform((v) => v.replace(/[\s().-]/g, ""))

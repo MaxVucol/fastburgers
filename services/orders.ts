@@ -4,7 +4,9 @@ import { Prisma, type OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { computeDeliveryFee, MIN_DELIVERY_ORDER } from "@/lib/pricing";
 import { consumeAll, mongoRateLimitStore, RATE_LIMITS, type RateLimitStore } from "@/lib/rate-limit";
+import { canChangeStatus, OPEN_STATUSES, ORDER_STATUS_LABEL } from "@/lib/order-status";
 import type { CheckoutData } from "@/lib/validation/checkout";
+import { audit, type AuditActor } from "@/services/audit";
 
 /** Codes map to dictionary keys (t.errors[code]); the action translates them for the customer. */
 export type OrderErrorCode =
@@ -122,10 +124,12 @@ export async function createOrder(data: CheckoutData, context: OrderContext = {}
       slug: true,
       image: true,
       price: true,
+      soldOut: true,
       options: { where: { active: true }, select: { id: true, name: true, price: true } },
     },
   });
-  const byId = new Map(products.map((p) => [p.id, p]));
+  // A sold-out dish is listed but cannot be ordered: treat it like an unavailable one.
+  const byId = new Map(products.filter((p) => !p.soldOut).map((p) => [p.id, p]));
 
   // Everything that can no longer be ordered, reported at once so the cart can be fixed in one go.
   const unavailable: UnavailableItem[] = [];
@@ -256,6 +260,26 @@ export async function createOrder(data: CheckoutData, context: OrderContext = {}
   throw new OrderError("saveFailed");
 }
 
+export class StatusChangeError extends Error {
+  constructor(readonly code: "notFound" | "notAllowed" | "conflict") {
+    super(code);
+  }
+}
+
+/**
+ * Moves an order to `to` if the transition is allowed from its current status. The update is
+ * conditional on the status read (compare-and-set), so two admins changing it at once cannot both
+ * succeed or skip a step. The change is written to the audit log.
+ */
+export async function changeOrderStatus(actor: AuditActor, id: string, to: OrderStatus) {
+  const order = await prisma.order.findUnique({ where: { id }, select: { number: true, status: true, deliveryMethod: true } });
+  if (!order) throw new StatusChangeError("notFound");
+  if (!canChangeStatus(order.status, to, order.deliveryMethod)) throw new StatusChangeError("notAllowed");
+  const { count } = await prisma.order.updateMany({ where: { id, status: order.status }, data: { status: to } });
+  if (count !== 1) throw new StatusChangeError("conflict");
+  await audit(actor, "order.status", "order", id, `${order.number}: ${ORDER_STATUS_LABEL[order.status]} → ${ORDER_STATUS_LABEL[to]}`);
+}
+
 /** Public order tracking: limited fields, no contact details. */
 export async function getOrderForTracking(number: string) {
   return prisma.order.findUnique({
@@ -299,9 +323,40 @@ export async function findOrderNumberByPhone(number: string, phone: string) {
 
 // ───────────── Admin queries ─────────────
 
-export async function listOrders(status?: OrderStatus, take = 100) {
+export type OrderFilters = {
+  status?: OrderStatus;
+  /** Order number, customer name or phone (partial, case-insensitive). */
+  q?: string;
+  from?: Date;
+  to?: Date;
+  /** "real": placed with ORDER_MODE=live; "demo": tagged demo orders; undefined: both. */
+  kind?: "real" | "demo";
+};
+
+function orderWhere(f: OrderFilters): Prisma.OrderWhereInput {
+  const q = f.q?.trim();
+  const and: Prisma.OrderWhereInput[] = [];
+  if (f.status) and.push({ status: f.status });
+  if (f.from || f.to) and.push({ createdAt: { ...(f.from ? { gte: f.from } : {}), ...(f.to ? { lt: f.to } : {}) } });
+  // Orders from before the demo flag existed have no `demo` field at all: they count as real.
+  if (f.kind === "demo") and.push({ demo: true });
+  if (f.kind === "real") and.push({ OR: [{ demo: false }, { demo: null }, { demo: { isSet: false } }] });
+  if (q) {
+    and.push({
+      OR: [
+        { number: { contains: q, mode: "insensitive" } },
+        { customerName: { contains: q, mode: "insensitive" } },
+        { customerPhone: { contains: q.replace(/[\s().-]/g, "") } },
+      ],
+    });
+  }
+  return and.length ? { AND: and } : {};
+}
+
+export async function listOrders(filters: OrderStatus | OrderFilters = {}, take = 100) {
+  const f: OrderFilters = typeof filters === "string" ? { status: filters } : filters;
   return prisma.order.findMany({
-    where: status ? { status } : undefined,
+    where: orderWhere(f),
     orderBy: { createdAt: "desc" },
     take,
     select: {
@@ -326,36 +381,47 @@ export async function getOrderById(id: string) {
   });
 }
 
-export async function getDashboardStats() {
-  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const [orderCount, openOrders, salesAgg, activeProducts, categoryCount, recentOrders, topItems] =
-    await Promise.all([
-      prisma.order.count(),
-      prisma.order.count({
-        where: { status: { in: ["NEW", "CONFIRMED", "PREPARING", "READY", "OUT_FOR_DELIVERY"] } },
-      }),
-      prisma.order.aggregate({
-        where: { status: { not: "CANCELLED" } },
-        _sum: { total: true },
-      }),
-      prisma.product.count({ where: { active: true } }),
-      prisma.category.count(),
-      listOrders(undefined, 6),
-      prisma.orderItem.groupBy({
-        by: ["productId", "productName"],
-        where: { order: { is: { createdAt: { gte: since }, status: { not: "CANCELLED" } } } },
-        _sum: { quantity: true, total: true },
-        orderBy: { _sum: { quantity: "desc" } },
-        take: 5,
-      }),
-    ]);
-
+/**
+ * Dashboard figures for orders created in [from, to). Rules (shown on the page as well):
+ * - revenue = sum of order totals (food + delivery fee) of the period's orders that are not
+ *   cancelled; "completed revenue" counts only completed orders;
+ * - average ticket = revenue / number of non-cancelled orders;
+ * - new / in progress = the orders in those statuses right now, whatever their date;
+ * - best sellers = quantities of the period's non-cancelled order lines (snapshot names).
+ * There is no refund status in the order model, so refunds are not tracked.
+ */
+export async function getDashboardStats(filters: { from: Date; to: Date; kind?: "real" | "demo" }) {
+  const period = orderWhere({ from: filters.from, to: filters.to, kind: filters.kind });
+  const now = orderWhere({ kind: filters.kind });
+  const notCancelled = { ...period, status: { not: "CANCELLED" as const } };
+  const [byStatus, revenueAgg, completedAgg, newNow, openNow, topItems, recentOrders] = await Promise.all([
+    prisma.order.groupBy({ by: ["status"], where: period, _count: { _all: true } }),
+    prisma.order.aggregate({ where: notCancelled, _sum: { total: true }, _count: { _all: true } }),
+    prisma.order.aggregate({ where: { ...period, status: "COMPLETED" }, _sum: { total: true } }),
+    prisma.order.count({ where: { ...now, status: "NEW" } }),
+    prisma.order.count({ where: { ...now, status: { in: [...OPEN_STATUSES] } } }),
+    prisma.orderItem.groupBy({
+      by: ["productId", "productName"],
+      where: { order: { is: notCancelled } },
+      _sum: { quantity: true, total: true },
+      orderBy: { _sum: { quantity: "desc" } },
+      take: 6,
+    }),
+    listOrders({ kind: filters.kind }, 6),
+  ]);
+  const counts = Object.fromEntries(byStatus.map((r) => [r.status, r._count._all])) as Partial<Record<OrderStatus, number>>;
+  const orderCount = byStatus.reduce((sum, r) => sum + r._count._all, 0);
+  const paidCount = revenueAgg._count._all;
+  const revenue = revenueAgg._sum.total ?? 0;
   return {
     orderCount,
-    openOrders,
-    sales: salesAgg._sum.total ?? 0,
-    activeProducts,
-    categoryCount,
+    cancelled: counts.CANCELLED ?? 0,
+    counts,
+    revenue,
+    completedRevenue: completedAgg._sum.total ?? 0,
+    averageTicket: paidCount > 0 ? Math.round(revenue / paidCount) : 0,
+    newNow,
+    openNow,
     recentOrders,
     topProducts: topItems.map((t) => ({
       productId: t.productId,
@@ -364,4 +430,14 @@ export async function getDashboardStats() {
       revenue: t._sum.total ?? 0,
     })),
   };
+}
+
+/** Catalog items needing attention: hidden, drafts, temporarily unavailable. */
+export async function getCatalogAttention() {
+  return prisma.product.findMany({
+    where: { OR: [{ active: false }, { draft: true }, { soldOut: true }] },
+    orderBy: { updatedAt: "desc" },
+    take: 12,
+    select: { id: true, name: true, active: true, draft: true, soldOut: true },
+  });
 }

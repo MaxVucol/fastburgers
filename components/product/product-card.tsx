@@ -13,11 +13,11 @@ export const PRODUCT_GRID_SIZES =
   "(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 520px) 46vw, 100vw";
 
 function badgeLabels(t: Dictionary): BadgeLabels {
-  return { isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest };
+  return { isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest, spicy: t.product.badgeSpicy, soldOut: t.product.soldOut };
 }
 
 function quickAddProduct(product: ProductCardData) {
-  return { id: product.id, slug: product.slug, name: product.name, image: product.image, price: product.price };
+  return { id: product.id, slug: product.slug, name: product.name, image: product.image, price: product.price, soldOut: product.soldOut };
 }
 
 /** Catalog card: white card on cream, photo-led, price and a round "+" at the bottom. */
@@ -62,6 +62,8 @@ export async function ProductCard({
           popular={product.popular}
           isNew={product.isNew}
           featured={product.featured}
+          spicy={product.spicy}
+          soldOut={product.soldOut}
           discount={discount}
           labels={badgeLabels(t)}
           className="absolute top-3 left-3"

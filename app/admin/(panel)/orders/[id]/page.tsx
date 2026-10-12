@@ -9,6 +9,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { formatDateTime, formatPrice } from "@/lib/format";
 import { DELIVERY_METHOD_LABEL, PAYMENT_METHOD_LABEL } from "@/lib/order-status";
 import { isObjectId } from "@/lib/utils";
+import { listAudit } from "@/services/audit";
 import { getOrderById } from "@/services/orders";
 
 export const metadata: Metadata = { title: "Detalii comandă" };
@@ -63,11 +64,20 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
 
         <div className="space-y-6">
           <Panel className="p-5">
-            <OrderStatusSelect id={order.id} status={order.status} />
+            <OrderStatusSelect id={order.id} status={order.status} method={order.deliveryMethod} />
           </Panel>
+          <OrderHistory id={order.id} createdAt={order.createdAt} />
           <Panel title="Client">
             <ul className="space-y-3 p-5 text-sm">
-              <li className="font-semibold">{order.customerName}</li>
+              <li className="font-semibold">
+                {order.customerName}
+                {order.userId ? (
+                  <Link href={`/admin/users/${order.userId}`} className="ml-2 text-xs font-semibold text-accent-ink hover:underline">cont client</Link>
+                ) : (
+                  <span className="ml-2 text-xs font-normal text-muted">fără cont</span>
+                )}
+                {order.demo && <span className="ml-2 rounded-full bg-sand px-2 py-0.5 text-[0.6875rem] font-semibold text-muted">demo</span>}
+              </li>
               <li>
                 <a href={`tel:${order.customerPhone}`} className="flex items-center gap-2 hover:text-accent-ink">
                   <Phone className="size-4 text-muted" aria-hidden /> {order.customerPhone}
@@ -103,5 +113,28 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
         </div>
       </div>
     </>
+  );
+}
+
+/** Status changes recorded in the audit log (who and when). */
+async function OrderHistory({ id, createdAt }: { id: string; createdAt: Date }) {
+  const entries = await listAudit({ entity: "order", entityId: id, take: 50 });
+  return (
+    <Panel title="Istoric">
+      <ol className="space-y-3 p-5 text-sm">
+        {entries.map((e) => (
+          <li key={e.id}>
+            <span className="block font-semibold">{e.summary.replace(/^[^:]+:\s*/, "")}</span>
+            <span className="text-xs text-muted">
+              {formatDateTime(e.createdAt)} · {e.actorEmail}
+            </span>
+          </li>
+        ))}
+        <li>
+          <span className="block font-semibold">Comandă plasată</span>
+          <span className="text-xs text-muted">{formatDateTime(createdAt)}</span>
+        </li>
+      </ol>
+    </Panel>
   );
 }

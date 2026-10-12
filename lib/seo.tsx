@@ -49,7 +49,7 @@ export function productJsonLd(product: ProductDetail, path: string): { [key: str
     offers: {
       "@type": "Offer",
       price: (product.price / 100).toFixed(2),
-      priceCurrency: "RON",
+      priceCurrency: "MDL",
       availability: "https://schema.org/InStock",
     },
     ...(product.calories

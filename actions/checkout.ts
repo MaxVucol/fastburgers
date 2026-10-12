@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { getSessionUser } from "@/lib/auth/session";
 import { clientIp } from "@/lib/client-ip";
 import { formatPrice } from "@/lib/format";
 import { defaultLocale, fill, isLocale } from "@/lib/i18n/config";
@@ -39,7 +40,10 @@ export async function placeOrder(input: unknown, locale?: string): Promise<Check
   }
 
   try {
+    // The owner comes from the verified session only — never from the request body.
+    const user = await getSessionUser();
     const order = await createOrder(parsed.data, {
+      userId: user?.id,
       idempotencyKey: parsed.data.idempotencyKey,
       ip: clientIp(await headers()),
       demo: isDemo(),

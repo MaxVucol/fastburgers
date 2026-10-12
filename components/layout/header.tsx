@@ -1,4 +1,5 @@
-import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, CircleUserRound } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { getI18n } from "@/lib/i18n/server";
 import { CartButton } from "./cart-button";
@@ -37,6 +38,15 @@ export async function Header() {
           </div>
           <ThemeToggle />
           <SearchDialog triggerClassName="hidden sm:grid" />
+          {/* Account: the page itself shows sign-in or the account, so no session lookup here. */}
+          <Link
+            href={href("/account")}
+            aria-label={t.me.link}
+            title={t.me.link}
+            className="hidden size-11 place-items-center rounded-full text-on-dark transition-colors duration-[var(--duration-fast)] hover:bg-graphite-soft sm:grid"
+          >
+            <CircleUserRound className="size-[1.375rem]" aria-hidden strokeWidth={1.8} />
+          </Link>
           <CartButton />
           {/* Desktop only; the wrapper hides it (the button's own display class would win over `hidden`). */}
           <div className="ml-2 hidden lg:block">

@@ -1,4 +1,5 @@
 import "server-only";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 // Admin reads are intentionally uncached: staff must always see the current state.
@@ -23,10 +24,27 @@ export async function getCategoryAdmin(id: string) {
   return prisma.category.findUnique({ where: { id } });
 }
 
-export async function listProductsAdmin(filters: { q?: string; categoryId?: string }) {
+export type ProductStatusFilter = "published" | "hidden" | "draft" | "soldOut";
+export type ProductSort = "order" | "name" | "price-asc" | "price-desc" | "updated";
+
+export async function listProductsAdmin(filters: { q?: string; categoryId?: string; status?: ProductStatusFilter; sort?: ProductSort }) {
+  const statusWhere: Record<ProductStatusFilter, Prisma.ProductWhereInput> = {
+    published: { active: true },
+    hidden: { active: false },
+    draft: { draft: true },
+    soldOut: { soldOut: true },
+  };
+  const orderBy: Record<ProductSort, Prisma.ProductOrderByWithRelationInput[]> = {
+    order: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    name: [{ name: "asc" }],
+    "price-asc": [{ price: "asc" }],
+    "price-desc": [{ price: "desc" }],
+    updated: [{ updatedAt: "desc" }],
+  };
   return prisma.product.findMany({
     where: {
       ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
+      ...(filters.status ? statusWhere[filters.status] : {}),
       ...(filters.q
         ? {
             OR: [
@@ -36,7 +54,7 @@ export async function listProductsAdmin(filters: { q?: string; categoryId?: stri
           }
         : {}),
     },
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    orderBy: orderBy[filters.sort ?? "order"],
     select: {
       id: true,
       name: true,
@@ -48,6 +66,9 @@ export async function listProductsAdmin(filters: { q?: string; categoryId?: stri
       popular: true,
       isNew: true,
       featured: true,
+      spicy: true,
+      soldOut: true,
+      draft: true,
       category: { select: { name: true } },
       _count: { select: { options: true } },
     },

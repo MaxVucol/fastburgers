@@ -1,3 +1,4 @@
+import { meRo } from "./me-ro";
 import type { PluralForms } from "../config";
 
 /** Marks a plural-forms entry so other languages may use their own categories (ru: many). */
@@ -106,7 +107,7 @@ export const ro = {
   categories: {
     eyebrow: "Ce poftești azi",
     title: "Meniul, pe categorii",
-    lead: "Opt categorii, un singur standard: totul se gătește după comandă.",
+    lead: "Fiecare categorie, un singur standard: totul se gătește după comandă.",
     count: plural({ one: "{count} produs", few: "{count} produse", other: "{count} de produse" }),
     viewAll: "Vezi tot meniul",
   },
@@ -171,6 +172,8 @@ export const ro = {
     addedNamed: "Adăugat în coș: {name}",
     oldPrice: "Preț vechi:",
     badgeNew: "Nou",
+    badgeSpicy: "Picant",
+    soldOut: "Indisponibil momentan",
     badgePopular: "Popular",
     badgeBest: "Best seller",
     weight: "Gramaj",
@@ -366,6 +369,8 @@ export const ro = {
     staffTitle: "Personal restaurant",
     staffText: "Autentificare în panoul de administrare",
   },
+
+  me: meRo,
 
   about: {
     eyebrow: "Despre noi",

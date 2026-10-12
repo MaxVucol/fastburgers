@@ -34,13 +34,15 @@ export function Badge({
   );
 }
 
-export type BadgeLabels = { sale?: string; isNew: string; popular: string; best: string };
+export type BadgeLabels = { sale?: string; isNew: string; popular: string; best: string; spicy?: string; soldOut?: string };
 
 /** Marketing badges for product cards and pages — at most two, by priority. */
 export function ProductBadges({
   popular,
   isNew,
   featured,
+  spicy,
+  soldOut,
   discount,
   labels,
   className,
@@ -48,13 +50,17 @@ export function ProductBadges({
   popular: boolean;
   isNew: boolean;
   featured?: boolean;
+  spicy?: boolean;
+  soldOut?: boolean;
   discount: number | null;
   labels: BadgeLabels;
   className?: string;
 }) {
   const items: ReactNode[] = [];
+  if (soldOut && labels.soldOut) items.push(<Badge key="out" tone="light">{labels.soldOut}</Badge>);
   if (discount) items.push(<Badge key="sale" tone="accent">−{discount}%</Badge>);
   if (isNew) items.push(<Badge key="new" tone="sage">{labels.isNew}</Badge>);
+  if (spicy && labels.spicy) items.push(<Badge key="spicy" tone="accent">{labels.spicy}</Badge>);
   if (popular) items.push(<Badge key="pop" tone="dark">{labels.popular}</Badge>);
   else if (featured) items.push(<Badge key="best" tone="light">{labels.best}</Badge>);
   if (items.length === 0) return null;

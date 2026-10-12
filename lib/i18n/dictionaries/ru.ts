@@ -1,3 +1,4 @@
+import { meRu } from "./me-ru";
 import type { Dictionary } from "./ro";
 
 export const ru: Dictionary = {
@@ -99,7 +100,7 @@ export const ru: Dictionary = {
   categories: {
     eyebrow: "Чего хочется сегодня",
     title: "Меню по категориям",
-    lead: "Восемь категорий и один стандарт: всё готовится после заказа.",
+    lead: "Во всех категориях один стандарт: всё готовится после заказа.",
     count: { one: "{count} блюдо", few: "{count} блюда", many: "{count} блюд", other: "{count} блюда" },
     viewAll: "Всё меню",
   },
@@ -169,6 +170,8 @@ export const ru: Dictionary = {
     addedNamed: "Добавлено в корзину: {name}",
     oldPrice: "Старая цена:",
     badgeNew: "Новинка",
+    badgeSpicy: "Острое",
+    soldOut: "Временно нет в наличии",
     badgePopular: "Хит",
     badgeBest: "Бестселлер",
     weight: "Вес",
@@ -375,6 +378,8 @@ export const ru: Dictionary = {
     staffTitle: "Сотрудникам ресторана",
     staffText: "Вход в панель администратора",
   },
+
+  me: meRu,
 
   about: {
     eyebrow: "О нас",

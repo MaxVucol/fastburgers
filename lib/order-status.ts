@@ -40,3 +40,30 @@ export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
   CARD_ON_DELIVERY: "Card la livrare / ridicare",
   CARD_ONLINE: "Card online",
 };
+
+/**
+ * Allowed status changes. Completed and cancelled orders are final; pick-up orders never go
+ * "out for delivery", delivery orders are completed only after leaving with the courier.
+ */
+const NEXT: Record<OrderStatus, OrderStatus[]> = {
+  NEW: ["CONFIRMED", "CANCELLED"],
+  CONFIRMED: ["PREPARING", "CANCELLED"],
+  PREPARING: ["READY", "OUT_FOR_DELIVERY", "CANCELLED"],
+  READY: ["OUT_FOR_DELIVERY", "COMPLETED", "CANCELLED"],
+  OUT_FOR_DELIVERY: ["COMPLETED", "CANCELLED"],
+  COMPLETED: [],
+  CANCELLED: [],
+};
+
+export function nextStatuses(status: OrderStatus, method: DeliveryMethod): OrderStatus[] {
+  return NEXT[status].filter((s) =>
+    method === "PICKUP" ? s !== "OUT_FOR_DELIVERY" : !(status === "READY" && s === "COMPLETED"),
+  );
+}
+
+export function canChangeStatus(from: OrderStatus, to: OrderStatus, method: DeliveryMethod) {
+  return nextStatuses(from, method).includes(to);
+}
+
+/** Orders still in progress (counted as "active" on the dashboard). */
+export const OPEN_STATUSES = ["NEW", "CONFIRMED", "PREPARING", "READY", "OUT_FOR_DELIVERY"] as const satisfies readonly OrderStatus[];

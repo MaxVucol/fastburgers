@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ClipboardList, FolderTree, LayoutDashboard, UtensilsCrossed } from "lucide-react";
+import { ClipboardList, FolderTree, History, LayoutDashboard, Scale, Users, UtensilsCrossed } from "lucide-react";
 import { WithPathname } from "@/components/layout/nav-links";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +10,9 @@ const items = [
   { href: "/admin/orders", label: "Comenzi", icon: ClipboardList },
   { href: "/admin/products", label: "Produse", icon: UtensilsCrossed },
   { href: "/admin/categories", label: "Categorii", icon: FolderTree },
+  { href: "/admin/users", label: "Utilizatori", icon: Users },
+  { href: "/admin/market", label: "Piață și prețuri", icon: Scale },
+  { href: "/admin/audit", label: "Jurnal", icon: History },
 ];
 
 function AdminNavView({ pathname }: { pathname: string }) {

@@ -7,7 +7,7 @@ import { AlertCircle, ImagePlus, Loader2, Plus, Trash2 } from "lucide-react";
 import { saveProduct, type ProductFormState } from "@/actions/admin/products";
 import { Button, buttonStyles } from "@/components/ui/button";
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
-import { baniToInput } from "@/lib/format";
+import { baniToInput, formatPrice, parsePriceToBani } from "@/lib/format";
 import { slugify } from "@/lib/utils";
 
 export const ALLERGENS = [
@@ -32,6 +32,9 @@ export type ProductFormValues = {
   popular: boolean;
   featured: boolean;
   isNew: boolean;
+  spicy: boolean;
+  soldOut: boolean;
+  draft: boolean;
   active: boolean;
   image: string;
   images: string[];
@@ -58,6 +61,12 @@ export function ProductForm({
   const [options, setOptions] = useState<OptionRow[]>(
     () => product?.options.map((o) => ({ key: newKey(), id: o.id, name: o.name, price: baniToInput(o.price), active: o.active })) ?? [],
   );
+
+  const [priceInput, setPriceInput] = useState(baniToInput(product?.price));
+  const [draft, setDraft] = useState(product?.draft ?? false);
+  // Editing the price of an existing dish needs an explicit confirmation (old → new), checked again on the server.
+  const newPrice = parsePriceToBani(priceInput);
+  const priceChanged = Boolean(product) && Number.isFinite(newPrice) && newPrice !== product?.price;
 
   const fe = state.fieldErrors ?? {};
   const gallery = product?.images.filter((src) => src !== product.image) ?? [];
@@ -127,8 +136,8 @@ export function ProductForm({
               </Select>
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Preț (lei)" htmlFor="price" error={fe.price} required>
-                <Input id="price" name="price" inputMode="decimal" placeholder="32.90" defaultValue={baniToInput(product?.price)} required aria-invalid={fe.price ? true : undefined} />
+              <Field label="Preț (MDL)" htmlFor="price" error={fe.price} required>
+                <Input id="price" name="price" inputMode="decimal" placeholder="89.00" value={priceInput} onChange={(e) => setPriceInput(e.target.value)} required aria-invalid={fe.price ? true : undefined} />
               </Field>
               <Field label="Preț vechi" htmlFor="oldPrice" error={fe.oldPrice} hint="Pentru reducere">
                 <Input id="oldPrice" name="oldPrice" inputMode="decimal" placeholder="—" defaultValue={baniToInput(product?.oldPrice)} aria-invalid={fe.oldPrice ? true : undefined} />
@@ -277,16 +286,38 @@ export function ProductForm({
           </Field>
         </section>
 
+        {priceChanged && product && (
+          <section className="rounded-2xl bg-mustard-soft p-5 ring-1 ring-line" aria-live="polite">
+            <h2 className="font-bold">Schimbare de preț</h2>
+            <p className="mt-1 text-sm">
+              <span className="tabular-nums">{formatPrice(product.price)}</span> → <span className="font-bold tabular-nums">{formatPrice(newPrice)}</span>
+            </p>
+            <label className="mt-3 flex cursor-pointer items-start gap-3 text-sm font-semibold">
+              <Checkbox name="confirmPrice" value={String(newPrice)} className="mt-0.5" />
+              Confirm noul preț. Se aplică imediat în meniu; comenzile existente își păstrează prețul.
+            </label>
+          </section>
+        )}
+
         <section className="space-y-3 rounded-2xl bg-white p-5 ring-1 ring-line">
           <h2 className="font-bold">Vizibilitate</h2>
+          <label className="flex cursor-pointer items-start gap-3 text-sm font-semibold">
+            <Checkbox name="draft" checked={draft} onChange={(e) => setDraft(e.target.checked)} className="mt-0.5" />
+            <span>
+              Ciornă
+              <span className="block text-xs font-normal text-muted">Rețetă neaprobată: nu poate fi publicată cât timp e bifată.</span>
+            </span>
+          </label>
           {[
-            { name: "active", label: "Activ (vizibil în meniu)", value: product?.active ?? true },
+            { name: "active", label: "Activ (vizibil în meniu)", value: product?.active ?? !draft, disabled: draft },
+            { name: "soldOut", label: "Indisponibil temporar (în meniu, dar nu se poate comanda)", value: product?.soldOut ?? false },
             { name: "popular", label: "Popular", value: product?.popular ?? false },
             { name: "isNew", label: "Nou", value: product?.isNew ?? false },
+            { name: "spicy", label: "Picant", value: product?.spicy ?? false },
             { name: "featured", label: "Recomandat / Best Seller", value: product?.featured ?? false },
           ].map((f) => (
-            <label key={f.name} className="flex cursor-pointer items-center gap-3 text-sm font-semibold">
-              <Checkbox name={f.name} defaultChecked={f.value} />
+            <label key={f.name} className={`flex cursor-pointer items-center gap-3 text-sm font-semibold ${f.disabled ? "opacity-50" : ""}`}>
+              <Checkbox name={f.name} defaultChecked={f.value} disabled={f.disabled} />
               {f.label}
             </label>
           ))}

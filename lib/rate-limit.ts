@@ -34,6 +34,13 @@ export const RATE_LIMITS = {
   loginIp: { name: "login-ip", limit: 10, windowMs: 15 * 60_000 },
   /** Sign-in attempts for one e-mail address (cleared after a successful sign-in). */
   loginAccount: { name: "login-account", limit: 5, windowMs: 15 * 60_000 },
+  /** New accounts per IP address. */
+  registerIp: { name: "register-ip", limit: 5, windowMs: 60 * 60_000 },
+  /** Password-reset requests per IP and per e-mail address. */
+  resetIp: { name: "reset-ip", limit: 5, windowMs: 60 * 60_000 },
+  resetAccount: { name: "reset-account", limit: 3, windowMs: 60 * 60_000 },
+  /** Verification e-mails per account. */
+  verifyAccount: { name: "verify-account", limit: 3, windowMs: 60 * 60_000 },
   /** Orders that reach the database step, per IP address. */
   orderIp: { name: "order-ip", limit: 6, windowMs: 10 * 60_000 },
   /** Orders per phone number, whatever the address they come from. */

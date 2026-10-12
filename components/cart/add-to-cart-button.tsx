@@ -14,6 +14,8 @@ type QuickAddProduct = {
   name: string;
   image: string;
   price: number;
+  /** Temporarily not orderable: the button is shown disabled with a "not available" label. */
+  soldOut?: boolean;
 };
 
 /** One-tap add from cards and the promo block (base configuration, no extras). */
@@ -49,6 +51,20 @@ export function QuickAddButton({
       options: [],
     });
     setAdded(true);
+  }
+
+  if (product.soldOut) {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center rounded-full border border-line px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-muted",
+          tone === "dark" && "border-line-dark text-muted-on-dark",
+          className,
+        )}
+      >
+        {t.product.soldOut}
+      </span>
+    );
   }
 
   const doneVariant = tone === "dark" ? "light" : "dark";

@@ -24,6 +24,9 @@ export type ProductCardData = {
   popular: boolean;
   featured: boolean;
   isNew: boolean;
+  spicy: boolean;
+  /** Listed but temporarily not orderable. */
+  soldOut: boolean;
   weight: number | null;
   weightUnit: string;
   categoryId: string;
