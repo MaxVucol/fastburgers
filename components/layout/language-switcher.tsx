@@ -40,7 +40,9 @@ function Switcher({ pathname, tone }: { pathname: string; tone: "light" | "dark"
                   router.push(`${target}${window.location.search}${window.location.hash}`);
                 }}
                 className={cn(
-                  "relative grid h-8 min-w-9 place-items-center px-1.5 text-xs font-bold tracking-[0.12em] transition-colors duration-[var(--duration-fast)]",
+                  "relative grid h-8 min-w-8 place-items-center px-1 text-xs font-bold xl:min-w-9 xl:text-[0.8125rem] tracking-[0.12em] transition-colors duration-[var(--duration-fast)]",
+                  // Dark bar: the current language is plain cream with a thin cream rule; orange stays
+                  // reserved for the active page in the main navigation next to it.
                   tone === "dark"
                     ? active
                       ? "text-on-dark"
@@ -52,7 +54,12 @@ function Switcher({ pathname, tone }: { pathname: string; tone: "light" | "dark"
               >
                 <span className="sr-only">{localeNames[l].native}</span>
                 <span aria-hidden>{localeNames[l].short}</span>
-                {active && <span className="absolute inset-x-2 bottom-1 h-[2px] bg-accent" aria-hidden />}
+                {active && (
+                  <span
+                    className={cn("absolute inset-x-2 bottom-0.5 h-[2px] rounded-full", tone === "dark" ? "bg-on-dark/70" : "bg-accent")}
+                    aria-hidden
+                  />
+                )}
               </a>
             </li>
           );

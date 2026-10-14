@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { cn } from "@/lib/utils";
+import { headerIcon, headerIconButton } from "./header-icon";
 
 export function SearchDialog({ triggerClassName }: { triggerClassName?: string }) {
   const { t, href } = useI18n();
@@ -17,14 +18,11 @@ export function SearchDialog({ triggerClassName }: { triggerClassName?: string }
       <button
         type="button"
         onClick={() => ref.current?.showModal()}
-        className={cn(
-          "grid size-11 place-items-center rounded-full text-on-dark transition-colors duration-[var(--duration-fast)] hover:bg-graphite-soft",
-          triggerClassName,
-        )}
+        className={cn(headerIconButton, triggerClassName)}
         aria-label={t.search.label}
         aria-haspopup="dialog"
       >
-        <Search className="size-5" aria-hidden strokeWidth={1.9} />
+        <Search {...headerIcon} />
       </button>
       <dialog
         ref={ref}

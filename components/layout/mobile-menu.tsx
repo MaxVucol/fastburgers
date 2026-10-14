@@ -7,6 +7,7 @@ import { useRef } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { headerIconButton } from "./header-icon";
 import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import { isActivePath, WithPathname } from "./nav-links";
@@ -21,11 +22,11 @@ export function MobileMenu() {
       <button
         type="button"
         onClick={() => ref.current?.showModal()}
-        className="grid size-11 place-items-center rounded-full text-on-dark hover:bg-graphite-soft lg:hidden"
+        className={cn(headerIconButton, "lg:hidden")}
         aria-label={t.header.openMenu}
         aria-haspopup="dialog"
       >
-        <Menu className="size-6" aria-hidden />
+        <Menu className="size-6" aria-hidden strokeWidth={1.75} />
       </button>
       <dialog
         ref={ref}

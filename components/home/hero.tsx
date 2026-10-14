@@ -31,7 +31,11 @@ export async function Hero({ burgersFrom }: { burgersFrom: number | null }) {
           <h1 id="hero-title" lang="en" className="enter type-poster mt-3 uppercase [--enter-step:1] sm:mt-5">
             {siteConfig.slogan.map((line, i) =>
               line.split(" ").map((word) => (
-                <span key={`${i}-${word}`} className={i === 1 ? "block text-accent" : "block"}>
+                <span
+                  key={`${i}-${word}`}
+                  // "BETTER" is set slightly open: its six wide capitals looked crowded at the poster's tight tracking.
+                  className={i === 1 ? (word === "Better" ? "block tracking-[0.01em] text-accent" : "block text-accent") : "block"}
+                >
                   {word}{" "}
                 </span>
               )),

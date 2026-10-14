@@ -5,6 +5,7 @@ import { cartActions, useCart } from "@/components/cart/cart-store";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { formatPrice } from "@/lib/format";
 import { plural } from "@/lib/i18n/config";
+import { headerIcon, headerIconButton } from "./header-icon";
 
 /** Cart icon with an orange count bubble; the full count and total are in the accessible name. */
 export function CartButton() {
@@ -16,16 +17,16 @@ export function CartButton() {
     <button
       type="button"
       onClick={() => cartActions.open()}
-      className="relative grid size-11 place-items-center rounded-full text-on-dark transition-colors duration-[var(--duration-base)] hover:bg-graphite-soft"
+      className={headerIconButton}
       aria-label={
         filled ? `${plural(locale, count, t.cart.button)}, ${formatPrice(subtotal, locale)}` : t.cart.buttonEmpty
       }
     >
-      <ShoppingCart className="size-[1.375rem]" aria-hidden strokeWidth={1.8} />
+      <ShoppingCart {...headerIcon} />
       {filled && (
         <span
           key={bump}
-          className="absolute top-0.5 right-0 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-accent px-1 text-[0.6875rem] leading-none font-bold text-on-accent tabular-nums ring-2 ring-night"
+          className="absolute -top-0.5 -right-1 grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-accent px-1 text-[0.6875rem] leading-none font-bold text-on-accent tabular-nums ring-2 ring-night"
           aria-hidden
         >
           {count > 99 ? "99+" : count}

@@ -42,7 +42,7 @@ export function Wordmark({
       {tagline && (
         <span
           className={cn(
-            "mt-[0.32em] pl-[0.3em] font-display text-[0.25em] font-semibold tracking-[0.3em] whitespace-nowrap uppercase",
+            "mt-[0.6em] pl-[0.3em] font-display text-[0.25em] font-semibold tracking-[0.3em] whitespace-nowrap uppercase",
             tone === "dark" ? "text-muted-on-dark" : "text-ink-soft",
           )}
         >
@@ -57,18 +57,24 @@ export function Logo({
   href = "/",
   label = "BUNIQ",
   tone = "light",
+  size = "md",
   className,
   onClick,
 }: {
   href?: string;
   label?: string;
   tone?: "light" | "dark";
+  /** "lg": the site header, about 12 % larger than the default lock-up. */
+  size?: "md" | "lg";
   className?: string;
   onClick?: () => void;
 }) {
   return (
     <Link href={href} onClick={onClick} className={cn("inline-flex rounded-[var(--radius-xs)]", className)} aria-label={label}>
-      <Wordmark tone={tone} className="text-[1.75rem] lg:text-[2rem]" />
+      <Wordmark
+        tone={tone}
+        className={size === "lg" ? "text-[1.875rem] lg:text-[2.125rem] xl:text-[2.25rem]" : "text-[1.75rem] lg:text-[2rem]"}
+      />
     </Link>
   );
 }

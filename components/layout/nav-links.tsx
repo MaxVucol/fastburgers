@@ -34,7 +34,7 @@ function PathnameReader({ children }: { children: (pathname: string) => React.Re
 function NavLinksView({ pathname }: { pathname: string }) {
   const { t, href } = useI18n();
   return (
-    <ul className="flex items-center gap-1 xl:gap-3">
+    <ul className="flex items-center lg:gap-0.5 xl:gap-5">
       {siteConfig.nav.map((item) => {
         const active = isActivePath(pathname, item.href);
         return (
@@ -43,11 +43,12 @@ function NavLinksView({ pathname }: { pathname: string }) {
               href={href(item.href)}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative inline-flex h-10 items-center px-3 text-[0.9375rem] font-medium transition-colors duration-[var(--duration-fast)]",
-                "after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:origin-left after:bg-accent after:transition-transform after:duration-[var(--duration-base)]",
+                "relative inline-flex h-11 items-center px-2 text-[0.9375rem] font-medium whitespace-nowrap transition-colors duration-[var(--duration-fast)] xl:px-3 xl:text-[1.0625rem]",
+                // Underline 2 px under the words, drawn from the centre on hover.
+                "after:absolute after:inset-x-2 after:bottom-1 after:h-[2px] after:rounded-full after:transition-[transform,background-color] after:duration-[var(--duration-base)] xl:after:inset-x-3",
                 active
-                  ? "text-flame after:scale-x-100"
-                  : "text-on-dark/85 after:scale-x-0 hover:text-on-dark hover:after:scale-x-100",
+                  ? "font-semibold text-flame after:scale-x-100 after:bg-accent"
+                  : "text-on-dark/75 after:scale-x-0 after:bg-on-dark/40 hover:text-on-dark hover:after:scale-x-100",
               )}
             >
               {t.nav[item.key]}

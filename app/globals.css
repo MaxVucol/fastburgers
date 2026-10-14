@@ -170,7 +170,7 @@
     :root { --gutter: 1.5rem; }
   }
   @media (width >= 64rem) {
-    :root { --gutter: 2.5rem; --header-h: 5rem; }
+    :root { --gutter: 2.5rem; --header-h: 5.25rem; }
   }
 
   html {

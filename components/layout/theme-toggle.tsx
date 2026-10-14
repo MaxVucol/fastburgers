@@ -5,6 +5,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { preferredTheme, THEME_STORAGE_KEY, type Theme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
+import { headerIcon, headerIconButton } from "./header-icon";
 
 function subscribe(onChange: () => void) {
   const observer = new MutationObserver(onChange);
@@ -49,13 +50,10 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-pressed={dark}
       aria-label={t.header.darkTheme}
       title={t.header.darkTheme}
-      className={cn(
-        "grid size-11 place-items-center rounded-full text-on-dark transition-colors duration-[var(--duration-base)] hover:bg-graphite-soft",
-        className,
-      )}
+      className={cn(headerIconButton, className)}
     >
-      <Moon className="size-5 dark:hidden" aria-hidden strokeWidth={1.8} />
-      <Sun className="hidden size-5 dark:block" aria-hidden strokeWidth={1.8} />
+      <Moon {...headerIcon} className="size-[1.375rem] dark:hidden" />
+      <Sun {...headerIcon} className="hidden size-[1.375rem] dark:block" />
     </button>
   );
 }

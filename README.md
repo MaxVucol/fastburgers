@@ -11,10 +11,10 @@ Website complet pentru un restaurant fast-food: meniu cu căutare și filtre, pa
 ```bash
 npm install
 cp .env.example .env          # completează AUTH_SECRET (min. 32 caractere)
-npm run db                    # MongoDB local (replica set) — lasă-l pornit într-un terminal separat
+npm run db                    # MongoDB local (replica set); doar pentru db:push / db:seed — `npm run dev` îl pornește singur
 npm run db:push               # creează colecțiile și indexurile
 npm run db:seed               # date demo: 8 categorii, 27 produse, 3 locații, comenzi demo
-npm run dev                   # http://localhost:3000
+npm run dev                   # http://localhost:3000 + MongoDB local (pornit și repornit automat)
 ```
 
 `npm run db` descarcă la prima rulare un binar oficial `mongod` (prin `mongodb-memory-server`) și pornește un replica set cu un singur nod pe portul 27017, cu datele salvate în `.mongo-data/`. Nu e nevoie de Docker. În producție, setează `DATABASE_URL` către MongoDB Atlas sau orice replica set (Prisma are nevoie de replica set).
@@ -50,7 +50,7 @@ Imaginile încărcate din admin merg în Vercel Blob când există `BLOB_READ_WR
 
 | Script | Rol |
 | --- | --- |
-| `npm run dev` / `build` / `start` | Next.js (`build` verifică întâi variabilele de mediu) |
+| `npm run dev` / `build` / `start` | Next.js (`dev` pornește și MongoDB local dacă `DATABASE_URL` e local; `build` verifică întâi variabilele de mediu) |
 | `npm run check-env` | Verifică doar variabilele de mediu |
 | `npm run typecheck` · `npm run lint` | TypeScript și ESLint |
 | `npm run db` | MongoDB local pentru dezvoltare |
