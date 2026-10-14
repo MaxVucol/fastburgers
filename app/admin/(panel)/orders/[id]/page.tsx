@@ -8,6 +8,7 @@ import { Panel, StatusBadge } from "@/components/admin/admin-ui";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatDateTime, formatPrice } from "@/lib/format";
 import { DELIVERY_METHOD_LABEL, PAYMENT_METHOD_LABEL } from "@/lib/order-status";
+import { paymentBankName } from "@/lib/payment-banks";
 import { isObjectId } from "@/lib/utils";
 import { listAudit } from "@/services/audit";
 import { getOrderById } from "@/services/orders";
@@ -101,7 +102,12 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
                     ? `${order.location.name} — ${order.location.address}`
                     : "Locație ștearsă"}
               </li>
-              <li className="text-muted">{PAYMENT_METHOD_LABEL[order.paymentMethod]}</li>
+              <li className="text-muted">
+                {PAYMENT_METHOD_LABEL[order.paymentMethod]}
+                {order.paymentBank && ` · ${paymentBankName(order.paymentBank, "altă bancă")}`}
+                {/* Nothing is charged on the site: the staff send the payment link. */}
+                {order.paymentMethod === "CARD_ONLINE" && <span className="block font-semibold text-accent-ink">Neplătit — trimite clientului linkul de plată</span>}
+              </li>
               {order.notes && (
                 <li className="flex gap-2 rounded-xl bg-mustard-soft p-3 text-ink">
                   <MessageSquare className="mt-0.5 size-4 shrink-0" aria-hidden />

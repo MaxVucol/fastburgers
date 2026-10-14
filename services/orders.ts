@@ -72,6 +72,7 @@ export function checkoutFingerprint(data: CheckoutData): string {
     data.deliveryMethod,
     data.deliveryMethod === "PICKUP" ? data.locationId : "",
     data.paymentMethod,
+    data.paymentMethod === "CASH" ? "" : (data.paymentBank ?? ""),
   ]);
   return createHash("sha256").update(payload).digest("hex");
 }
@@ -199,11 +200,10 @@ export async function createOrder(data: CheckoutData, context: OrderContext = {}
     locationId = location.id;
   }
 
-  if (data.paymentMethod === "CARD_ONLINE") {
-    // Integration point: create a payment intent with the provider (Stripe, Netopia…)
-    // and keep the order in NEW until the webhook confirms the payment.
-    throw new OrderError("onlinePayment");
-  }
+  // CARD_ONLINE: nothing is charged here. The order is saved as unpaid with the chosen bank and the
+  // staff send the customer a payment link. Integration point for a real gateway (maib, MICB,
+  // Victoriabank e-commerce): create the payment here and keep the order in NEW until its webhook
+  // confirms the payment.
 
   // Spam guard, after the checks above and before any write: per IP and per phone number.
   const limited = await consumeAll(
@@ -232,6 +232,7 @@ export async function createOrder(data: CheckoutData, context: OrderContext = {}
             deliveryAddress: data.deliveryMethod === "DELIVERY" ? data.deliveryAddress : null,
             locationId,
             paymentMethod: data.paymentMethod,
+            paymentBank: data.paymentMethod === "CASH" ? null : (data.paymentBank ?? null),
             notes: data.notes || null,
             demo: context.demo ? true : undefined,
             subtotal,
@@ -290,6 +291,7 @@ export async function getOrderForTracking(number: string) {
       customerName: true,
       deliveryMethod: true,
       paymentMethod: true,
+      paymentBank: true,
       subtotal: true,
       deliveryFee: true,
       total: true,

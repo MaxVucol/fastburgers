@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { PAYMENT_BANKS } from "@/lib/payment-banks";
 import { MAX_ITEM_QUANTITY } from "@/lib/pricing";
 import { objectIdSchema } from "./common";
 
 // Messages are dictionary keys (t.errors[key]) so the action can answer in the
 // customer's language. Anything else falls back to t.errors.invalid.
-export const CHECKOUT_ERROR_KEYS = ["name", "phone", "email", "address", "location", "notes", "cartEmpty"] as const;
+export const CHECKOUT_ERROR_KEYS = ["name", "phone", "email", "address", "location", "notes", "cartEmpty", "bank"] as const;
 export type CheckoutErrorKey = (typeof CHECKOUT_ERROR_KEYS)[number];
 
 export const phoneSchema = z
@@ -30,6 +31,8 @@ export const checkoutSchema = z
     deliveryAddress: z.string().trim().max(200, "address").optional().default(""),
     locationId: z.string().optional().default(""),
     paymentMethod: z.enum(["CASH", "CARD_ON_DELIVERY", "CARD_ONLINE"]),
+    /** Bank chosen for card payment (courier terminal or online link); ignored for cash. */
+    paymentBank: z.enum(PAYMENT_BANKS).optional(),
     notes: z.string().trim().max(500, "notes").optional().default(""),
     items: z.array(checkoutItemSchema).min(1, "cartEmpty").max(50),
     /** Random id of this checkout attempt (crypto.randomUUID in the browser). */
@@ -38,6 +41,9 @@ export const checkoutSchema = z
   .superRefine((data, ctx) => {
     if (data.deliveryMethod === "DELIVERY" && data.deliveryAddress.length < 8) {
       ctx.addIssue({ code: "custom", path: ["deliveryAddress"], message: "address" });
+    }
+    if (data.paymentMethod !== "CASH" && !data.paymentBank) {
+      ctx.addIssue({ code: "custom", path: ["paymentBank"], message: "bank" });
     }
     if (data.deliveryMethod === "PICKUP" && !/^[a-f0-9]{24}$/i.test(data.locationId)) {
       ctx.addIssue({ code: "custom", path: ["locationId"], message: "location" });

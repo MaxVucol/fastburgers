@@ -234,29 +234,33 @@ type OrderItemOption {
 }
 
 model Order {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
   /// Human-friendly order number shown to customers (e.g. FB-7K2M9Q).
-  number          String         @unique
-  userId          String?        @db.ObjectId
-  user            User?          @relation(fields: [userId], references: [id])
-  customerName    String
-  customerPhone   String
-  customerEmail   String
-  deliveryAddress String?
-  deliveryMethod  DeliveryMethod
-  locationId      String?        @db.ObjectId
-  location        Location?      @relation(fields: [locationId], references: [id])
-  paymentMethod   PaymentMethod
-  status          OrderStatus    @default(NEW)
-  subtotal        Int
-  deliveryFee     Int
-  total           Int
-  notes           String?
+  number             String         @unique
+  userId             String?        @db.ObjectId
+  user               User?          @relation(fields: [userId], references: [id])
+  customerName       String
+  customerPhone      String
+  customerEmail      String
+  deliveryAddress    String?
+  deliveryMethod     DeliveryMethod
+  locationId         String?        @db.ObjectId
+  location           Location?      @relation(fields: [locationId], references: [id])
+  paymentMethod      PaymentMethod
+  /// Bank chosen for card payment (maib, micb, victoriabank, other); unset for cash and older orders.
+  paymentBank        String?
+  status             OrderStatus    @default(NEW)
+  subtotal           Int
+  deliveryFee        Int
+  total              Int
+  notes              String?
   /// Placed while the site runs as a demo (ORDER_MODE ≠ "live"); unset on older orders.
-  demo            Boolean?
-  items           OrderItem[]
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  demo               Boolean?
+  /// When the owner's Telegram "new order" message was sent; unset while not (yet) delivered.
+  telegramNotifiedAt DateTime?
+  items              OrderItem[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 
   @@index([status, createdAt])
   @@index([createdAt])

@@ -10,6 +10,7 @@ import { requireUser } from "@/lib/auth/session";
 import { formatDateTime, formatPrice } from "@/lib/format";
 import { optionName } from "@/lib/i18n/catalog";
 import { fill } from "@/lib/i18n/config";
+import { paymentBankName } from "@/lib/payment-banks";
 import { getI18n } from "@/lib/i18n/server";
 import { getUserOrder } from "@/services/customer";
 
@@ -107,7 +108,11 @@ async function OrderDetail({ params }: Pick<PageProps<"/[lang]/account/orders/[n
             )}
             <div>
               <dt className="text-muted">{t.me.order.payment}</dt>
-              <dd className="mt-0.5">{t.order.payments[order.paymentMethod]}</dd>
+              <dd className="mt-0.5">
+                {t.order.payments[order.paymentMethod]}
+                {order.paymentBank && ` · ${paymentBankName(order.paymentBank, t.checkout.bankOther)}`}
+                {order.paymentMethod === "CARD_ONLINE" && <span className="mt-1 block text-muted">{t.order.onlinePending}</span>}
+              </dd>
             </div>
             {order.notes && (
               <div>

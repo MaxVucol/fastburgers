@@ -10,6 +10,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { formatDateTime, formatPrice } from "@/lib/format";
 import { optionName } from "@/lib/i18n/catalog";
 import { fill } from "@/lib/i18n/config";
+import { paymentBankName } from "@/lib/payment-banks";
 import { getI18n } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 import { getOrderForTracking } from "@/services/orders";
@@ -155,7 +156,11 @@ async function OrderDetails({
         </div>
         <div className="bg-ivory p-5">
           <h2 className="font-sans text-base font-semibold tracking-normal">{t.order.payment}</h2>
-          <p className="mt-2 text-muted">{t.order.payments[order.paymentMethod]}</p>
+          <p className="mt-2 text-muted">
+            {t.order.payments[order.paymentMethod]}
+            {order.paymentBank && ` · ${paymentBankName(order.paymentBank, t.checkout.bankOther)}`}
+          </p>
+          {order.paymentMethod === "CARD_ONLINE" && <p className="mt-2 text-sm font-medium">{t.order.onlinePending}</p>}
         </div>
       </section>
 

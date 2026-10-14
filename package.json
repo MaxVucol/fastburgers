@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-transform-types --no-warnings --import ./tests/setup/register.mjs --test \"tests/*.test.ts\"",
+    "test": "node --experimental-transform-types --no-warnings --import ./tests/setup/register.mjs --test --test-concurrency=1 \"tests/*.test.ts\"",
     "db": "node scripts/dev-db.mjs",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
@@ -19,7 +19,8 @@
     "images:fetch": "node scripts/fetch-images.mjs",
     "og:build": "node scripts/make-og.mjs",
     "postinstall": "prisma generate",
-    "check-env": "node scripts/check-env.mjs"
+    "check-env": "node scripts/check-env.mjs",
+    "telegram:check": "node scripts/telegram-check.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

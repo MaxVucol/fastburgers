@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { clientIp } from "@/lib/client-ip";
 import { formatPrice } from "@/lib/format";
@@ -8,6 +9,7 @@ import { defaultLocale, fill, isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { CHECKOUT_ERROR_KEYS, checkoutSchema, type CheckoutErrorKey } from "@/lib/validation/checkout";
 import { toFieldErrors, type ActionResult, type FieldErrors } from "@/lib/validation/common";
+import { notifyNewOrder } from "@/services/order-notifications";
 import { createOrder, OrderError, type PriceUpdate, type UnavailableItem } from "@/services/orders";
 
 export type CheckoutResult =
@@ -48,6 +50,9 @@ export async function placeOrder(input: unknown, locale?: string): Promise<Check
       ip: clientIp(await headers()),
       demo: isDemo(),
     });
+    // Only reached once the order is saved. Runs after the response is sent (on Vercel within the
+    // function's time limit); a replayed attempt returns the same order and is not notified twice.
+    after(() => notifyNewOrder(order.id));
     return { ok: true, data: { number: order.number } };
   } catch (error) {
     if (error instanceof OrderError) {

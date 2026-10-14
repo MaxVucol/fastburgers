@@ -8,6 +8,7 @@ import type { LucideIcon } from "lucide-react";
 import { placeOrder } from "@/actions/checkout";
 import { checkoutProfileAction } from "@/actions/customer";
 import { cartActions, lineLabel, lineUnitPrice, useCart, useHydrated } from "@/components/cart/cart-store";
+import { BankDialog } from "@/components/checkout/bank-dialog";
 import { QuantityStepper } from "@/components/cart/quantity-stepper";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { Field, Input, Textarea } from "@/components/ui/field";
 import { formatPrice } from "@/lib/format";
 import { optionName } from "@/lib/i18n/catalog";
 import { fill } from "@/lib/i18n/config";
+import { paymentBankName, type PaymentBank } from "@/lib/payment-banks";
 import { computeDeliveryFee, FREE_DELIVERY_THRESHOLD, MIN_DELIVERY_ORDER } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import type { FieldErrors } from "@/lib/validation/common";
@@ -99,6 +101,10 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
   const { lines, subtotal } = useCart();
   const [delivery, setDelivery] = useState<Delivery>("DELIVERY");
   const [payment, setPayment] = useState<Payment>("CASH");
+  // Card payment needs a bank: picking a card option opens the bank dialog first, and the option
+  // becomes selected only after "Continue" (closing the dialog keeps the previous choice).
+  const [bank, setBank] = useState<PaymentBank | null>(null);
+  const [bankFor, setBankFor] = useState<Exclude<Payment, "CASH"> | null>(null);
   const [locationId, setLocationId] = useState(locations[0]?.id ?? "");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -151,6 +157,7 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
     delivery,
     delivery === "PICKUP" ? locationId : "",
     payment,
+    payment === "CASH" ? "" : bank,
   ]);
   useEffect(() => {
     attemptKey.current = null;
@@ -200,6 +207,7 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
           deliveryAddress: delivery === "DELIVERY" ? text("deliveryAddress") : "",
           locationId: delivery === "PICKUP" ? locationId : "",
           paymentMethod: payment,
+          paymentBank: payment === "CASH" ? undefined : (bank ?? undefined),
           notes: text("notes"),
           items: lines.map((l) => ({
             productId: l.productId,
@@ -365,10 +373,30 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
                 the cards get too narrow, so they stack like on phones. */}
             <div className="grid gap-3 sm:grid-cols-3 md:grid-cols-1">
               <ChoiceCard name="paymentMethod" value="CASH" checked={payment === "CASH"} onChange={() => setPayment("CASH")} icon={Banknote} title={t.checkout.cash} description={delivery === "DELIVERY" ? t.checkout.onDelivery : t.checkout.onPickup} />
-              <ChoiceCard name="paymentMethod" value="CARD_ON_DELIVERY" checked={payment === "CARD_ON_DELIVERY"} onChange={() => setPayment("CARD_ON_DELIVERY")} icon={CreditCard} title={t.checkout.card} description={delivery === "DELIVERY" ? t.checkout.courierPos : t.checkout.atCounter} />
-              <ChoiceCard name="paymentMethod" value="CARD_ONLINE" checked={payment === "CARD_ONLINE"} onChange={() => setPayment("CARD_ONLINE")} icon={Lock} title={t.checkout.online} description={t.checkout.soon} disabled />
+              <ChoiceCard name="paymentMethod" value="CARD_ON_DELIVERY" checked={payment === "CARD_ON_DELIVERY"} onChange={() => setBankFor("CARD_ON_DELIVERY")} icon={CreditCard} title={delivery === "DELIVERY" ? t.checkout.card : t.checkout.cardPickup} description={delivery === "DELIVERY" ? t.checkout.courierPos : t.checkout.atCounter} />
+              <ChoiceCard name="paymentMethod" value="CARD_ONLINE" checked={payment === "CARD_ONLINE"} onChange={() => setBankFor("CARD_ONLINE")} icon={Lock} title={t.checkout.online} description={t.checkout.onlineHint} />
             </div>
+            {payment !== "CASH" && bank && (
+              <p className="mt-3 flex flex-wrap items-center gap-x-2 text-sm">
+                <span className="text-muted">{t.checkout.bankLabel}:</span>
+                <span className="font-semibold">{paymentBankName(bank, t.checkout.bankOther)}</span>
+                <button type="button" onClick={() => setBankFor(payment)} className="font-semibold text-accent-ink underline underline-offset-4 hover:text-ink">
+                  {t.checkout.bankChange}
+                </button>
+              </p>
+            )}
+            {err("paymentBank") && <p className="mt-2 text-sm font-medium text-accent-ink" role="alert">{err("paymentBank")}</p>}
           </fieldset>
+          {bankFor && (
+            <BankDialog
+              initial={bank}
+              onConfirm={(chosen) => {
+                setBank(chosen);
+                setPayment(bankFor);
+              }}
+              onClose={() => setBankFor(null)}
+            />
+          )}
           <Field label={t.checkout.notes} htmlFor="notes" error={err("notes")} hint={t.checkout.notesHint} className="mt-5">
             <Textarea id="notes" name="notes" maxLength={500} aria-invalid={invalid("notes")} />
           </Field>

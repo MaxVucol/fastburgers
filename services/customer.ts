@@ -38,6 +38,7 @@ export async function getUserOrder(userId: string, number: string) {
       deliveryMethod: true,
       deliveryAddress: true,
       paymentMethod: true,
+      paymentBank: true,
       notes: true,
       subtotal: true,
       deliveryFee: true,
