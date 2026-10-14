@@ -6,7 +6,9 @@ import type { DeliveryMethod, OrderStatus } from "@prisma/client";
 import { deleteCategory, moveCategory, setCategoryActive } from "@/actions/admin/categories";
 import { updateOrderStatus } from "@/actions/admin/orders";
 import { deleteProduct, setProductFlag } from "@/actions/admin/products";
-import { nextStatuses, ORDER_STATUS_LABEL } from "@/lib/order-status";
+import { useAdminI18n } from "@/components/admin/admin-i18n";
+import { fill } from "@/lib/i18n/config";
+import { nextStatuses } from "@/lib/order-status";
 import { cn } from "@/lib/utils";
 
 function Switch({
@@ -33,7 +35,7 @@ function Switch({
         checked ? "bg-herb" : "bg-oat",
       )}
     >
-      <span className={cn("inline-block size-5 rounded-full bg-white shadow transition-transform", checked ? "translate-x-5.5" : "translate-x-0.5")} />
+      <span className={cn("inline-block size-5 rounded-full bg-paper shadow transition-transform", checked ? "translate-x-5.5" : "translate-x-0.5")} />
     </button>
   );
 }
@@ -53,6 +55,7 @@ export function ProductFlagSwitch({
   const [prev, setPrev] = useState(value);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const { msg } = useAdminI18n();
   if (value !== prev) {
     setPrev(value);
     setOptimistic(value);
@@ -72,7 +75,7 @@ export function ProductFlagSwitch({
             if (result.error) {
               // Refused on the server (e.g. publishing a draft): show why and put the switch back.
               setOptimistic(!next);
-              setError(result.error);
+              setError(msg(result.error));
             }
           });
         }}
@@ -119,13 +122,14 @@ export function DeleteButton({
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const { a } = useAdminI18n();
   return (
     <span className="inline-flex flex-col items-end">
       <button
         type="button"
         disabled={pending}
         onClick={() => {
-          if (!window.confirm(`Ștergi definitiv „${name}”? Acțiunea nu poate fi anulată.`)) return;
+          if (!window.confirm(fill(a.products.confirmDelete, { name }))) return;
           setError(null);
           startTransition(async () => {
             const result = kind === "product" ? await deleteProduct(id) : await deleteCategory(id);
@@ -133,7 +137,7 @@ export function DeleteButton({
           });
         }}
         className="grid size-9 place-items-center rounded-lg text-muted hover:bg-accent-soft hover:text-accent-ink disabled:opacity-50"
-        aria-label={`Șterge ${name}`}
+        aria-label={fill(a.common.delete, { name })}
       >
         {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Trash2 className="size-4" aria-hidden />}
       </button>
@@ -148,13 +152,14 @@ export function DeleteButton({
 
 export function MoveButtons({ id, isFirst, isLast, name }: { id: string; isFirst: boolean; isLast: boolean; name: string }) {
   const [pending, startTransition] = useTransition();
+  const { a } = useAdminI18n();
   const btn = "grid size-8 place-items-center rounded-lg text-ink-soft hover:bg-sand disabled:opacity-30";
   return (
     <span className="inline-flex flex-col">
-      <button type="button" className={btn} disabled={pending || isFirst} onClick={() => startTransition(() => moveCategory(id, "up"))} aria-label={`Mută ${name} mai sus`}>
+      <button type="button" className={btn} disabled={pending || isFirst} onClick={() => startTransition(() => moveCategory(id, "up"))} aria-label={fill(a.categories.moveUp, { name })}>
         <ArrowUp className="size-4" aria-hidden />
       </button>
-      <button type="button" className={btn} disabled={pending || isLast} onClick={() => startTransition(() => moveCategory(id, "down"))} aria-label={`Mută ${name} mai jos`}>
+      <button type="button" className={btn} disabled={pending || isLast} onClick={() => startTransition(() => moveCategory(id, "down"))} aria-label={fill(a.categories.moveDown, { name })}>
         <ArrowDown className="size-4" aria-hidden />
       </button>
     </span>
@@ -166,11 +171,12 @@ export function OrderStatusSelect({ id, status, method }: { id: string; status: 
   const [value, setValue] = useState<OrderStatus>(status);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const { a } = useAdminI18n();
 
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={`status-${id}`} className="text-sm font-semibold text-ink-soft">
-        Status comandă
+        {a.status.label}
       </label>
       <div className="flex items-center gap-2">
         <select
@@ -189,17 +195,17 @@ export function OrderStatusSelect({ id, status, method }: { id: string; status: 
               }
             });
           }}
-          className="h-11 flex-1 cursor-pointer rounded-xl border border-line bg-white px-3 font-semibold focus:border-accent focus:outline-none"
+          className="h-11 flex-1 cursor-pointer rounded-xl border border-line bg-paper px-3 font-semibold focus:border-accent focus:outline-none"
         >
           {[status, ...nextStatuses(status, method)].map((s) => (
             <option key={s} value={s}>
-              {s === status ? `${ORDER_STATUS_LABEL[s]} (actual)` : `→ ${ORDER_STATUS_LABEL[s]}`}
+              {s === status ? fill(a.status.current, { label: a.status[s] }) : `→ ${a.status[s]}`}
             </option>
           ))}
         </select>
-        {pending && <Loader2 className="size-5 animate-spin text-muted" aria-label="Se salvează" />}
+        {pending && <Loader2 className="size-5 animate-spin text-muted" aria-label={a.shell.saving} />}
       </div>
-      {nextStatuses(status, method).length === 0 && <p className="text-xs text-muted">Status final: nu mai poate fi schimbat.</p>}
+      {nextStatuses(status, method).length === 0 && <p className="text-xs text-muted">{a.status.final}</p>}
       {error && <p role="alert" className="text-sm text-accent-ink">{error}</p>}
     </div>
   );

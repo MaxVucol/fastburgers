@@ -3,26 +3,22 @@
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/session";
+import { getAdminI18n } from "@/lib/i18n/admin/server";
 import { ORDER_STATUSES } from "@/lib/order-status";
 import { objectIdSchema } from "@/lib/validation/common";
 import { changeOrderStatus, StatusChangeError } from "@/services/orders";
 
 const schema = z.object({ id: objectIdSchema, status: z.enum(ORDER_STATUSES) });
 
-const MESSAGES: Record<StatusChangeError["code"], string> = {
-  notFound: "Comanda nu mai există.",
-  notAllowed: "Această schimbare de status nu este permisă din statusul curent.",
-  conflict: "Statusul a fost schimbat între timp de altcineva. Reîncarcă pagina.",
-};
-
 export async function updateOrderStatus(id: string, status: string): Promise<{ error?: string }> {
   const admin = await requireAdmin();
+  const { a } = await getAdminI18n();
   const parsed = schema.safeParse({ id, status });
-  if (!parsed.success) return { error: "Status invalid." };
+  if (!parsed.success) return { error: a.status.invalid };
   try {
     await changeOrderStatus(admin, parsed.data.id, parsed.data.status);
   } catch (error) {
-    if (error instanceof StatusChangeError) return { error: MESSAGES[error.code] };
+    if (error instanceof StatusChangeError) return { error: a.status[error.code] };
     throw error;
   }
   refresh();

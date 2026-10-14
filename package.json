@@ -20,7 +20,9 @@
     "og:build": "node scripts/make-og.mjs",
     "postinstall": "prisma generate",
     "check-env": "node scripts/check-env.mjs",
-    "telegram:check": "node scripts/telegram-check.mjs"
+    "telegram:check": "node scripts/telegram-check.mjs",
+    "admin:grant": "tsx scripts/make-admin.ts",
+    "admin:grant:atlas": "node --env-file=.env.atlas node_modules/tsx/dist/cli.mjs scripts/make-admin.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

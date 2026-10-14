@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AdminPageHeader } from "@/components/admin/admin-ui";
 import { CategoryForm } from "@/components/admin/category-form";
 import { requireAdmin } from "@/lib/auth/session";
+import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 import { isObjectId } from "@/lib/utils";
 import { getCategoryAdmin } from "@/services/admin-catalog";
 
-export const metadata: Metadata = { title: "Editează categoria" };
+export const generateMetadata = () => adminTitle("editCategory");
 
 export default async function EditCategoryPage({ params }: PageProps<"/admin/categories/[id]">) {
   await requireAdmin();
+  const { a } = await getAdminI18n();
   const { id } = await params;
   if (!isObjectId(id)) notFound();
   const category = await getCategoryAdmin(id);
@@ -17,7 +18,7 @@ export default async function EditCategoryPage({ params }: PageProps<"/admin/cat
 
   return (
     <>
-      <AdminPageHeader title={category.name} description="Editează categoria." />
+      <AdminPageHeader title={category.name} description={a.categories.editLead} />
       <CategoryForm
         category={{
           id: category.id,

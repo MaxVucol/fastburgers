@@ -22,12 +22,12 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
 
 export const ORDER_STATUS_TONE: Record<OrderStatus, string> = {
   NEW: "bg-accent-soft text-accent-ink",
-  CONFIRMED: "bg-mustard-soft text-[#8a5a00]",
-  PREPARING: "bg-mustard-soft text-[#8a5a00]",
+  CONFIRMED: "bg-mustard-soft text-[#8a5a00] dark:text-[#e8b84a]",
+  PREPARING: "bg-mustard-soft text-[#8a5a00] dark:text-[#e8b84a]",
   READY: "bg-herb-soft text-herb",
-  OUT_FOR_DELIVERY: "bg-sky-100 text-sky-800",
+  OUT_FOR_DELIVERY: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300",
   COMPLETED: "bg-herb-soft text-herb",
-  CANCELLED: "bg-stone-200 text-stone-600",
+  CANCELLED: "bg-stone-200 text-stone-600 dark:bg-stone-800 dark:text-stone-300",
 };
 
 export const DELIVERY_METHOD_LABEL: Record<DeliveryMethod, string> = {

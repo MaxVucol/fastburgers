@@ -3,7 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 import type { OrderStatus } from "@prisma/client";
 import type { ReactNode } from "react";
 import { buttonStyles } from "@/components/ui/button";
-import { ORDER_STATUS_LABEL, ORDER_STATUS_TONE } from "@/lib/order-status";
+import { ORDER_STATUS_TONE } from "@/lib/order-status";
 import { cn } from "@/lib/utils";
 
 export function AdminPageHeader({
@@ -45,17 +45,18 @@ export function SavedNotice({ show, children }: { show: boolean; children: React
   );
 }
 
-export function StatusBadge({ status, className }: { status: OrderStatus; className?: string }) {
+/** `label` comes from the panel dictionary (a.status[status]). */
+export function StatusBadge({ status, label, className }: { status: OrderStatus; label: string; className?: string }) {
   return (
     <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-bold whitespace-nowrap", ORDER_STATUS_TONE[status], className)}>
-      {ORDER_STATUS_LABEL[status]}
+      {label}
     </span>
   );
 }
 
 export function Panel({ title, children, className, action }: { title?: string; children: ReactNode; className?: string; action?: ReactNode }) {
   return (
-    <section className={cn("rounded-2xl bg-white ring-1 ring-line", className)}>
+    <section className={cn("rounded-2xl bg-paper ring-1 ring-line", className)}>
       {title && (
         <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
           <h2 className="font-bold">{title}</h2>

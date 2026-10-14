@@ -4,6 +4,9 @@ import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatPrice, parsePriceToBani } from "@/lib/format";
+import { fill } from "@/lib/i18n/config";
+import { translateAdminMessage, translateFieldErrors } from "@/lib/i18n/admin";
+import { getAdminI18n } from "@/lib/i18n/admin/server";
 import { prisma } from "@/lib/prisma";
 import { deleteImage, isUploadedFile, saveImage, UploadError } from "@/lib/storage";
 import { isObjectId } from "@/lib/utils";
@@ -52,13 +55,15 @@ function parseOptions(raw: FormDataEntryValue | null) {
 
 export async function saveProduct(_prev: ProductFormState, formData: FormData): Promise<ProductFormState> {
   const admin = await requireAdmin();
+  const { locale, a } = await getAdminI18n();
+  const t = a.productActions;
 
   const id = String(formData.get("id") ?? "");
-  if (id && !isObjectId(id)) return { error: "Produs invalid." };
+  if (id && !isObjectId(id)) return { error: t.invalid };
   const existing = id
     ? await prisma.product.findUnique({ where: { id }, select: { id: true, slug: true, image: true, images: true, price: true, active: true, soldOut: true } })
     : null;
-  if (id && !existing) return { error: "Produsul nu mai există." };
+  if (id && !existing) return { error: t.gone };
 
   const oldPriceRaw = String(formData.get("oldPrice") ?? "").trim();
   const parsed = productInputSchema.safeParse({
@@ -82,7 +87,7 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
     options: parseOptions(formData.get("options")),
   });
   if (!parsed.success) {
-    return { error: "Verifică câmpurile marcate.", fieldErrors: toFieldErrors(parsed.error) };
+    return { error: a.common.checkFields, fieldErrors: translateFieldErrors(a, toFieldErrors(parsed.error)) };
   }
   const data = parsed.data;
   const draft = formData.get("draft") === "on";
@@ -92,8 +97,8 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
   // A price change on an existing dish must be confirmed for exactly the new value.
   if (existing && data.price !== existing.price && formData.get("confirmPrice") !== String(data.price)) {
     return {
-      error: `Confirmă schimbarea prețului: ${formatPrice(existing.price)} → ${formatPrice(data.price)}.`,
-      fieldErrors: { price: "Bifează confirmarea noului preț" },
+      error: fill(t.confirmPrice, { from: formatPrice(existing.price, locale), to: formatPrice(data.price, locale) }),
+      fieldErrors: { price: t.confirmPriceField },
     };
   }
 
@@ -101,8 +106,8 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
     prisma.product.findFirst({ where: { slug: data.slug, NOT: id ? { id } : undefined }, select: { id: true } }),
     prisma.category.findUnique({ where: { id: data.categoryId }, select: { id: true } }),
   ]);
-  if (slugTaken) return { error: "Slug-ul este deja folosit.", fieldErrors: { slug: "Alege alt slug" } };
-  if (!category) return { error: "Categoria nu există.", fieldErrors: { categoryId: "Categorie invalidă" } };
+  if (slugTaken) return { error: t.slugTaken, fieldErrors: { slug: t.slugField } };
+  if (!category) return { error: t.noCategory, fieldErrors: { categoryId: t.categoryField } };
 
   // Images: keep the ones still checked, add new uploads.
   const mainFile = formData.get("imageFile");
@@ -122,10 +127,13 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
     for (const file of galleryFiles.slice(0, 8)) uploaded.push(await saveImage(file));
   } catch (error) {
     await Promise.all(uploaded.map(deleteImage));
-    if (error instanceof UploadError) return { error: error.message, fieldErrors: { image: error.message } };
+    if (error instanceof UploadError) {
+      const message = translateAdminMessage(a, error.message);
+      return { error: message, fieldErrors: { image: message } };
+    }
     throw error;
   }
-  if (!image) return { error: "Adaugă o imagine principală.", fieldErrors: { image: "Imaginea este obligatorie" } };
+  if (!image) return { error: t.needImage, fieldErrors: { image: t.imageField } };
 
   const newGallery = uploaded.filter((u) => u !== image);
   const images = [image, ...keepGallery.filter((src) => src !== image), ...newGallery];
@@ -203,11 +211,12 @@ export async function saveProduct(_prev: ProductFormState, formData: FormData): 
  */
 export async function deleteProduct(id: string): Promise<{ error?: string }> {
   const admin = await requireAdmin();
-  if (!isObjectId(id)) return { error: "Produs invalid." };
+  const { a } = await getAdminI18n();
+  if (!isObjectId(id)) return { error: a.productActions.invalid };
   const product = await prisma.product.findUnique({ where: { id }, select: { slug: true, name: true, image: true, images: true } });
   if (!product) return {};
   if ((await prisma.orderItem.count({ where: { productId: id } })) > 0) {
-    return { error: `„${product.name}” apare în comenzi și nu poate fi șters. Ascunde-l din meniu.` };
+    return { error: fill(a.productActions.inOrders, { name: product.name }) };
   }
   await prisma.$transaction([
     prisma.productOption.deleteMany({ where: { productId: id } }),
@@ -235,11 +244,12 @@ const FLAG_LABEL: Record<ProductFlag, string> = {
 
 export async function setProductFlag(id: string, flag: ProductFlag, value: boolean): Promise<{ error?: string }> {
   const admin = await requireAdmin();
-  if (!isObjectId(id) || !FLAGS.includes(flag) || typeof value !== "boolean") return { error: "Cerere invalidă." };
+  const { a } = await getAdminI18n();
+  if (!isObjectId(id) || !FLAGS.includes(flag) || typeof value !== "boolean") return { error: a.common.invalidRequest };
   if (flag === "active" && value) {
     const current = await prisma.product.findUnique({ where: { id }, select: { draft: true, image: true } });
-    if (current?.draft) return { error: "Produsul este ciornă: aprobă rețeta înainte de publicare." };
-    if (!current?.image) return { error: "Adaugă o fotografie înainte de publicare." };
+    if (current?.draft) return { error: a.productActions.draftPublish };
+    if (!current?.image) return { error: a.productActions.photoPublish };
   }
   const product = await prisma.product.update({ where: { id }, data: { [flag]: value }, select: { slug: true, name: true } });
   invalidateCatalog(product.slug);

@@ -4,6 +4,9 @@ import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/session";
 import { audit } from "@/services/audit";
+import { fill } from "@/lib/i18n/config";
+import { translateAdminMessage, translateFieldErrors } from "@/lib/i18n/admin";
+import { getAdminI18n } from "@/lib/i18n/admin/server";
 import { prisma } from "@/lib/prisma";
 import { deleteImage, isUploadedFile, saveImage, UploadError } from "@/lib/storage";
 import { isObjectId } from "@/lib/utils";
@@ -21,11 +24,13 @@ function invalidate() {
 
 export async function saveCategory(_prev: CategoryFormState, formData: FormData): Promise<CategoryFormState> {
   const admin = await requireAdmin();
+  const { a } = await getAdminI18n();
+  const t = a.categoryActions;
 
   const id = String(formData.get("id") ?? "");
-  if (id && !isObjectId(id)) return { error: "Categorie invalidă." };
+  if (id && !isObjectId(id)) return { error: t.invalid };
   const existing = id ? await prisma.category.findUnique({ where: { id }, select: { id: true, image: true } }) : null;
-  if (id && !existing) return { error: "Categoria nu mai există." };
+  if (id && !existing) return { error: t.gone };
 
   const parsed = categoryInputSchema.safeParse({
     name: formData.get("name"),
@@ -33,13 +38,13 @@ export async function saveCategory(_prev: CategoryFormState, formData: FormData)
     description: formData.get("description") ?? "",
     active: formData.get("active") === "on",
   });
-  if (!parsed.success) return { error: "Verifică câmpurile marcate.", fieldErrors: toFieldErrors(parsed.error) };
+  if (!parsed.success) return { error: a.common.checkFields, fieldErrors: translateFieldErrors(a, toFieldErrors(parsed.error)) };
 
   const slugTaken = await prisma.category.findFirst({
     where: { slug: parsed.data.slug, NOT: id ? { id } : undefined },
     select: { id: true },
   });
-  if (slugTaken) return { error: "Slug-ul este deja folosit.", fieldErrors: { slug: "Alege alt slug" } };
+  if (slugTaken) return { error: a.productActions.slugTaken, fieldErrors: { slug: a.productActions.slugField } };
 
   let image = existing?.image ?? null;
   const file = formData.get("imageFile");
@@ -47,7 +52,10 @@ export async function saveCategory(_prev: CategoryFormState, formData: FormData)
     try {
       image = await saveImage(file);
     } catch (error) {
-      if (error instanceof UploadError) return { error: error.message, fieldErrors: { image: error.message } };
+      if (error instanceof UploadError) {
+        const message = translateAdminMessage(a, error.message);
+        return { error: message, fieldErrors: { image: message } };
+      }
       throw error;
     }
   }
@@ -67,10 +75,11 @@ export async function saveCategory(_prev: CategoryFormState, formData: FormData)
 
 export async function deleteCategory(id: string): Promise<{ error?: string }> {
   const admin = await requireAdmin();
-  if (!isObjectId(id)) return { error: "Categorie invalidă." };
+  const { a } = await getAdminI18n();
+  if (!isObjectId(id)) return { error: a.categoryActions.invalid };
   const productCount = await prisma.product.count({ where: { categoryId: id } });
   if (productCount > 0) {
-    return { error: `Categoria are ${productCount} produse. Mută-le sau șterge-le întâi.` };
+    return { error: fill(a.categoryActions.hasProducts, { count: productCount }) };
   }
   const category = await prisma.category.delete({ where: { id }, select: { image: true, name: true } });
   await audit(admin, "category.delete", "category", id, category.name);

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { AlertTriangle, Download, ExternalLink, Pencil } from "lucide-react";
 import { AdminPageHeader, Panel } from "@/components/admin/admin-ui";
@@ -6,52 +5,54 @@ import { CompetitorForm, CsvImportForm, DeleteCompetitorButton, PriceChange } fr
 import { buttonStyles } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatDate, formatPrice } from "@/lib/format";
+import { fill } from "@/lib/i18n/config";
+import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 import { cn, isObjectId } from "@/lib/utils";
 import { CSV_COLUMNS, listCompetitorPrices, marketOverview, MIN_COMPARABLES, STALE_DAYS } from "@/services/market";
 
-export const metadata: Metadata = { title: "Piață și prețuri" };
+export const generateMetadata = () => adminTitle("market");
 
 export default async function AdminMarketPage({ searchParams }: PageProps<"/admin/market">) {
   await requireAdmin();
+  const { locale, a } = await getAdminI18n();
+  const t = a.market;
+  const price = (bani: number) => formatPrice(bani, locale);
+  const date = (d: Date) => formatDate(d, locale);
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.trim().slice(0, 60) : "";
   const editId = typeof params.edit === "string" && isObjectId(params.edit) ? params.edit : "";
   const [overview, offers] = await Promise.all([marketOverview(), listCompetitorPrices({ q })]);
   const productName = new Map(overview.map((p) => [p.id, p.name]));
-  const productOptions = overview.map((p) => ({ id: p.id, name: `${p.name}${p.draft ? " (ciornă)" : ""}` }));
+  const productOptions = overview.map((p) => ({ id: p.id, name: `${p.name}${p.draft ? ` (${t.draft})` : ""}` }));
   const editing = offers.find((o) => o.id === editId);
 
   return (
     <>
       <AdminPageHeader
-        title="Piață și prețuri"
-        description="Prețuri publicate de concurenți (MDL), introduse sau importate manual. Date interne: nu apar pe site."
+        title={a.meta.market}
+        description={t.lead}
       >
         {/* A file download from a route handler: a plain link, not client-side navigation. */}
         <a href="/admin/market-export" download className={buttonStyles({ variant: "outline", size: "md" })}>
-          <Download className="size-4.5" aria-hidden /> Export CSV
+          <Download className="size-4.5" aria-hidden /> {t.export}
         </a>
       </AdminPageHeader>
 
-      <p className="mb-5 rounded-xl bg-mustard-soft p-4 text-sm">
-        Reperul de piață este mediana ofertelor <strong>legate explicit</strong> de un produs BUNIQ și de același tip (produs separat / combo), doar
-        dacă există cel puțin {MIN_COMPARABLES}. Prețul pieței nu este cost: fără costul de producție nu se poate calcula marja. Prețurile BUNIQ se
-        schimbă doar după confirmare. Verificările mai vechi de {STALE_DAYS} de zile sunt marcate ca expirate.
-      </p>
+      <p className="mb-5 rounded-xl bg-mustard-soft p-4 text-sm">{fill(t.explain, { min: MIN_COMPARABLES, days: STALE_DAYS })}</p>
 
-      <Panel title="Comparație pe produse">
+      <Panel title={t.comparison}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[56rem] text-sm">
             <thead className="border-b border-line text-left text-xs font-bold tracking-wide text-muted uppercase">
               <tr>
-                <th className="px-5 py-3">Produs BUNIQ</th>
-                <th className="px-3 py-3">Preț BUNIQ</th>
-                <th className="px-3 py-3">Oferte</th>
-                <th className="px-3 py-3">Min – max</th>
-                <th className="px-3 py-3">Reper (mediană)</th>
-                <th className="px-3 py-3">Diferență</th>
-                <th className="px-3 py-3">Verificat</th>
-                <th className="px-5 py-3">Acțiune</th>
+                <th className="px-5 py-3">{t.colProduct}</th>
+                <th className="px-3 py-3">{t.colPrice}</th>
+                <th className="px-3 py-3">{t.colOffers}</th>
+                <th className="px-3 py-3">{t.colRange}</th>
+                <th className="px-3 py-3">{t.colBenchmark}</th>
+                <th className="px-3 py-3">{t.colGap}</th>
+                <th className="px-3 py-3">{t.colChecked}</th>
+                <th className="px-5 py-3">{t.colAction}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -63,18 +64,18 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
                       {p.category.name}
                       {p.weight ? ` · ${p.weight} ${p.weightUnit}` : ""}
                       {p.kind === "COMBO" ? " · combo" : ""}
-                      {p.draft ? " · ciornă" : !p.active ? " · ascuns" : ""}
+                      {p.draft ? ` · ${t.draft}` : !p.active ? ` · ${t.hidden}` : ""}
                     </span>
                   </td>
-                  <td className="px-3 py-3 font-semibold tabular-nums">{formatPrice(p.price)}</td>
+                  <td className="px-3 py-3 font-semibold tabular-nums">{price(p.price)}</td>
                   <td className="px-3 py-3 tabular-nums">{p.offers.length}</td>
-                  <td className="px-3 py-3 tabular-nums">{p.min !== null && p.max !== null ? `${formatPrice(p.min)} – ${formatPrice(p.max)}` : "—"}</td>
+                  <td className="px-3 py-3 tabular-nums">{p.min !== null && p.max !== null ? `${price(p.min)} – ${price(p.max)}` : "—"}</td>
                   <td className="px-3 py-3 tabular-nums">
                     {p.benchmark !== null ? (
-                      formatPrice(p.benchmark)
+                      price(p.benchmark)
                     ) : (
                       <span className="inline-flex items-center gap-1 text-xs text-muted">
-                        <AlertTriangle className="size-3.5" aria-hidden /> Date insuficiente
+                        <AlertTriangle className="size-3.5" aria-hidden /> {t.insufficient}
                       </span>
                     )}
                   </td>
@@ -84,8 +85,8 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
                   <td className="px-3 py-3 text-xs">
                     {p.lastChecked ? (
                       <span className={cn(p.stale && "font-semibold text-accent-ink")}>
-                        {formatDate(p.lastChecked)}
-                        {p.stale ? " · expirat" : ""}
+                        {date(p.lastChecked)}
+                        {p.stale ? ` · ${t.stale}` : ""}
                       </span>
                     ) : (
                       "—"
@@ -102,7 +103,7 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
       </Panel>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <Panel title={editing ? `Editează: ${editing.restaurant} · ${editing.itemName}` : "Adaugă un preț de concurent"}>
+        <Panel title={editing ? fill(t.editing, { name: `${editing.restaurant} · ${editing.itemName}` }) : t.add}>
           <div className="p-5">
             <CompetitorForm
               key={editing?.id ?? "new"}
@@ -114,44 +115,43 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
               }
             />
             {editing && (
-              <Link href="/admin/market" className="mt-3 inline-block text-sm font-semibold text-muted hover:text-ink">Renunță la editare</Link>
+              <Link href="/admin/market" className="mt-3 inline-block text-sm font-semibold text-muted hover:text-ink">{t.cancelEdit}</Link>
             )}
           </div>
         </Panel>
-        <Panel title="Import CSV">
+        <Panel title={t.import}>
           <div className="space-y-3 p-5 text-sm">
             <p className="text-muted">
-              Coloane: <code className="text-xs break-words">{CSV_COLUMNS.join(", ")}</code>. Prețul în MDL (89.00), data AAAA-LL-ZZ, tipul SINGLE/COMBO,
-              sursa RESTAURANT_SITE/AGGREGATOR, <code>buniq_slug</code> opțional. Dacă un rând e greșit, nu se importă nimic.
+              {t.columns} <code className="text-xs break-words">{CSV_COLUMNS.join(", ")}</code>. {t.importHelp}
             </p>
             <CsvImportForm />
           </div>
         </Panel>
       </div>
 
-      <Panel title={`Înregistrări (${offers.length})`} className="mt-6">
+      <Panel title={fill(t.records, { count: offers.length })} className="mt-6">
         <form role="search" className="flex gap-2 border-b border-line p-4">
           <label className="flex-1">
-            <span className="sr-only">Caută</span>
-            <input name="q" defaultValue={q} placeholder="Restaurant, produs, categorie…" className="h-10 w-full rounded-lg border border-line bg-white px-3 text-sm focus:border-accent focus:outline-none" />
+            <span className="sr-only">{a.common.search}</span>
+            <input name="q" defaultValue={q} placeholder={t.searchPlaceholder} className="h-10 w-full rounded-lg border border-line bg-paper px-3 text-sm focus:border-accent focus:outline-none" />
           </label>
-          <button type="submit" className={buttonStyles({ variant: "dark", size: "sm" })}>Caută</button>
+          <button type="submit" className={buttonStyles({ variant: "dark", size: "sm" })}>{a.common.search}</button>
         </form>
         {offers.length === 0 ? (
-          <p className="p-5 text-sm text-muted">Nicio înregistrare.</p>
+          <p className="p-5 text-sm text-muted">{t.empty}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[60rem] text-sm">
               <thead className="border-b border-line text-left text-xs font-bold tracking-wide text-muted uppercase">
                 <tr>
-                  <th className="px-5 py-3">Restaurant · produs</th>
-                  <th className="px-3 py-3">Categorie</th>
-                  <th className="px-3 py-3">Preț</th>
-                  <th className="px-3 py-3">Gramaj</th>
-                  <th className="px-3 py-3">Tip</th>
-                  <th className="px-3 py-3">Sursă</th>
-                  <th className="px-3 py-3">Verificat</th>
-                  <th className="px-3 py-3">BUNIQ</th>
+                  <th className="px-5 py-3">{t.colRestaurant}</th>
+                  <th className="px-3 py-3">{t.colCategory}</th>
+                  <th className="px-3 py-3">{t.colRecordPrice}</th>
+                  <th className="px-3 py-3">{t.colSize}</th>
+                  <th className="px-3 py-3">{t.colType}</th>
+                  <th className="px-3 py-3">{t.colSource}</th>
+                  <th className="px-3 py-3">{t.colChecked}</th>
+                  <th className="px-3 py-3">{t.colBuniq}</th>
                   <th className="px-5 py-3" />
                 </tr>
               </thead>
@@ -163,19 +163,19 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
                       {o.notes && <span className="block text-xs text-muted">{o.notes}</span>}
                     </td>
                     <td className="px-3 py-3">{o.category}</td>
-                    <td className="px-3 py-3 font-semibold tabular-nums">{formatPrice(o.price)}</td>
+                    <td className="px-3 py-3 font-semibold tabular-nums">{price(o.price)}</td>
                     <td className="px-3 py-3">{o.size ?? "—"}</td>
-                    <td className="px-3 py-3">{o.offerType === "COMBO" ? "Combo" : "Separat"}</td>
+                    <td className="px-3 py-3">{o.offerType === "COMBO" ? t.combo : t.single}</td>
                     <td className="px-3 py-3">
                       <a href={o.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" className="inline-flex items-center gap-1 text-accent-ink hover:underline">
-                        {o.sourceType === "AGGREGATOR" ? "Agregator" : "Site"} <ExternalLink className="size-3.5" aria-hidden />
+                        {o.sourceType === "AGGREGATOR" ? t.aggregator : t.site} <ExternalLink className="size-3.5" aria-hidden />
                       </a>
                     </td>
-                    <td className="px-3 py-3 text-xs">{formatDate(o.checkedAt)}</td>
+                    <td className="px-3 py-3 text-xs">{date(o.checkedAt)}</td>
                     <td className="px-3 py-3 text-xs">{o.productId ? (productName.get(o.productId) ?? "—") : "—"}</td>
                     <td className="px-5 py-3">
                       <span className="flex justify-end gap-1">
-                        <Link href={`/admin/market?edit=${o.id}`} className="grid size-9 place-items-center rounded-lg text-muted hover:bg-sand hover:text-ink" aria-label={`Editează ${o.itemName}`}>
+                        <Link href={`/admin/market?edit=${o.id}`} className="grid size-9 place-items-center rounded-lg text-muted hover:bg-sand hover:text-ink" aria-label={fill(a.common.edit, { name: o.itemName })}>
                           <Pencil className="size-4" aria-hidden />
                         </Link>
                         <DeleteCompetitorButton id={o.id} label={`${o.restaurant} · ${o.itemName}`} />

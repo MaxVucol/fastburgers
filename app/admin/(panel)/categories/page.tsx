@@ -1,29 +1,32 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Pencil, Plus } from "lucide-react";
 import { CategoryActiveSwitch, DeleteButton, MoveButtons } from "@/components/admin/admin-controls";
 import { AdminPageHeader, Panel, SavedNotice } from "@/components/admin/admin-ui";
 import { requireAdmin } from "@/lib/auth/session";
+import { fill } from "@/lib/i18n/config";
+import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 import { listCategoriesAdmin } from "@/services/admin-catalog";
 
-export const metadata: Metadata = { title: "Categorii" };
+export const generateMetadata = () => adminTitle("categories");
 
 export default async function AdminCategoriesPage({ searchParams }: PageProps<"/admin/categories">) {
   await requireAdmin();
+  const { a } = await getAdminI18n();
+  const t = a.categories;
   const [{ saved }, categories] = await Promise.all([searchParams, listCategoriesAdmin()]);
 
   return (
     <>
       <AdminPageHeader
-        title="Categorii"
-        description="Ordinea de aici este ordinea din meniu și din homepage."
-        action={{ href: "/admin/categories/new", label: "Categorie nouă", icon: <Plus className="size-4.5" aria-hidden /> }}
+        title={a.meta.categories}
+        description={t.lead}
+        action={{ href: "/admin/categories/new", label: t.new, icon: <Plus className="size-4.5" aria-hidden /> }}
       />
-      <SavedNotice show={saved === "1"}>Categoria a fost salvată.</SavedNotice>
+      <SavedNotice show={saved === "1"}>{t.saved}</SavedNotice>
       <Panel>
         {categories.length === 0 ? (
-          <p className="p-6 text-sm text-muted">Nu există categorii.</p>
+          <p className="p-6 text-sm text-muted">{t.empty}</p>
         ) : (
           <ol className="divide-y divide-line">
             {categories.map((c, i) => (
@@ -37,14 +40,14 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps<"/
                     {c.name}
                   </Link>
                   <span className="block truncate text-xs text-muted">
-                    /{c.slug} · {c._count.products} produse
+                    /{c.slug} · {fill(t.products, { count: c._count.products })}
                   </span>
                 </span>
-                <CategoryActiveSwitch id={c.id} value={c.active} label={`${c.name} activă`} />
+                <CategoryActiveSwitch id={c.id} value={c.active} label={fill(t.switchActive, { name: c.name })} />
                 <Link
                   href={`/admin/categories/${c.id}`}
                   className="grid size-9 place-items-center rounded-lg text-muted hover:bg-sand hover:text-ink"
-                  aria-label={`Editează ${c.name}`}
+                  aria-label={fill(a.common.edit, { name: c.name })}
                 >
                   <Pencil className="size-4" aria-hidden />
                 </Link>

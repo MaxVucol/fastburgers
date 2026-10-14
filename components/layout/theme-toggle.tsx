@@ -15,13 +15,11 @@ function subscribe(onChange: () => void) {
 const isDarkNow = () => document.documentElement.getAttribute("data-theme") === "dark";
 
 /**
- * Light / Dark Premium switch for the header (on the always-dark bar). A toggle button with a
- * fixed name ("Dark theme") and `aria-pressed`; the icon shows the theme it switches to and is
- * chosen by CSS, so it is right before hydration too. The change cross-fades where the browser
- * supports view transitions (skipped with reduced motion) and is saved for later visits.
+ * Current theme and a switch for it, shared by the site header and the admin panel. The choice is
+ * saved for later visits (same key on the site and in the panel) and cross-fades where the browser
+ * supports view transitions (skipped with reduced motion).
  */
-export function ThemeToggle({ className }: { className?: string }) {
-  const { t } = useI18n();
+export function useDarkTheme() {
   const dark = useSyncExternalStore(subscribe, isDarkNow, () => false);
 
   // Pages rendered on the client from an error shell (404) never run the inline <head> script.
@@ -42,6 +40,18 @@ export function ThemeToggle({ className }: { className?: string }) {
     if (!reduce && typeof document.startViewTransition === "function") document.startViewTransition(apply);
     else apply();
   }
+
+  return { dark, toggle };
+}
+
+/**
+ * Light / Dark Premium switch for the header (on the always-dark bar). A toggle button with a
+ * fixed name ("Dark theme") and `aria-pressed`; the icon shows the theme it switches to and is
+ * chosen by CSS, so it is right before hydration too.
+ */
+export function ThemeToggle({ className }: { className?: string }) {
+  const { t } = useI18n();
+  const { dark, toggle } = useDarkTheme();
 
   return (
     <button

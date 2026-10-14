@@ -3,10 +3,12 @@
 import { startTransition, useActionState } from "react";
 import { Loader2 } from "lucide-react";
 import { login, type LoginState } from "@/actions/auth";
+import { useAdminI18n } from "@/components/admin/admin-i18n";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 
 export function LoginForm() {
+  const { a } = useAdminI18n();
   const [state, action, pending] = useActionState<LoginState, FormData>(login, {});
 
   return (
@@ -19,10 +21,10 @@ export function LoginForm() {
         startTransition(() => action(data));
       }}
     >
-      <Field label="Email" htmlFor="email" required>
+      <Field label={a.login.email} htmlFor="email" required>
         <Input id="email" name="email" type="email" autoComplete="username" required defaultValue={state.email} />
       </Field>
-      <Field label="Parolă" htmlFor="password" required>
+      <Field label={a.login.password} htmlFor="password" required>
         <Input id="password" name="password" type="password" autoComplete="current-password" required />
       </Field>
       {state.error && (
@@ -32,7 +34,7 @@ export function LoginForm() {
       )}
       <Button type="submit" className="w-full" disabled={pending}>
         {pending && <Loader2 className="size-4.5 animate-spin" aria-hidden />}
-        Intră în cont
+        {a.login.submit}
       </Button>
     </form>
   );

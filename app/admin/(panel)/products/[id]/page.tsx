@@ -1,17 +1,18 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/admin-ui";
 import { ProductForm } from "@/components/admin/product-form";
 import { requireAdmin } from "@/lib/auth/session";
+import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 import { isObjectId } from "@/lib/utils";
 import { getProductAdmin, listCategoryOptions } from "@/services/admin-catalog";
 
-export const metadata: Metadata = { title: "Editează produs" };
+export const generateMetadata = () => adminTitle("editProduct");
 
 export default async function EditProductPage({ params }: PageProps<"/admin/products/[id]">) {
   await requireAdmin();
+  const { a } = await getAdminI18n();
   const { id } = await params;
   if (!isObjectId(id)) notFound();
   const [product, categories] = await Promise.all([getProductAdmin(id), listCategoryOptions()]);
@@ -19,9 +20,9 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
 
   return (
     <>
-      <AdminPageHeader title={product.name} description="Editează produsul.">
+      <AdminPageHeader title={product.name} description={a.products.editLead}>
         <Link href={`/menu/${product.slug}`} target="_blank" className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink">
-          Vezi în site <ExternalLink className="size-4" aria-hidden />
+          {a.products.viewOnSite} <ExternalLink className="size-4" aria-hidden />
         </Link>
       </AdminPageHeader>
       <ProductForm
