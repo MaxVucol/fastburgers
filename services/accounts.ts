@@ -2,6 +2,7 @@ import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import type { AuthTokenType, Role } from "@prisma/client";
+import { currentSessionVersion, NO_SESSION_VERSION } from "@/lib/auth/session-version";
 import { prisma } from "@/lib/prisma";
 import { audit, type AuditActor } from "@/services/audit";
 
@@ -27,6 +28,18 @@ const normalizeEmail = (email: string) => email.trim().toLowerCase();
 /** MongoDB: "not set" covers both a stored null and a missing field (older documents). */
 const unset = <T extends string>(field: T) => ({ OR: [{ [field]: null }, { [field]: { isSet: false } }] }) as Record<"OR", object[]>;
 const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
+
+/**
+ * Update data that also ends every existing session of the user (`sessionVersion + 1`), merged
+ * with `data`. An account without a stored version (null / missing — older accounts, the seeded
+ * administrator) first gets 0: Prisma's increment would leave it null on MongoDB and no session
+ * would ever be revoked. That step only touches a missing value, so repeating it is harmless; the
+ * increment itself is one atomic update, so parallel revocations each count.
+ */
+async function revokeSessionsData<T extends object>(userId: string, data: T) {
+  await prisma.user.updateMany({ where: { id: userId, ...NO_SESSION_VERSION }, data: { sessionVersion: 0 } });
+  return { ...data, sessionVersion: { increment: 1 } };
+}
 
 export async function hashPassword(password: string) {
   return bcrypt.hash(password, BCRYPT_COST);
@@ -63,7 +76,7 @@ export async function authenticate(emailInput: string, password: string, roles: 
   });
   const valid = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
   if (!user || !user.passwordHash || !valid || user.blockedAt || !roles.includes(user.role)) return null;
-  return { id: user.id, role: user.role, sessionVersion: user.sessionVersion ?? 0 };
+  return { id: user.id, role: user.role, sessionVersion: currentSessionVersion(user.sessionVersion) };
 }
 
 /** New one-time token for `userId` (earlier unused ones of the type are revoked). Returns the raw token. */
@@ -99,10 +112,10 @@ export async function consumeToken(token: string, type: AuthTokenType, now = Dat
 export async function bumpSessionVersion(userId: string) {
   const user = await prisma.user.update({
     where: { id: userId },
-    data: { sessionVersion: { increment: 1 } },
+    data: await revokeSessionsData(userId, {}),
     select: { sessionVersion: true },
   });
-  return user.sessionVersion ?? 1;
+  return currentSessionVersion(user.sessionVersion);
 }
 
 /** Sets a new password from a reset link; all existing sessions end. */
@@ -110,7 +123,7 @@ export async function resetPasswordWithToken(token: string, password: string) {
   const userId = await consumeToken(token, "PASSWORD_RESET");
   const user = await prisma.user.update({
     where: { id: userId },
-    data: { passwordHash: await hashPassword(password), sessionVersion: { increment: 1 } },
+    data: await revokeSessionsData(userId, { passwordHash: await hashPassword(password) }),
     select: { id: true, role: true, sessionVersion: true, blockedAt: true },
   });
   return user;
@@ -128,10 +141,10 @@ export async function changePassword(userId: string, current: string, next: stri
   if (!user?.passwordHash || !(await bcrypt.compare(current, user.passwordHash))) throw new AccountError("wrongPassword");
   const updated = await prisma.user.update({
     where: { id: userId },
-    data: { passwordHash: await hashPassword(next), sessionVersion: { increment: 1 } },
+    data: await revokeSessionsData(userId, { passwordHash: await hashPassword(next) }),
     select: { sessionVersion: true },
   });
-  return updated.sessionVersion ?? 1;
+  return currentSessionVersion(updated.sessionVersion);
 }
 
 async function activeAdminCount(excludeId?: string) {
@@ -148,7 +161,7 @@ export async function setUserRole(actor: AuditActor, targetId: string, role: Rol
   if (!target) throw new AccountError("notFound");
   if (target.role === role) return;
   if (target.role === "ADMIN" && !target.blockedAt && (await activeAdminCount(targetId)) === 0) throw new AccountError("lastAdmin");
-  await prisma.user.update({ where: { id: targetId }, data: { role, sessionVersion: { increment: 1 } } });
+  await prisma.user.update({ where: { id: targetId }, data: await revokeSessionsData(targetId, { role }) });
   await audit(actor, "user.role", "user", targetId, `${target.email}: ${target.role} → ${role}`);
 }
 
@@ -161,7 +174,7 @@ export async function setUserBlocked(actor: AuditActor, targetId: string, blocke
   if (blocked && target.role === "ADMIN" && (await activeAdminCount(targetId)) === 0) throw new AccountError("lastAdmin");
   await prisma.user.update({
     where: { id: targetId },
-    data: { blockedAt: blocked ? new Date() : null, sessionVersion: { increment: 1 } },
+    data: await revokeSessionsData(targetId, { blockedAt: blocked ? new Date() : null }),
   });
   await audit(actor, blocked ? "user.block" : "user.unblock", "user", targetId, target.email);
 }

@@ -426,6 +426,7 @@ async function main() {
       name: "Administrator",
       role: "ADMIN",
       passwordHash: await bcrypt.hash(adminPassword, 12),
+      sessionVersion: 0,
     },
   });
 

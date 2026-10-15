@@ -368,8 +368,6 @@ export const en: Dictionary = {
     submit: "Track order",
     helpTitle: "Need a hand?",
     helpText: "We answer the phone during opening hours.",
-    staffTitle: "Restaurant staff",
-    staffText: "Sign in to the admin panel",
   },
 
   me: meEn,

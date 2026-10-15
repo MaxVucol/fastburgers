@@ -385,8 +385,6 @@ export const ru: Dictionary = {
     submit: "Отследить заказ",
     helpTitle: "Нужна помощь?",
     helpText: "Отвечаем на звонки в часы работы.",
-    staffTitle: "Сотрудникам ресторана",
-    staffText: "Вход в панель администратора",
   },
 
   me: meRu,

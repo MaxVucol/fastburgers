@@ -376,8 +376,6 @@ export const ro = {
     submit: "Urmărește comanda",
     helpTitle: "Ai nevoie de ajutor?",
     helpText: "Suntem la telefon în timpul programului.",
-    staffTitle: "Personal restaurant",
-    staffText: "Autentificare în panoul de administrare",
   },
 
   me: meRo,

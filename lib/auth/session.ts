@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { SESSION_COOKIE, SESSION_TTL_SECONDS, signSession, verifySession } from "./jwt";
+import { isCurrentSession } from "./session-version";
 
 export type AdminUser = { id: string; name: string; email: string };
 
@@ -45,7 +46,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     where: { id: session.userId },
     select: { id: true, name: true, email: true, phone: true, role: true, sessionVersion: true, blockedAt: true, emailVerifiedAt: true },
   });
-  if (!user || user.blockedAt || (user.sessionVersion ?? 0) !== session.version) return null;
+  if (!user || user.blockedAt || !isCurrentSession(user.sessionVersion, session.version)) return null;
   return {
     id: user.id,
     name: user.name,

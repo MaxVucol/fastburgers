@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowRight, ArrowUpRight, Heart, LockKeyhole, MapPin, Package, UserRound } from "lucide-react";
+import { ArrowRight, Heart, MapPin, Package, UserRound } from "lucide-react";
 import { AccountPanel, AccountShell, AccountSkeleton } from "@/components/account/shell";
 import { OrderRows } from "@/components/account/order-bits";
 import { OrderLookupForm } from "@/components/checkout/order-lookup-form";
@@ -120,17 +120,6 @@ async function GuestAccount() {
               {siteConfig.phone}
             </a>
           </div>
-          <Link
-            href="/admin"
-            className="group flex items-center gap-3 rounded-[var(--radius-card)] border border-line p-5 text-sm transition-colors hover:border-ink/35"
-          >
-            <LockKeyhole className="size-5 text-muted" aria-hidden />
-            <span className="flex-1">
-              <span className="block font-semibold">{t.account.staffTitle}</span>
-              <span className="text-muted">{t.account.staffText}</span>
-            </span>
-            <ArrowUpRight className="size-4 text-muted group-hover:text-ink" aria-hidden />
-          </Link>
         </aside>
       </div>
     </div>

@@ -68,6 +68,12 @@ async function main() {
     return;
   }
 
+  // A missing session version must be 0 before the increment (Prisma leaves null + 1 as null on
+  // MongoDB, which would keep the account's existing sessions alive).
+  await prisma.user.updateMany({
+    where: { id: user.id, OR: [{ sessionVersion: null }, { sessionVersion: { isSet: false } }] },
+    data: { sessionVersion: 0 },
+  });
   // Conditional update: only this account, only if it is still a customer.
   const updated = await prisma.user.updateMany({
     where: { id: user.id, role: "CUSTOMER" },
