@@ -11,6 +11,7 @@ export const meRu: MeDictionary = {
     favorites: "Избранное",
     settings: "Настройки",
     logout: "Выйти",
+    admin: "Админ-панель",
   },
   guest: {
     eyebrow: "Личный кабинет",

@@ -11,6 +11,7 @@ export const meEn: MeDictionary = {
     favorites: "Favourites",
     settings: "Settings",
     logout: "Sign out",
+    admin: "Admin panel",
   },
   guest: {
     eyebrow: "My account",

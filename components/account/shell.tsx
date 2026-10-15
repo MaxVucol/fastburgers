@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Heart, LayoutGrid, LogOut, MapPin, Package, Settings, UserRound } from "lucide-react";
+import { Heart, LayoutGrid, LogOut, MapPin, Package, Settings, ShieldCheck, UserRound } from "lucide-react";
 import { signOutAction } from "@/actions/customer";
 import { ResendVerification } from "@/components/account/forms";
 import { Crown } from "@/components/ui/brand";
@@ -73,7 +73,22 @@ export async function AccountShell({
                 </li>
               );
             })}
-            <li className="shrink-0 lg:mt-3 lg:border-t lg:border-line lg:pt-3">
+            {/* Administrators only, from the role the server just re-read from the database. A
+                shortcut, not a permission: /admin checks the role again on every page and action. */}
+            {user.role === "ADMIN" && (
+              // First in the scrolling row on phones (it would sit off-screen at the end), above "Sign out" on desktop.
+              <li className="order-first shrink-0 lg:order-none lg:mt-3 lg:border-t lg:border-line lg:pt-3">
+                <Link
+                  href="/admin"
+                  prefetch={false}
+                  className="flex min-h-11 items-center gap-2.5 rounded-full border border-accent/45 px-4 text-sm font-semibold whitespace-nowrap text-accent-ink transition-colors duration-[var(--duration-fast)] hover:border-accent hover:bg-accent-soft lg:rounded-[var(--radius-sm)] lg:border-transparent"
+                >
+                  <ShieldCheck className="size-4.5 shrink-0" aria-hidden />
+                  {t.me.nav.admin}
+                </Link>
+              </li>
+            )}
+            <li className={cn("shrink-0", user.role !== "ADMIN" && "lg:mt-3 lg:border-t lg:border-line lg:pt-3")}>
               <form action={signOutAction}>
                 <input type="hidden" name="locale" value={locale} />
                 <button

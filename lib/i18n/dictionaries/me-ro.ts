@@ -12,6 +12,7 @@ export const meRo = {
     favorites: "Favorite",
     settings: "Setări",
     logout: "Ieși din cont",
+    admin: "Panou de administrare",
   },
   guest: {
     eyebrow: "Contul meu",
