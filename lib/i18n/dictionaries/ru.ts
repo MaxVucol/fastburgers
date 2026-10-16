@@ -56,7 +56,7 @@ export const ru: Dictionary = {
   },
 
   header: {
-    homeLink: "BUNIQ — главная страница",
+    homeLink: "BUNIQ Burgers & More — главная страница",
     search: "Поиск по меню",
     openMenu: "Открыть меню",
     closeMenu: "Закрыть меню",

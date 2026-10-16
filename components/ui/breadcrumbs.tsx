@@ -14,7 +14,7 @@ export function Breadcrumbs({ items, label = "Breadcrumb" }: { items: Crumb[]; l
               </span>
             )}
             {item.href ? (
-              <Link href={item.href} className="underline-offset-4 hover:text-ink hover:underline">
+              <Link href={item.href} className="inline-block py-1.5 underline-offset-4 hover:text-ink hover:underline">
                 {item.label}
               </Link>
             ) : (

@@ -121,7 +121,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                     src={slide.src}
                     alt={slide.alt}
                     fill
-                    {...(i === 0 ? { preload: true } : { loading: "lazy" as const })}
+                    {...(i === 0 ? { preload: true, fetchPriority: "high" as const } : { loading: "lazy" as const })}
                     quality={80}
                     sizes="(min-width: 1344px) 1312px, 100vw"
                     className="object-cover"
@@ -136,7 +136,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
       </div>
 
       {count > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-2.5" role="group" aria-label={t.hero.carousel}>
+        <div className="mt-2 flex items-center justify-center gap-0" role="group" aria-label={t.hero.carousel}>
           {arrow("prev", "mr-2 grid lg:hidden")}
           {slides.map((slide, i) => (
             <button
@@ -145,11 +145,16 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               aria-label={fill(t.hero.goTo, { n: i + 1 })}
               aria-current={i === index}
               onClick={() => go(i)}
-              className={cn(
-                "h-2.5 rounded-full border-[1.5px] transition-[width,background-color,border-color] duration-300",
-                i === index ? "w-7 border-accent bg-accent" : "w-2.5 border-ink-soft/70 hover:border-ink",
-              )}
-            />
+              className="group grid h-8 place-items-center px-2"
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "block h-2.5 rounded-full border-[1.5px] transition-[width,background-color,border-color] duration-300",
+                  i === index ? "w-7 border-accent bg-accent" : "w-2.5 border-ink-soft/70 group-hover:border-ink",
+                )}
+              />
+            </button>
           ))}
           {arrow("next", "ml-2 grid lg:hidden")}
         </div>

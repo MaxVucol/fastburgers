@@ -35,7 +35,7 @@ export default async function ContactPage() {
           >
             <Phone className="size-6 shrink-0 text-flame" aria-hidden /> {siteConfig.phone}
           </a>
-          <a href={`mailto:${siteConfig.email}`} className="mt-3 flex items-center gap-3 font-semibold hover:text-flame">
+          <a href={`mailto:${siteConfig.email}`} className="mt-3 flex items-center gap-3 py-1.5 font-semibold hover:text-flame">
             <Mail className="size-5 text-flame" aria-hidden /> {siteConfig.email}
           </a>
           <h3 className="mt-10 flex items-center gap-2 font-sans text-sm font-semibold tracking-normal">
@@ -64,7 +64,7 @@ export default async function ContactPage() {
                   <p className="mt-1.5 flex gap-2 text-sm text-ink-soft">
                     <Clock className="mt-0.5 size-4 shrink-0 text-accent-ink" aria-hidden /> {l.hours}
                   </p>
-                  <a href={`tel:${l.phone.replace(/\s/g, "")}`} className="mt-1.5 flex gap-2 text-sm font-semibold hover:text-accent-ink">
+                  <a href={`tel:${l.phone.replace(/\s/g, "")}`} className="mt-0.5 flex gap-2 py-1.5 text-sm font-semibold hover:text-accent-ink">
                     <Phone className="mt-0.5 size-4 shrink-0 text-accent-ink" aria-hidden /> {l.phone}
                   </a>
                 </div>

@@ -29,17 +29,19 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/menu/[slug
   if (!product) return { title: t.meta.productUnavailable, robots: { index: false } };
 
   const title = `${product.name} — ${formatPrice(product.price, locale)}`;
+  // Drinks and a few other products have no description of their own.
+  const summary = product.shortDescription || product.description || `${product.name} | ${siteConfig.name}`;
   return {
     title,
-    description: product.shortDescription,
+    description: summary,
     alternates: localeAlternates(locale, `/menu/${product.slug}`),
     openGraph: {
       type: "website",
       title: `${product.name} | ${siteConfig.name}`,
-      description: product.description,
+      description: summary,
       images: [{ url: product.image, width: 1600, height: 1200, alt: product.name }],
     },
-    twitter: { card: "summary_large_image", title, description: product.shortDescription, images: [product.image] },
+    twitter: { card: "summary_large_image", title, description: summary, images: [product.image] },
   };
 }
 

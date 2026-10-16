@@ -63,7 +63,7 @@ export const ro = {
   },
 
   header: {
-    homeLink: "BUNIQ — pagina principală",
+    homeLink: "BUNIQ Burgers & More — pagina principală",
     search: "Caută în meniu",
     openMenu: "Deschide meniul",
     closeMenu: "Închide meniul",

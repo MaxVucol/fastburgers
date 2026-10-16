@@ -42,7 +42,7 @@ export function MenuExplorer({
   /** The page's own address, to which the chosen filters are appended. */
   path: string;
 }) {
-  const { locale } = useI18n();
+  const { locale, t } = useI18n();
   const [query, setQuery] = useState<MenuQuery>(DEFAULT_MENU_QUERY);
   const latest = useRef(query);
   // The dim-in only plays for a change made on the page, not for the first paint.
@@ -101,7 +101,10 @@ export function MenuExplorer({
         {filtered ? (
           <FilteredMenu products={filtered} hasSearch={Boolean(deferred.q)} />
         ) : categorySlug ? (
-          <ProductList products={items} eagerCount={4} />
+          <>
+            <h2 className="sr-only">{t.menu.eyebrow}</h2>
+            <ProductList products={items} eagerCount={4} />
+          </>
         ) : (
           <GroupedMenu categories={categories} products={items} />
         )}

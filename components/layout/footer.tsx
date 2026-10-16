@@ -112,10 +112,10 @@ export async function Footer() {
 
         <nav aria-label={t.footer.navigation}>
           <ColumnTitle>{t.footer.navigation}</ColumnTitle>
-          <ul className="space-y-3 text-[0.9375rem]">
+          <ul className="space-y-0.5 text-[0.9375rem]">
             {nav.map((item) => (
               <li key={item.href}>
-                <Link href={href(item.href)} className="text-on-dark/85 transition-colors hover:text-flame">
+                <Link href={href(item.href)} className="block py-1.5 text-on-dark/85 transition-colors hover:text-flame">
                   {item.label}
                 </Link>
               </li>
@@ -125,12 +125,12 @@ export async function Footer() {
 
         <nav aria-label={t.footer.categories}>
           <ColumnTitle>{t.footer.categories}</ColumnTitle>
-          <ul className="space-y-3 text-[0.9375rem]">
+          <ul className="space-y-0.5 text-[0.9375rem]">
             {categories.map((c) => {
               const category = localizeCategory(c, locale);
               return (
                 <li key={c.id}>
-                  <Link href={href(`/categorii/${c.slug}`)} className="text-on-dark/85 transition-colors hover:text-flame">
+                  <Link href={href(`/categorii/${c.slug}`)} className="block py-1.5 text-on-dark/85 transition-colors hover:text-flame">
                     {category.name}
                   </Link>
                 </li>
@@ -148,13 +148,13 @@ export async function Footer() {
               {siteConfig.address}
             </li>
             <li>
-              <a href={siteConfig.phoneHref} className="flex gap-2.5 font-semibold hover:text-flame">
+              <a href={siteConfig.phoneHref} className="flex gap-2.5 py-1.5 font-semibold hover:text-flame">
                 <Phone className="mt-0.5 size-4 shrink-0 text-flame" aria-hidden />
                 {siteConfig.phone}
               </a>
             </li>
             <li>
-              <a href={`mailto:${siteConfig.email}`} className="flex gap-2.5 text-on-dark/85 hover:text-flame">
+              <a href={`mailto:${siteConfig.email}`} className="flex gap-2.5 py-1.5 text-on-dark/85 hover:text-flame">
                 <Mail className="mt-0.5 size-4 shrink-0 text-flame" aria-hidden />
                 {siteConfig.email}
               </a>

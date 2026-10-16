@@ -56,7 +56,7 @@ export const en: Dictionary = {
   },
 
   header: {
-    homeLink: "BUNIQ — home page",
+    homeLink: "BUNIQ Burgers & More — home page",
     search: "Search the menu",
     openMenu: "Open menu",
     closeMenu: "Close menu",

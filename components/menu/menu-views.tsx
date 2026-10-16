@@ -89,6 +89,7 @@ export function FilteredMenu({ products, hasSearch }: { products: ProductCardDat
   }
   return (
     <>
+      <h2 className="sr-only">{t.menu.eyebrow}</h2>
       <p className="mb-5 text-sm font-semibold text-muted" role="status">
         {plural(locale, products.length, t.menu.found)}
       </p>

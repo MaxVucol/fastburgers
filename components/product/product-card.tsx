@@ -51,6 +51,7 @@ export function ProductCard({
           alt={product.name}
           fill
           sizes={PRODUCT_GRID_SIZES}
+          quality={70}
           {...(preload ? { preload: true } : { loading: eager ? "eager" : "lazy" })}
           className="object-cover"
         />
@@ -117,7 +118,8 @@ export function ProductGrid({
   const wide = columns === "four" ? "lg:grid-cols-4" : "lg:grid-cols-3 xl:grid-cols-4";
   return (
     <div
-      className={cn("grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 sm:gap-5", wide, className)}
+      // The menu lists every product: cards far below the screen are not laid out or painted until near it.
+      className={cn("grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 sm:gap-5 [&>article]:[contain-intrinsic-size:auto_26rem] [&>article]:[content-visibility:auto]", wide, className)}
     >
       {children}
     </div>

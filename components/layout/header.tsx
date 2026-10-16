@@ -146,7 +146,7 @@ export async function Header() {
 
       {/* Phones and tablets: the category row sits under the sticky bar and scrolls away with the page. */}
       <div className="container-page pt-4 lg:hidden">
-        <HeaderCategories categories={categoryLinks} tone="page" withLanguages languageClassName="md:hidden" />
+        <HeaderCategories categories={categoryLinks} tone="page" withLanguages={false} />
       </div>
     </>
   );

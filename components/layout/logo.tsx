@@ -39,6 +39,7 @@ export function Wordmark({
       >
         BUNIQ
       </span>
+      {tagline && " "}
       {tagline && (
         <span
           className={cn(
@@ -84,7 +85,7 @@ export function Logo({
               : "text-[1.75rem] lg:text-[2rem]"
         }
       />
-      {sparkle && <span aria-hidden className="logo-fx pointer-events-none absolute -inset-x-3 -inset-y-2" />}
+      {sparkle && <span aria-hidden className="logo-fx pointer-events-none absolute -inset-x-3 -inset-y-2 max-md:scale-[1.7] max-md:[clip-path:inset(calc((100%-var(--header-h)/1.7)/2)_-1rem)]" />}
     </Link>
   );
 }
