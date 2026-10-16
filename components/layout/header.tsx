@@ -97,7 +97,7 @@ export async function Header() {
       <HeaderShell>
         <div className="container-page grid h-[var(--header-h)] grid-cols-[1fr_auto_1fr] items-center gap-2 md:grid-cols-[auto_auto_1fr] md:gap-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-6 xl:gap-10">
           <div className="justify-self-start lg:hidden">
-            <MobileMenu />
+            <MobileMenu categories={categoryLinks.map((c) => ({ slug: c.slug, name: c.name }))} />
           </div>
 
           <Logo

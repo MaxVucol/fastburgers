@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import Form from "next/form";
 import { ArrowRight, CircleUserRound, Clock, Menu, PackageSearch, Phone, Search, X } from "lucide-react";
-import { useRef } from "react";
+import { useId, useRef, useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
+import categoryIcons from "@/lib/category-icons.json";
 import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { headerIconButton } from "./header-icon";
@@ -12,10 +14,18 @@ import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import { isActivePath, WithPathname } from "./nav-links";
 
-export function MobileMenu() {
+const icons: Record<string, { src: string; width: number }> = categoryIcons;
+
+/**
+ * The phone menu. "Menu" is a link to the menu page; the arrow beside it opens the list of categories
+ * right under it (and closes it again).
+ */
+export function MobileMenu({ categories }: { categories: { slug: string; name: string }[] }) {
   const { t, href } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
   const close = () => ref.current?.close();
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const categoriesId = useId();
 
   return (
     <>
@@ -70,17 +80,62 @@ export function MobileMenu() {
                   {(pathname) =>
                     siteConfig.nav.map((item) => {
                       const active = isActivePath(pathname, item.href);
+                      const linkClass = cn(
+                        "flex items-center justify-between py-4 font-display text-[1.75rem] leading-none font-extrabold tracking-[-0.03em] transition-colors",
+                        active ? "text-flame" : "text-on-dark hover:text-flame",
+                      );
+                      if (item.href === "/menu") {
+                        return (
+                          <li key={item.href}>
+                            <div className="flex items-stretch">
+                              <Link href={href(item.href)} onClick={close} aria-current={active ? "page" : undefined} className={cn(linkClass, "flex-1")}>
+                                {t.nav[item.key]}
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => setCategoriesOpen((v) => !v)}
+                                aria-expanded={categoriesOpen}
+                                aria-controls={categoriesId}
+                                aria-label={t.menu.categoriesLabel}
+                                className="-mr-2 grid w-14 place-items-center text-on-dark opacity-70 transition-opacity hover:opacity-100"
+                              >
+                                <ArrowRight className={cn("size-5 transition-transform duration-300", categoriesOpen && "rotate-90")} aria-hidden />
+                              </button>
+                            </div>
+                            <div
+                              id={categoriesId}
+                              inert={!categoriesOpen}
+                              className={cn(
+                                "grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
+                                categoriesOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+                              )}
+                            >
+                              <ul className="min-h-0 overflow-hidden">
+                                {[{ slug: "", name: t.menu.allCategories }, ...categories].map((c) => {
+                                  const icon = icons[c.slug || "all"];
+                                  return (
+                                    <li key={c.slug || "all"}>
+                                      <Link
+                                        href={href(c.slug ? `/categorii/${c.slug}` : "/menu")}
+                                        onClick={close}
+                                        className="flex items-center gap-4 py-2.5 pl-1 text-lg font-semibold text-on-dark/90 transition-colors hover:text-flame"
+                                      >
+                                        <span className="grid h-11 w-14 shrink-0 place-items-center">
+                                          {icon && <Image src={icon.src} alt="" width={icon.width} height={144} sizes="64px" className="max-h-11 w-auto object-contain" />}
+                                        </span>
+                                        {c.name}
+                                      </Link>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </div>
+                          </li>
+                        );
+                      }
                       return (
                         <li key={item.href}>
-                          <Link
-                            href={href(item.href)}
-                            onClick={close}
-                            aria-current={active ? "page" : undefined}
-                            className={cn(
-                              "flex items-center justify-between py-4 font-display text-[1.75rem] leading-none font-extrabold tracking-[-0.03em] transition-colors",
-                              active ? "text-flame" : "text-on-dark hover:text-flame",
-                            )}
-                          >
+                          <Link href={href(item.href)} onClick={close} aria-current={active ? "page" : undefined} className={linkClass}>
                             {t.nav[item.key]}
                             <ArrowRight className="size-5 opacity-60" aria-hidden />
                           </Link>
