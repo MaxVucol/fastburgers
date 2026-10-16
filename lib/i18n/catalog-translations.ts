@@ -2,6 +2,8 @@
 // truth in Romanian (admins edit it in Romanian); these entries translate it by slug.
 // Anything without a translation (e.g. a product added later in /admin) falls back to Romanian.
 
+import { pizzamaniaRu } from "./catalog-pizzamania";
+
 type ProductCopy = { short: string; description: string; ingredients: string[] };
 type CategoryCopy = { name: string; description: string };
 
@@ -595,5 +597,9 @@ const en: CatalogCopy = {
   },
   hoursWords: { Zilnic: "Daily" },
 };
+
+// Catalogue imported from the previous brand menu: Russian copy exists, English does not (it falls back to Romanian).
+Object.assign(ru.categories, pizzamaniaRu.categories);
+Object.assign(ru.products, pizzamaniaRu.products);
 
 export const catalogCopy: Record<"ru" | "en", CatalogCopy> = { ru, en };

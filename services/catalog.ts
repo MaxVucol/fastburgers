@@ -54,7 +54,7 @@ function toCard(row: CardRow): ProductCardData {
     description: row.description,
     price: row.price,
     oldPrice: row.oldPrice,
-    image: row.image,
+    image: row.image || PRODUCT_PLACEHOLDER,
     popular: row.popular,
     featured: row.featured,
     isNew: row.isNew,
@@ -70,6 +70,9 @@ function toCard(row: CardRow): ProductCardData {
   };
 }
 
+/** Shown for a product that has no photo (yet). */
+const PRODUCT_PLACEHOLDER = "/images/product-placeholder.webp";
+
 const visibleProduct = {
   active: true,
   category: { is: { active: true } },
@@ -77,11 +80,12 @@ const visibleProduct = {
 
 export async function getCategories(): Promise<CategorySummary[]> {
   "use cache";
-  cacheLife("hours");
-  cacheTag(CATALOG_TAGS.categories);
+  cacheLife("days");
+  // Depends on products too: a category with no visible product is not listed.
+  cacheTag(CATALOG_TAGS.categories, CATALOG_TAGS.products);
 
   return prisma.category.findMany({
-    where: { active: true },
+    where: { active: true, products: { some: { active: true } } },
     orderBy: { order: "asc" },
     select: { id: true, name: true, slug: true, description: true, image: true },
   });
@@ -95,7 +99,7 @@ export async function getCategoryBySlug(slug: string): Promise<CategorySummary |
 /** All visible products, ordered like the printed menu (category order, then product order). */
 export async function getMenuProducts(): Promise<ProductCardData[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
   cacheTag(CATALOG_TAGS.products, CATALOG_TAGS.categories);
 
   const rows = await prisma.product.findMany({
@@ -125,7 +129,7 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
 
 export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("days");
   cacheTag(CATALOG_TAGS.products, CATALOG_TAGS.product(slug));
 
   const row = await prisma.product.findFirst({
