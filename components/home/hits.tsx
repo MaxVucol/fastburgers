@@ -30,7 +30,7 @@ export async function Hits({ products }: { products: ProductCardData[] }) {
   if (!feature) return null;
 
   return (
-    <section aria-labelledby="hits-title" className="bg-night text-on-dark">
+    <section aria-labelledby="hits-title" className="light-surface bg-night text-on-dark">
       <div className="container-page section-y">
         <SectionHeading id="hits-title" tone="dark" eyebrow={t.hits.eyebrow} title={t.hits.title} lead={t.hits.lead} />
         <div className="grid gap-3 sm:gap-4 lg:grid-cols-2 lg:gap-5">

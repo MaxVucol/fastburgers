@@ -41,7 +41,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-transparent bg-cream transition-[border-color,box-shadow] duration-[450ms] ease-out motion-reduce:transition-none shadow-[0_2px_6px_rgb(0_0_0/0.12),0_12px_28px_-10px_rgb(0_0_0/0.38)] hover:border-oat hover:shadow-[0_4px_10px_rgb(0_0_0/0.16),0_18px_36px_-12px_rgb(0_0_0/0.5)]",
+        "group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-transparent bg-cream transition-[border-color,box-shadow] duration-[450ms] ease-out motion-reduce:transition-none shadow-[0_2px_6px_rgb(0_0_0/0.14),0_14px_30px_-10px_rgb(0_0_0/0.48)] hover:border-oat hover:shadow-[0_4px_10px_rgb(0_0_0/0.18),0_20px_38px_-12px_rgb(0_0_0/0.58)]",
         className,
       )}
     >

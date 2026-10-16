@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronDown, Search, X } from "lucide-react";
-import { useLayoutEffect, useRef } from "react";
+import { Check, ChevronDown, Search, X } from "lucide-react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { MENU_SORTS, type MenuFilter, type MenuQuery, type MenuSort } from "@/lib/menu-query";
 import { cn } from "@/lib/utils";
@@ -119,23 +119,143 @@ export function MenuToolbar({
           </div>
           )}
 
-          <label className="relative shrink-0 self-start min-[480px]:self-auto">
-            <span className="sr-only">{t.menu.sortLabel}</span>
-            <select
-              value={query.sort}
-              onChange={(e) => onChange({ sort: e.target.value as MenuSort })}
-              className="h-10 cursor-pointer appearance-none rounded-full border-[1.5px] border-line bg-transparent pr-9 pl-4 text-sm font-semibold hover:border-ink/30 focus:border-ink focus:outline-none"
-            >
-              {MENU_SORTS.map((s) => (
-                <option key={s} value={s}>
-                  {t.menu.sorts[s]}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2" aria-hidden />
-          </label>
+          <SortSelect
+            label={t.menu.sortLabel}
+            value={query.sort}
+            options={MENU_SORTS.map((value) => ({ value, label: t.menu.sorts[value] }))}
+            onChange={(sort) => onChange({ sort })}
+          />
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The sorting menu: a pill like the filter group that opens a rounded card with the options (the
+ * browser's own list could not be styled). Keyboard: arrows, Home/End, Enter or Space to choose,
+ * Escape to close; a press outside closes it.
+ */
+function SortSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: MenuSort;
+  options: { value: MenuSort; label: string }[];
+  onChange: (value: MenuSort) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const id = useId();
+  const current = options.find((o) => o.value === value) ?? options[0];
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [open]);
+
+  function show() {
+    setActive(Math.max(0, options.findIndex((o) => o.value === value)));
+    setOpen(true);
+  }
+  function choose(index: number) {
+    onChange(options[index].value);
+    setOpen(false);
+    buttonRef.current?.focus();
+  }
+  function onKeyDown(event: React.KeyboardEvent) {
+    const last = options.length - 1;
+    switch (event.key) {
+      case "ArrowDown":
+      case "ArrowUp": {
+        event.preventDefault();
+        if (!open) return show();
+        setActive((i) => (event.key === "ArrowDown" ? Math.min(last, i + 1) : Math.max(0, i - 1)));
+        break;
+      }
+      case "Home":
+      case "End":
+        if (!open) return;
+        event.preventDefault();
+        setActive(event.key === "Home" ? 0 : last);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        if (open) choose(active);
+        else show();
+        break;
+      case "Escape":
+        if (open) {
+          event.preventDefault();
+          setOpen(false);
+        }
+        break;
+      case "Tab":
+        setOpen(false);
+        break;
+    }
+  }
+
+  return (
+    <div ref={rootRef} className="relative shrink-0 self-start min-[480px]:self-auto" onKeyDown={onKeyDown}>
+      <button
+        ref={buttonRef}
+        type="button"
+        role="combobox"
+        aria-label={label}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={`${id}-list`}
+        aria-activedescendant={open ? `${id}-${active}` : undefined}
+        onClick={() => (open ? setOpen(false) : show())}
+        className={cn(
+          "flex h-10 items-center gap-2 rounded-full border-[1.5px] bg-transparent pr-3 pl-4 text-sm font-semibold transition-colors duration-[var(--duration-fast)] focus-visible:border-ink focus-visible:outline-none",
+          open ? "border-ink" : "border-line hover:border-ink/30",
+        )}
+      >
+        {current.label}
+        <ChevronDown className={cn("size-4 transition-transform duration-200", open && "rotate-180")} aria-hidden />
+      </button>
+      {open && (
+        <ul
+          id={`${id}-list`}
+          role="listbox"
+          aria-label={label}
+          className="animate-fade-in absolute top-full right-0 z-40 mt-2 w-max min-w-full overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper p-1.5 shadow-[var(--shadow-lift)] max-[479px]:left-0"
+        >
+          {options.map((option, index) => {
+            const selected = option.value === value;
+            return (
+              <li
+                key={option.value}
+                id={`${id}-${index}`}
+                role="option"
+                aria-selected={selected}
+                onPointerEnter={() => setActive(index)}
+                onClick={() => choose(index)}
+                className={cn(
+                  "flex cursor-pointer items-center justify-between gap-6 rounded-[var(--radius-sm)] px-3 py-2.5 text-sm whitespace-nowrap transition-colors duration-100",
+                  index === active ? "bg-sand" : "",
+                  selected ? "font-bold text-ink" : "font-medium text-ink-soft",
+                )}
+              >
+                {option.label}
+                {selected && <Check className="size-4 text-accent-ink" aria-hidden strokeWidth={2.6} />}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

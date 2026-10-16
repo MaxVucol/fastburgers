@@ -37,6 +37,7 @@ export const ro = {
 
   common: {
     skipToContent: "Sari la conținut",
+    backToTop: "Înapoi sus",
     home: "Acasă",
     menu: "Meniu",
     loading: "Se încarcă",

@@ -30,6 +30,7 @@ export const en: Dictionary = {
 
   common: {
     skipToContent: "Skip to content",
+    backToTop: "Back to top",
     home: "Home",
     menu: "Menu",
     loading: "Loading",

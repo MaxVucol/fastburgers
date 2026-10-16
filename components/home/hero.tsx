@@ -23,7 +23,7 @@ export async function Hero() {
   const slides: HeroSlide[] = SLIDES.map(({ src, to }, i) => ({ src, alt: t.hero.slides[i] ?? "", href: href(to) }));
 
   return (
-    <section aria-labelledby="hero-title" className="container-page pt-5 sm:pt-8">
+    <section aria-labelledby="hero-title" className="container-page pt-5 pb-[var(--section-y)] sm:pt-8">
       {/* The slogan is part of the brand and stays in English on every locale. */}
       <h1 id="hero-title" lang="en" className="sr-only">
         {siteConfig.slogan.join(" ")}
@@ -31,7 +31,7 @@ export async function Hero() {
 
       <HeroSlider slides={slides} />
 
-      <ul aria-label={t.benefits.title} className="mt-6 grid grid-cols-3 gap-2 border-t border-line py-5 sm:mt-8 sm:flex sm:justify-center sm:gap-12 sm:py-6 lg:gap-20">
+      <ul aria-label={t.benefits.title} className="mt-6 grid grid-cols-3 gap-2 border-t border-line pt-5 sm:mt-8 sm:flex sm:justify-center sm:gap-12 sm:pt-6 lg:gap-20">
         {t.benefits.items.map((item, i) => {
           const Icon = FACT_ICONS[i] ?? Leaf;
           return (

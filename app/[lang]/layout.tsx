@@ -4,6 +4,7 @@ import { InlineScript } from "@/components/inline-script";
 import { I18nProvider } from "@/components/i18n/i18n-provider";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { BackToTop } from "@/components/layout/back-to-top";
 import { ScrollToTopOnNavigate } from "@/components/layout/scroll-to-top";
 import { fontVariables } from "@/lib/fonts";
 import { intlLocale, locales, ogLocale } from "@/lib/i18n/config";
@@ -73,6 +74,7 @@ export default async function SiteRootLayout({ children }: LayoutProps<"/[lang]"
             {children}
           </main>
           <Footer />
+          <BackToTop />
           <CartDrawer />
         </I18nProvider>
       </body>

@@ -30,6 +30,7 @@ export const ru: Dictionary = {
 
   common: {
     skipToContent: "Перейти к содержимому",
+    backToTop: "Наверх",
     home: "Главная",
     menu: "Меню",
     loading: "Загрузка",

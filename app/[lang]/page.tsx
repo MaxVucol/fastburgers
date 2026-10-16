@@ -21,6 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return { alternates: localeAlternates(locale, "/") };
 }
 
+/** How many dishes the "worth trying" row holds. */
+const PICKS_COUNT = 12;
+
 export default async function HomePage() {
   const { locale, t, href } = await getI18n();
   // Reviews are fetched only while they may be shown (see siteConfig.showReviews).
@@ -34,9 +37,20 @@ export default async function HomePage() {
 
   const popular = products.filter((p) => p.popular);
   const hits = popular.slice(0, 4);
-  const featured = products.filter((p) => p.featured && !p.popular).slice(0, 4);
-  const fresh = products.filter((p) => p.isNew && !p.popular && !p.featured).slice(0, 4);
-  const picks = [...featured, ...fresh].slice(0, 8);
+  // "Worth trying": new, popular, highlighted and discounted dishes, taken in turns from every category
+  // (so the row runs from pizza to desserts), without the ones already shown above as the hits.
+  const hitIds = new Set(hits.map((p) => p.id));
+  const byCategory = new Map<string, typeof products>();
+  for (const p of products) {
+    if (hitIds.has(p.id) || !(p.isNew || p.popular || p.featured || (p.oldPrice && p.oldPrice > p.price))) continue;
+    byCategory.set(p.categorySlug, [...(byCategory.get(p.categorySlug) ?? []), p]);
+  }
+  const picks: typeof products = [];
+  for (let round = 0; picks.length < PICKS_COUNT; round++) {
+    const before = picks.length;
+    for (const list of byCategory.values()) if (list[round] && picks.length < PICKS_COUNT) picks.push(list[round]);
+    if (picks.length === before) break;
+  }
   const promo =
     products.find((p) => p.slug === "classic-combo") ??
     products.find((p) => p.categorySlug === "combo" && p.oldPrice) ??

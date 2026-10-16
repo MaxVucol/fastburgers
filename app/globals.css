@@ -20,7 +20,7 @@
    - ink/ink-soft/muted/accent-ink: text on those surfaces, flip with the theme;
    - graphite/night/line-dark/on-dark/muted-on-dark: the always-dark blocks (header,
      first screen, hits, combo, footer, summaries) — dark in both themes;
-   - on-accent: text on orange (dark in both themes); on-ink: text on an ink-filled
+   - on-accent: text on orange (white in both themes); on-ink: text on an ink-filled
      (inverted) control — light in the light theme, near-black in the dark one.
    ═══════════════════════════════════════════════════════════════════════════ */
 @theme {
@@ -45,7 +45,7 @@
   --color-muted: #615c54;
   --color-on-dark: #f6f3ea;
   --color-muted-on-dark: #aaa49a;
-  --color-on-accent: #242424; /* text on orange fills, both themes */
+  --color-on-accent: #ffffff; /* text on orange fills, both themes */
   --color-on-ink: #f6f3ea; /* text on ink fills (inverted controls) */
 
   /* Accent — BUNIQ orange. Fills, graphics, large type. */
@@ -113,7 +113,7 @@
    and by the header switch. Layered near-blacks instead of pure black: page #0b0d0f,
    dark blocks #0f1316, cards #151a1e, raised #1c2228; orange stays the one accent.
    Contrast checked: ink on cream 17.8:1 · muted on cream 8.6:1, on paper 7.7:1, on sand 7.6:1 ·
-   accent-ink on cream 8.4:1, on paper 7.5:1 · on-accent on accent 6.5:1 · flame on graphite 6.8:1 ·
+   accent-ink on cream 8.4:1, on paper 7.5:1 · on-accent (white) on accent about 2.9:1, a deliberate brand choice · flame on graphite 6.8:1 ·
    sage-ink on sage-soft 8.5:1 · herb on herb-soft 6.4:1.
    ═══════════════════════════════════════════════════════════════════════ */
 :root {
@@ -143,7 +143,7 @@
   --color-accent-hover: #ff854a;
   --color-accent-ink: #ff8a57;
   --color-accent-soft: #2e1a10;
-  --color-on-accent: #141414;
+  --color-on-accent: #ffffff;
   --color-peach: #2c1910;
 
   --color-sage-soft: #1a231c;
@@ -163,8 +163,9 @@
     --page-max: 84rem;
     --gutter: 1rem;
     --header-h: 4rem;
-    /* Vertical rhythm for page sections */
-    --section-y: clamp(3.5rem, 7vw, 6.5rem);
+    /* Vertical rhythm for page sections: each block pads its top and bottom by this, so two neighbours are
+       twice this apart (about 64px on phones, 104px on wide screens) */
+    --section-y: clamp(2rem, 3.6vw, 3.25rem);
   }
   @media (width >= 40rem) {
     :root { --gutter: 1.5rem; }
@@ -377,7 +378,7 @@ dialog[open]::backdrop {
    every admin page and form follows one palette without touching the public site. Dark graphite
    is the panel's default (lib/theme.ts adminThemeInitScript); the light theme stays available.
    Contrast checked (WCAG AA): dark — ink on paper 16.4:1, muted on paper 6.1:1, muted on cream
-   6.6:1, accent-ink on paper 6.9:1, on-accent on accent 6.5:1; light — ink on paper 16.0:1,
+   6.6:1, accent-ink on paper 6.9:1, on-accent (white) on accent about 2.9:1; light — ink on paper 16.0:1,
    muted on paper 6.2:1, muted on cream 5.7:1, accent-ink on paper 5.8:1. */
 :root.admin-ui {
   --color-cream: #f3f2ee; /* page */
@@ -514,17 +515,22 @@ dialog[open]::backdrop {
   }
 }
 
-/* The site header is a dark block on the dark theme and a white one on the light theme. Its parts are
+/* The site header (and any block marked .light-surface, e.g. the home page's popular dishes) is a dark block
+   on the dark theme and a white one on the light theme. Its parts are
    built from the always-dark tokens (on-dark, night, line-dark, graphite), so on the light theme those
-   are re-pointed to light surfaces and ink inside the header only (the language card, the mobile menu
-   and the category row included). */
-:root:not([data-theme="dark"]) .site-header {
+   are re-pointed to light surfaces and ink inside those blocks only (in the header: the language card, the
+   mobile menu and the category row included). */
+:root:not([data-theme="dark"]) :is(.site-header, .light-surface) {
   --color-night: #ffffff;
   --color-graphite: #ffffff;
   --color-graphite-soft: var(--color-sand);
   --color-on-dark: var(--color-ink);
   --color-muted-on-dark: var(--color-muted);
   --color-line-dark: var(--color-line);
+}
+/* The popular-dishes block sits on the page colour itself (its cards stay white). */
+:root:not([data-theme="dark"]) .light-surface {
+  --color-night: var(--color-cream);
 }
 :root:not([data-theme="dark"]) header.site-header {
   box-shadow: 0 1px 0 var(--color-line), 0 10px 24px -22px rgb(36 36 36 / 0.45);
