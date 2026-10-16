@@ -8,7 +8,7 @@
     "build": "node scripts/check-env.mjs && next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "node --experimental-transform-types --no-warnings --import ./tests/setup/register.mjs --test --test-concurrency=1 \"tests/*.test.ts\"",
     "test:integration": "node scripts/run-required-tests.mjs --db --integration",
     "test:security": "node scripts/run-required-tests.mjs tests/security.test.ts",

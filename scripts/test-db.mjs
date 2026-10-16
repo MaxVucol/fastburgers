@@ -51,8 +51,39 @@ function run(command, args, env, label) {
   }
 }
 
+/**
+ * Creates the schema's unique indexes (and so the collections) with plain MongoDB commands, read from Prisma's
+ * data model. Used for the throw-away database: `prisma db push` hangs against a freshly started
+ * mongodb-memory-server replica set (observed on Windows and on GitHub's Linux runners), although the same
+ * commands are accepted. Only unique indexes matter to the tests; plain (non-unique) indexes only speed queries up.
+ */
+export async function createUniqueIndexes(url) {
+  assertSafeTestUrl(url);
+  const { PrismaClient, Prisma } = await import("@prisma/client");
+  const prisma = new PrismaClient({ datasources: { db: { url } } });
+  try {
+    for (const model of Prisma.dmmf.datamodel.models) {
+      const collection = model.dbName ?? model.name;
+      const column = (name) => model.fields.find((field) => field.name === name)?.dbName ?? name;
+      const groups = [
+        ...model.fields.filter((field) => field.isUnique && !field.isId).map((field) => [field.name]),
+        ...(model.uniqueFields ?? []),
+      ];
+      const indexes = groups.map((names) => ({
+        name: `${collection}_${names.map(column).join("_")}_key`,
+        key: Object.fromEntries(names.map((name) => [column(name), 1])),
+        unique: true,
+      }));
+      if (indexes.length === 0) await prisma.$runCommandRaw({ create: collection }).catch(() => {});
+      else await prisma.$runCommandRaw({ createIndexes: collection, indexes });
+    }
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
 /** Pushes the Prisma schema (collections, unique indexes) and seeds the demo catalogue. */
-export function prepareTestDatabase(url) {
+export async function prepareTestDatabase(url, { ephemeral = false } = {}) {
   assertSafeTestUrl(url);
   const env = {
     DATABASE_URL: url,
@@ -60,7 +91,8 @@ export function prepareTestDatabase(url) {
     ADMIN_EMAIL: "ci-admin@example.com",
     ADMIN_PASSWORD: `Aa1-${randomBytes(18).toString("base64url")}`,
   };
-  run(process.execPath, ["node_modules/prisma/build/index.js", "db", "push", "--skip-generate"], env, "prisma db push");
+  if (ephemeral) await createUniqueIndexes(url);
+  else run(process.execPath, ["node_modules/prisma/build/index.js", "db", "push", "--skip-generate"], env, "prisma db push");
   try {
     run(process.execPath, ["node_modules/tsx/dist/cli.mjs", "prisma/seed.ts"], env, "database seed");
   } catch (error) {
@@ -77,7 +109,7 @@ export async function provisionTestDatabase({ prepare = true } = {}) {
   const provided = process.env.TEST_DATABASE_URL?.trim();
   if (provided) {
     assertSafeTestUrl(provided);
-    if (prepare) prepareTestDatabase(provided);
+    if (prepare) await prepareTestDatabase(provided);
     return { url: provided, source: "TEST_DATABASE_URL", stop: async () => {} };
   }
   const replSet = await MongoMemoryReplSet.create({
@@ -88,7 +120,7 @@ export async function provisionTestDatabase({ prepare = true } = {}) {
   uri.searchParams.set("directConnection", "true");
   const url = uri.toString();
   try {
-    if (prepare) prepareTestDatabase(url);
+    if (prepare) await prepareTestDatabase(url, { ephemeral: true });
   } catch (error) {
     await replSet.stop();
     throw error;
