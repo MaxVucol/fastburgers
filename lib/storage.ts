@@ -4,6 +4,7 @@ import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { del, put } from "@vercel/blob";
 import sharp from "sharp";
+import { outboundChannelsClosed } from "@/lib/preview-guard.mjs";
 
 // Uploaded images are normalized to WebP. Two backends, chosen by environment —
 // callers only ever see URLs:
@@ -16,8 +17,9 @@ export const UPLOAD_DIR = path.join(process.cwd(), "storage", "uploads");
 const MEDIA_PREFIX = "/media/";
 const BLOB_HOST_SUFFIX = ".public.blob.vercel-storage.com";
 
+/** Never on a Preview: it must not upload to, or delete from, the production Blob store (photos are still shown). */
 function blobEnabled(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN) && !outboundChannelsClosed();
 }
 
 function isBlobUrl(url: string): boolean {

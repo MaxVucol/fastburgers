@@ -1,5 +1,6 @@
 import "server-only";
 import { isValidEmail, readMailConfig } from "@/lib/mail-config";
+import { outboundChannelsClosed } from "@/lib/preview-guard.mjs";
 import { createGmailTransport, createResendTransport, type MailTransport, type OutgoingMail, type SendResult } from "@/lib/mail-transports";
 
 /**
@@ -29,6 +30,7 @@ export function setMailTransportForTests(transport: MailTransport | null, from =
 }
 
 function activeTransport(): { transport: MailTransport; from: string } | null {
+  if (outboundChannelsClosed()) return null; // Preview e-mails nobody, whatever is configured (even a test transport)
   if (testTransport) return testTransport;
   const config = readMailConfig();
   if (!config.ok) return null;
@@ -42,6 +44,7 @@ function activeTransport(): { transport: MailTransport; from: string } | null {
 }
 
 export function mailEnabled(): boolean {
+  if (outboundChannelsClosed()) return false;
   return testTransport !== null || readMailConfig().ok;
 }
 

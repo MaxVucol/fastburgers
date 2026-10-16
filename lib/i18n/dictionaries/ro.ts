@@ -342,6 +342,7 @@ export const ro = {
     locationUnavailable: "Restaurantul selectat nu este disponibil.",
     onlinePayment: "Plata online nu este încă disponibilă. Alege plata la livrare.",
     saveFailed: "Nu am putut înregistra comanda. Te rugăm să încerci din nou.",
+    previewDatabase: "Comenzile sunt dezactivate pe această versiune de test a site-ului.",
     unexpected: "A apărut o eroare la plasarea comenzii. Te rugăm să încerci din nou.",
     orderNumber: "Numărul are forma FB-XXXXXXXX",
     lookupPhone: "Introdu telefonul folosit la comandă",

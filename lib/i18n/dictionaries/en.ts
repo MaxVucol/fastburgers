@@ -334,6 +334,7 @@ export const en: Dictionary = {
     locationUnavailable: "The selected restaurant is not available.",
     onlinePayment: "Online payment is not available yet. Please choose to pay on delivery.",
     saveFailed: "We couldn’t save your order. Please try again.",
+    previewDatabase: "Orders are switched off on this test version of the site.",
     unexpected: "Something went wrong while placing your order. Please try again.",
     orderNumber: "Order numbers look like FB-XXXXXXXX",
     lookupPhone: "Enter the phone number used for the order",

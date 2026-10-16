@@ -5,6 +5,7 @@ import { EMAILED_STATUSES, type EmailedStatus } from "@/lib/email/strings";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { isValidEmail, sendMail, type MailMessage, type SendResult } from "@/lib/mail";
 import { prisma } from "@/lib/prisma";
+import { outboundChannelsClosed } from "@/lib/preview-guard.mjs";
 
 /**
  * E-mails about orders: "order received" to the customer, "new order" to the owner
@@ -83,6 +84,7 @@ async function sendOnce(
 /** "Order received" to the customer and "new order" to the owner. Both independent. */
 export async function sendNewOrderEmails(orderId: string, send: Send = sendMail, adminEmail: string | null = adminNotifyEmail()) {
   const outcome: { customer: EmailOutcome; admin: EmailOutcome } = { customer: "skipped", admin: "skipped" };
+  if (outboundChannelsClosed()) return outcome; // Preview: nothing is sent and nothing is claimed in the database
   try {
     const order = await prisma.order.findUnique({ where: { id: orderId }, select: orderSelect });
     if (!order) return outcome;
@@ -110,7 +112,7 @@ export function isEmailedStatus(status: OrderStatus): status is EmailedStatus {
  * skipped by the compare-and-set on `emailedStatus`).
  */
 export async function sendOrderStatusEmail(orderId: string, status: OrderStatus, send: Send = sendMail): Promise<EmailOutcome> {
-  if (!isEmailedStatus(status)) return "skipped";
+  if (!isEmailedStatus(status) || outboundChannelsClosed()) return "skipped";
   try {
     const order = await prisma.order.findUnique({ where: { id: orderId }, select: orderSelect });
     if (!order || order.status !== status || order.emailedStatus === status || !customerMayBeEmailed(order)) return "skipped";
