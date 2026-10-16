@@ -52,7 +52,7 @@ export async function Header() {
           </div>
         </div>
 
-        <div className="container-page grid grid-cols-[1fr_auto_1fr] items-center gap-2 py-3 sm:gap-6 lg:py-5">
+        <div className="container-page grid grid-cols-[1fr_auto_1fr] items-center gap-2 pt-3 pb-7 sm:gap-6 lg:py-5">
           <div className="justify-self-start lg:hidden">
             <MobileMenu categories={categoryLinks.map((c) => ({ slug: c.slug, name: c.name }))} />
           </div>
@@ -94,7 +94,7 @@ export async function Header() {
           </div>
         </div>
 
-        <div className="container-page pt-1 pb-2 lg:pt-4">
+        <div className="container-page pt-1 pb-3 lg:pt-4 lg:pb-2">
           <HeaderCategories categories={categoryLinks} tone="dark" withLanguages languageClassName="max-md:hidden" />
         </div>
       </div>

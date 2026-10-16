@@ -230,6 +230,7 @@ export const en: Dictionary = {
     },
     filters: { all: "All", popular: "Popular", new: "New", sale: "Deals" },
     filtersLabel: "Filters",
+    filtersButton: "Filters",
     categoriesLabel: "Categories",
     scrollBack: "Scroll back",
     scrollForward: "Scroll forward",

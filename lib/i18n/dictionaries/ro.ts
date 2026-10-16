@@ -238,6 +238,7 @@ export const ro = {
     },
     filters: { all: "Toate", popular: "Populare", new: "Noi", sale: "Reduceri" },
     filtersLabel: "Filtre",
+    filtersButton: "Filtre",
     categoriesLabel: "Categorii",
     scrollBack: "Derulează înapoi",
     scrollForward: "Derulează înainte",

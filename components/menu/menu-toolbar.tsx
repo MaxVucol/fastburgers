@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, ChevronDown, Search, X } from "lucide-react";
+import { Check, ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
-import { MENU_SORTS, type MenuFilter, type MenuQuery, type MenuSort } from "@/lib/menu-query";
+import { DEFAULT_MENU_QUERY, MENU_SORTS, type MenuFilter, type MenuQuery, type MenuSort } from "@/lib/menu-query";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,6 +21,10 @@ export function MenuToolbar({
   onChange: (next: Partial<MenuQuery>) => void;
 }) {
   const { t } = useI18n();
+  // Phones: the filters and the sorting sit behind a button; from `sm` up they are always shown.
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
+  const active = (query.filter !== DEFAULT_MENU_QUERY.filter ? 1 : 0) + (query.sort !== DEFAULT_MENU_QUERY.sort ? 1 : 0);
   const groupRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLSpanElement>(null);
   const pillPlaced = useRef(false);
@@ -62,7 +66,8 @@ export function MenuToolbar({
   return (
     <div>
       <div className="flex flex-col gap-3 py-3 md:flex-row md:items-center">
-        <form role="search" className="relative md:max-w-sm md:flex-1" onSubmit={(e) => e.preventDefault()}>
+        <div className="flex items-center gap-2 md:max-w-sm md:flex-1">
+        <form role="search" className="relative min-w-0 flex-1" onSubmit={(e) => e.preventDefault()}>
           <label htmlFor="menu-search" className="sr-only">
             {t.menu.searchLabel}
           </label>
@@ -86,8 +91,27 @@ export function MenuToolbar({
             </button>
           )}
         </form>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls={panelId}
+          className={cn(
+            "relative flex h-11 shrink-0 items-center gap-2 rounded-full border-[1.5px] px-4 text-[0.9375rem] font-semibold transition-colors sm:hidden",
+            open ? "border-ink bg-ink text-paper" : "border-line bg-paper text-ink hover:border-ink/30",
+          )}
+        >
+          <SlidersHorizontal className="size-[1.125rem]" aria-hidden />
+          {t.menu.filtersButton}
+          {active > 0 && (
+            <span className="absolute -top-1.5 -right-1 grid size-5 place-items-center rounded-full bg-accent text-xs font-bold text-on-accent" aria-hidden>
+              {active}
+            </span>
+          )}
+        </button>
+        </div>
 
-        <div className="flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center md:ml-auto">
+        <div id={panelId} className={cn("flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center md:ml-auto", !open && "max-sm:hidden")}>
           {filters.length > 1 && (
           <div
             ref={groupRef}

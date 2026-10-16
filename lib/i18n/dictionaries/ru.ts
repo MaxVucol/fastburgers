@@ -237,6 +237,7 @@ export const ru: Dictionary = {
     },
     filters: { all: "Все", popular: "Хиты", new: "Новинки", sale: "Скидки" },
     filtersLabel: "Фильтры",
+    filtersButton: "Фильтры",
     categoriesLabel: "Категории",
     scrollBack: "Прокрутить назад",
     scrollForward: "Прокрутить вперёд",

@@ -50,11 +50,25 @@ export function ScrollRail({
     };
   }, [update]);
 
+  // One page = as many cards as fit; the target is the exact snap position of a card, so the browser's
+  // snapping (mandatory) neither fights the animation nor settles on a neighbour.
   function page(direction: 1 | -1) {
     const el = ref.current;
     if (!el) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollBy({ left: direction * el.clientWidth * 0.9, behavior: reduce ? "auto" : "smooth" });
+    const cards = Array.from(el.children) as HTMLElement[];
+    if (cards.length === 0) return;
+    const box = el.getBoundingClientRect();
+    const inset = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+    const offset = (card: HTMLElement) => card.getBoundingClientRect().left - box.left - inset;
+    const pitch = cards.length > 1 ? offset(cards[1]) - offset(cards[0]) : box.width;
+    const perPage = Math.max(1, Math.floor((el.clientWidth - inset * 2 + (pitch - cards[0].offsetWidth)) / pitch));
+    // The card now at the start edge (the nearest one, whatever the scroll left over).
+    const current = cards.reduce((best, card, i) => (Math.abs(offset(card)) < Math.abs(offset(cards[best])) ? i : best), 0);
+    const target = Math.min(Math.max(current + direction * perPage, 0), cards.length - 1);
+    const max = el.scrollWidth - el.clientWidth;
+    const left = Math.min(Math.max(el.scrollLeft + offset(cards[target]), 0), max);
+    el.scrollTo({ left, behavior: reduce ? "auto" : "smooth" });
   }
 
   const button =

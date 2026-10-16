@@ -28,7 +28,8 @@ export default async function MenuPage() {
 
   return (
     <>
-      <header className="container-page pt-10 pb-8 sm:pt-14 sm:pb-10">
+      {/* On phones the title block is dropped (the categories and the toolbar come first); screen readers keep it. */}
+      <header className="container-page pt-14 pb-10 max-sm:sr-only">
         <p className="type-eyebrow flex items-center gap-2 text-ink-soft">
           <Crown className="h-3.5 text-accent-ink" />
           {t.menu.eyebrow}
