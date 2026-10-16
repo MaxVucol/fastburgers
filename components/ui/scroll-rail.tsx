@@ -110,7 +110,7 @@ export function ScrollRail({
           // Phones: one card and a clear peek of the next; tablets: two and a peek; desktop: three,
           // four from `xl` (narrower cards would squeeze names and prices).
           "[&>li]:flex [&>li]:w-[min(74vw,18.5rem)] [&>li]:shrink-0 [&>li]:snap-start sm:[&>li]:w-[calc((100%-2.5rem)/2.3)] lg:[&>li]:w-[calc((100%-2.5rem)/3)] xl:[&>li]:w-[calc((100%-3.75rem)/4)]",
-          "lg:-mx-2 lg:scroll-px-2 lg:px-2",
+          "lg:-mx-5 lg:scroll-px-5 lg:px-5",
         )}
       >
         {children}
