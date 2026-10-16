@@ -42,7 +42,8 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Everything except Next internals, API-like routes, metadata files and static assets.
-    "/((?!_next/|__next|media/|images/|favicon.ico|sitemap.xml|robots.txt|.*\\.[a-zA-Z0-9]{2,5}$).*)",
+    // Everything except Next internals, API-like routes (incl. the Google sign-in handlers at
+    // /auth/google, which have no language), metadata files and static assets.
+    "/((?!_next/|__next|media/|images/|auth/google|favicon.ico|sitemap.xml|robots.txt|.*\\.[a-zA-Z0-9]{2,5}$).*)",
   ],
 };

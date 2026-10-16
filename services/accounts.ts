@@ -16,10 +16,11 @@ const DUMMY_HASH = bcrypt.hashSync("timing-equaliser-not-a-real-password", BCRYP
 export const TOKEN_TTL_MS: Record<AuthTokenType, number> = {
   PASSWORD_RESET: 60 * 60 * 1000, // 1 hour
   EMAIL_VERIFY: 48 * 60 * 60 * 1000, // 2 days
+  EMAIL_CHANGE: 60 * 60 * 1000, // 1 hour
 };
 
 export class AccountError extends Error {
-  constructor(readonly code: "emailTaken" | "invalidToken" | "wrongPassword" | "self" | "lastAdmin" | "notFound") {
+  constructor(readonly code: "emailTaken" | "invalidToken" | "wrongPassword" | "self" | "lastAdmin" | "notFound" | "noPassword" | "sameEmail") {
     super(code);
   }
 }
@@ -79,13 +80,16 @@ export async function authenticate(emailInput: string, password: string, roles: 
   return { id: user.id, role: user.role, sessionVersion: currentSessionVersion(user.sessionVersion) };
 }
 
-/** New one-time token for `userId` (earlier unused ones of the type are revoked). Returns the raw token. */
-export async function issueToken(userId: string, type: AuthTokenType, now = Date.now()) {
+/**
+ * New one-time token for `userId` (earlier unused ones of the type are revoked). Returns the raw
+ * token; only its SHA-256 hash is stored. `newEmail` is the address an EMAIL_CHANGE token confirms.
+ */
+export async function issueToken(userId: string, type: AuthTokenType, now = Date.now(), newEmail?: string) {
   const token = randomBytes(32).toString("base64url");
   await prisma.$transaction([
     prisma.authToken.updateMany({ where: { userId, type, ...unset("usedAt") }, data: { usedAt: new Date(now) } }),
     prisma.authToken.create({
-      data: { userId, type, tokenHash: hashToken(token), expiresAt: new Date(now + TOKEN_TTL_MS[type]), usedAt: null },
+      data: { userId, type, tokenHash: hashToken(token), expiresAt: new Date(now + TOKEN_TTL_MS[type]), usedAt: null, newEmail: newEmail ?? null },
     }),
   ]);
   return token;
@@ -96,6 +100,10 @@ export async function issueToken(userId: string, type: AuthTokenType, now = Date
  * so two parallel requests cannot both succeed. Returns the user id, or throws invalidToken.
  */
 export async function consumeToken(token: string, type: AuthTokenType, now = Date.now()) {
+  return (await consumeTokenRow(token, type, now)).userId;
+}
+
+async function consumeTokenRow(token: string, type: AuthTokenType, now = Date.now()) {
   if (!/^[A-Za-z0-9_-]{20,100}$/.test(token)) throw new AccountError("invalidToken");
   const tokenHash = hashToken(token);
   const { count } = await prisma.authToken.updateMany({
@@ -103,9 +111,9 @@ export async function consumeToken(token: string, type: AuthTokenType, now = Dat
     data: { usedAt: new Date(now) },
   });
   if (count !== 1) throw new AccountError("invalidToken");
-  const row = await prisma.authToken.findUnique({ where: { tokenHash }, select: { userId: true } });
+  const row = await prisma.authToken.findUnique({ where: { tokenHash }, select: { userId: true, newEmail: true } });
   if (!row) throw new AccountError("invalidToken");
-  return row.userId;
+  return row;
 }
 
 /** Revokes every session of the user (cookies carry the old version). Returns the new version. */
@@ -133,6 +141,52 @@ export async function verifyEmailWithToken(token: string) {
   const userId = await consumeToken(token, "EMAIL_VERIFY");
   await prisma.user.update({ where: { id: userId }, data: { emailVerifiedAt: new Date() } });
   return userId;
+}
+
+/** Re-authentication: whether `password` is the account's current password (false without one). */
+export async function verifyPassword(userId: string, password: string) {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { passwordHash: true } });
+  const valid = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
+  return Boolean(user?.passwordHash) && valid;
+}
+
+export type EmailChangeRequest =
+  /** Send the confirmation link to the new address (and a notice to the old one). */
+  | { send: true; token: string; oldEmail: string; newEmail: string }
+  /** The address is taken by another account: send nothing, but answer exactly like `send`. */
+  | { send: false };
+
+/**
+ * First step of an e-mail change: checks the current password and issues an EMAIL_CHANGE token
+ * for the new address. The address changes only when that token is used (confirmEmailChange).
+ */
+export async function requestEmailChange(userId: string, newEmailInput: string, password: string): Promise<EmailChangeRequest> {
+  const newEmail = normalizeEmail(newEmailInput);
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, passwordHash: true } });
+  if (!user) throw new AccountError("notFound");
+  if (!user.passwordHash) throw new AccountError("noPassword");
+  if (!(await bcrypt.compare(password, user.passwordHash))) throw new AccountError("wrongPassword");
+  if (newEmail === user.email) throw new AccountError("sameEmail");
+  if (await prisma.user.findUnique({ where: { email: newEmail }, select: { id: true } })) return { send: false };
+  return { send: true, token: await issueToken(userId, "EMAIL_CHANGE", Date.now(), newEmail), oldEmail: user.email, newEmail };
+}
+
+/**
+ * Second step: the link from the new address. Sets the e-mail (now verified) and voids every other
+ * unused token of the account — links sent to the old address must not work for the new one.
+ */
+export async function confirmEmailChange(token: string, now = Date.now()) {
+  const row = await consumeTokenRow(token, "EMAIL_CHANGE", now);
+  if (!row.newEmail) throw new AccountError("invalidToken");
+  try {
+    await prisma.user.update({ where: { id: row.userId }, data: { email: row.newEmail, emailVerifiedAt: new Date(now) } });
+  } catch (error) {
+    // Someone registered the address meanwhile: the unique index refuses it.
+    if (error instanceof Error && "code" in error && error.code === "P2002") throw new AccountError("emailTaken");
+    throw error;
+  }
+  await prisma.authToken.updateMany({ where: { userId: row.userId, ...unset("usedAt") }, data: { usedAt: new Date(now) } });
+  return { userId: row.userId, email: row.newEmail };
 }
 
 /** Changes the password (current one required); other sessions end, the new version is returned. */

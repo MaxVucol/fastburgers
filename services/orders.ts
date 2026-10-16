@@ -50,6 +50,8 @@ export type OrderContext = {
   ip?: string | null;
   /** Tag the order as placed on the demo site. */
   demo?: boolean;
+  /** Language of the checkout page (the customer's e-mails use it). */
+  locale?: string;
   /** Counter storage; tests pass an in-memory one. */
   rateLimitStore?: RateLimitStore;
 };
@@ -235,6 +237,7 @@ export async function createOrder(data: CheckoutData, context: OrderContext = {}
             paymentBank: data.paymentMethod === "CASH" ? null : (data.paymentBank ?? null),
             notes: data.notes || null,
             demo: context.demo ? true : undefined,
+            locale: context.locale,
             subtotal,
             deliveryFee,
             total: subtotal + deliveryFee,

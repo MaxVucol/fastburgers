@@ -69,6 +69,27 @@ if (onVercel && !process.env.NEXT_PUBLIC_SITE_URL) {
   warnings.push("NEXT_PUBLIC_SITE_URL is not set: canonical URLs and the sitemap will use the Vercel production domain.");
 }
 
+// Optional integrations: warn about half-done setups (names only, never values).
+const filled = (name) => Boolean(process.env[name]?.trim());
+if (filled("GOOGLE_CLIENT_ID") !== filled("GOOGLE_CLIENT_SECRET")) {
+  warnings.push("Only one of GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET is set: “Continue with Google” stays hidden until both are.");
+}
+const provider = process.env.EMAIL_PROVIDER?.trim().toLowerCase() ?? "";
+if (provider && provider !== "gmail" && provider !== "resend") {
+  warnings.push('EMAIL_PROVIDER must be "gmail" or "resend": e-mail stays off.');
+}
+if (provider === "gmail" && (!filled("GMAIL_USER") || !filled("GMAIL_APP_PASSWORD"))) {
+  warnings.push("EMAIL_PROVIDER is gmail but GMAIL_USER / GMAIL_APP_PASSWORD are not both set: e-mail stays off.");
+} else if (filled("GMAIL_USER") !== filled("GMAIL_APP_PASSWORD")) {
+  warnings.push("Only one of GMAIL_USER / GMAIL_APP_PASSWORD is set: e-mail stays off until both are. Check with npm run mail:check.");
+}
+if (filled("GMAIL_APP_PASSWORD") && !/^[a-z]{16}$/i.test(process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, ""))) {
+  warnings.push("GMAIL_APP_PASSWORD is not a 16-letter Gmail app password (the normal Google password does not work): e-mail stays off.");
+}
+if (onVercel && !filled("GMAIL_USER") && !filled("RESEND_API_KEY")) {
+  warnings.push("No e-mail provider configured: password reset, e-mail confirmation and order e-mails are off.");
+}
+
 for (const w of warnings) console.warn(`⚠ env: ${w}`);
 if (errors.length > 0) {
   console.error("\n✖ Environment check failed:\n");

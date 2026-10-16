@@ -9,6 +9,7 @@ import { defaultLocale, fill, isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { CHECKOUT_ERROR_KEYS, checkoutSchema, type CheckoutErrorKey } from "@/lib/validation/checkout";
 import { toFieldErrors, type ActionResult, type FieldErrors } from "@/lib/validation/common";
+import { sendNewOrderEmails } from "@/services/order-emails";
 import { notifyNewOrder } from "@/services/order-notifications";
 import { createOrder, OrderError, type PriceUpdate, type UnavailableItem } from "@/services/orders";
 
@@ -49,10 +50,13 @@ export async function placeOrder(input: unknown, locale?: string): Promise<Check
       idempotencyKey: parsed.data.idempotencyKey,
       ip: clientIp(await headers()),
       demo: isDemo(),
+      locale: lang,
     });
     // Only reached once the order is saved. Runs after the response is sent (on Vercel within the
     // function's time limit); a replayed attempt returns the same order and is not notified twice.
     after(() => notifyNewOrder(order.id));
+    // E-mails are separate tasks, so a mail problem never affects the Telegram message (or the order).
+    after(() => sendNewOrderEmails(order.id));
     return { ok: true, data: { number: order.number } };
   } catch (error) {
     if (error instanceof OrderError) {

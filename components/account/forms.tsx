@@ -6,6 +6,10 @@ import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import {
   addAddressAction,
   changePasswordAction,
+  confirmEmailChangeAction,
+  confirmGoogleLinkAction,
+  requestEmailChangeAction,
+  unlinkGoogleAction,
   forgotPasswordAction,
   registerAction,
   resendVerificationAction,
@@ -80,13 +84,14 @@ function Submit({ pending, label, busy, variant = "primary", className }: { pend
 
 const linkClass = "font-semibold text-accent-ink underline-offset-4 hover:underline";
 
-export function SignInForm({ next, notice }: { next?: string; notice?: string }) {
+export function SignInForm({ next, notice, error }: { next?: string; notice?: string; error?: string }) {
   const { t, href } = useI18n();
   const [f, formRef] = useAccountForm(signInAction);
   return (
     <form ref={formRef} onSubmit={f.onSubmit} noValidate className="space-y-4">
       {next && <input type="hidden" name="next" value={next} />}
       {notice && !f.state.error && <FormMessage state={{ notice }} />}
+      {error && !f.state.error && !f.state.notice && <FormMessage state={{ error }} />}
       <Field label={t.me.signIn.email} htmlFor="email" error={f.fe("email")} required>
         <Input id="email" name="email" type="email" autoComplete="email" defaultValue={f.state.values?.email} required aria-invalid={f.invalid("email")} aria-describedby={f.describedBy("email")} />
       </Field>
@@ -248,6 +253,82 @@ export function PasswordForm() {
       </Field>
       <FormMessage state={f.state} />
       <Submit pending={f.pending} label={t.me.profile.changePassword} busy={t.me.profile.changePassword} variant="dark" className="sm:w-auto sm:px-8" />
+    </form>
+  );
+}
+
+export function EmailChangeForm() {
+  const { t } = useI18n();
+  const [f, formRef] = useAccountForm(requestEmailChangeAction);
+  useEffect(() => {
+    if (f.state.notice) formRef.current?.reset();
+  }, [f.state, formRef]);
+  return (
+    <form ref={formRef} onSubmit={f.onSubmit} noValidate className="space-y-4">
+      <p className="text-sm text-muted">{t.me.emailChange.lead}</p>
+      <Field label={t.me.emailChange.newEmail} htmlFor="new-email" error={f.fe("email")} required>
+        <Input id="new-email" name="email" type="email" autoComplete="email" defaultValue={f.state.notice ? undefined : f.state.values?.email} required aria-invalid={f.invalid("email")} aria-describedby={f.fe("email") ? "new-email-error" : undefined} />
+      </Field>
+      <Field label={t.me.emailChange.password} htmlFor="email-password" error={f.fe("password")} required>
+        <Input id="email-password" name="password" type="password" autoComplete="current-password" required aria-invalid={f.invalid("password")} aria-describedby={f.fe("password") ? "email-password-error" : undefined} />
+      </Field>
+      <FormMessage state={f.state} />
+      <Submit pending={f.pending} label={t.me.emailChange.submit} busy={t.me.emailChange.submitting} variant="dark" className="sm:w-auto sm:px-8" />
+    </form>
+  );
+}
+
+/** Confirms the link from the new address (button press, so mail scanners cannot use it up). */
+export function ConfirmEmailChangeForm({ token }: { token: string }) {
+  const { t, href } = useI18n();
+  const [f, formRef] = useAccountForm(confirmEmailChangeAction);
+  return (
+    <form ref={formRef} onSubmit={f.onSubmit} className="space-y-4">
+      <input type="hidden" name="token" value={token} />
+      <FormMessage state={f.state} />
+      {f.state.notice ? (
+        <Link href={href("/account/profile")} className={linkClass}>{t.me.nav.profile}</Link>
+      ) : (
+        <Submit pending={f.pending} label={t.me.emailChange.confirmSubmit} busy={t.me.emailChange.confirmSubmit} />
+      )}
+    </form>
+  );
+}
+
+/** Re-authentication with the account password before a Google account is connected. */
+export function GoogleLinkForm() {
+  const { t } = useI18n();
+  const [f, formRef] = useAccountForm(confirmGoogleLinkAction);
+  return (
+    <form ref={formRef} onSubmit={f.onSubmit} noValidate className="space-y-4">
+      <Field label={t.me.google.linkPassword} htmlFor="password" error={f.fe("password")} required>
+        <Input id="password" name="password" type="password" autoComplete="current-password" required aria-invalid={f.invalid("password")} aria-describedby={f.describedBy("password")} />
+      </Field>
+      <FormMessage state={f.state} />
+      <Submit pending={f.pending} label={t.me.google.linkSubmit} busy={t.me.google.linkSubmit} />
+    </form>
+  );
+}
+
+export function GoogleUnlinkForm() {
+  const { t } = useI18n();
+  const [f, formRef] = useAccountForm(unlinkGoogleAction);
+  return (
+    <form
+      ref={formRef}
+      onSubmit={(event) => {
+        if (!window.confirm(t.me.google.confirmDisconnect)) return event.preventDefault();
+        f.onSubmit(event);
+      }}
+      className="space-y-4"
+    >
+      <FormMessage state={f.state} />
+      {!f.state.notice && (
+        <Button type="submit" variant="outline" disabled={f.pending} aria-busy={f.pending}>
+          {f.pending && <Loader2 className="size-4.5 animate-spin" aria-hidden />}
+          {t.me.google.disconnect}
+        </Button>
+      )}
     </form>
   );
 }

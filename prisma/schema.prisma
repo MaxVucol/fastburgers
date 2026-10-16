@@ -53,6 +53,7 @@ model User {
   addresses    Address[]
   favorites    Favorite[]
   authTokens   AuthToken[]
+  oauthAccounts OAuthAccount[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -83,6 +84,8 @@ model Favorite {
 enum AuthTokenType {
   PASSWORD_RESET
   EMAIL_VERIFY
+  /// Confirms a new e-mail address (sent to that address; the address is stored on the token).
+  EMAIL_CHANGE
 }
 
 /// One-time token (password reset, e-mail verification). Only its SHA-256 hash is stored.
@@ -94,9 +97,28 @@ model AuthToken {
   tokenHash String        @unique
   expiresAt DateTime
   usedAt    DateTime?
+  /// EMAIL_CHANGE only: the address being confirmed.
+  newEmail  String?
   createdAt DateTime      @default(now())
 
   @@index([userId, type])
+}
+
+/// An external sign-in linked to a user ("Sign in with Google"). Identified by the provider's
+/// stable account id (Google `sub`), never by the e-mail, which can change. One per provider and user.
+model OAuthAccount {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// "google"
+  provider          String
+  providerAccountId String
+  userId            String   @db.ObjectId
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// The provider's verified e-mail when it was linked (shown in the account, not used to sign in).
+  email             String
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 /// Administrative actions: who changed what and when. Never holds passwords, tokens or secrets.
@@ -258,6 +280,14 @@ model Order {
   demo               Boolean?
   /// When the owner's Telegram "new order" message was sent; unset while not (yet) delivered.
   telegramNotifiedAt DateTime?
+  /// Language of the checkout page, used for the customer's e-mails; unset on older orders.
+  locale             String?
+  /// When the customer's "order received" e-mail was sent (claimed before sending, so at most once).
+  customerEmailedAt  DateTime?
+  /// When the owner's "new order" e-mail was sent.
+  adminEmailedAt     DateTime?
+  /// The last status the customer was e-mailed about (one e-mail per status).
+  emailedStatus      OrderStatus?
   items              OrderItem[]
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt

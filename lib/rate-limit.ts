@@ -39,8 +39,13 @@ export const RATE_LIMITS = {
   /** Password-reset requests per IP and per e-mail address. */
   resetIp: { name: "reset-ip", limit: 5, windowMs: 60 * 60_000 },
   resetAccount: { name: "reset-account", limit: 3, windowMs: 60 * 60_000 },
-  /** Verification e-mails per account. */
+  /** Verification e-mails per account: three an hour, and not two within a minute. */
   verifyAccount: { name: "verify-account", limit: 3, windowMs: 60 * 60_000 },
+  verifyCooldown: { name: "verify-cooldown", limit: 1, windowMs: 60_000 },
+  /** E-mail change requests per account. */
+  emailChangeAccount: { name: "email-change-account", limit: 3, windowMs: 60 * 60_000 },
+  /** "Sign in with Google" round trips per IP address (each callback may create an account). */
+  googleIp: { name: "google-ip", limit: 20, windowMs: 10 * 60_000 },
   /** Orders that reach the database step, per IP address. */
   orderIp: { name: "order-ip", limit: 6, windowMs: 10 * 60_000 },
   /** Orders per phone number, whatever the address they come from. */
