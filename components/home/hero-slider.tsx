@@ -79,7 +79,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
       <div className="lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-5">
         {count > 1 && arrow("prev", "hidden lg:grid")}
         <div
-          className="relative aspect-[1930/815] touch-pan-y overflow-hidden rounded-[var(--radius-panel)] bg-graphite"
+          // On phones the picture fills the screen width with square corners (the page gutter is cancelled out).
+          className="relative aspect-[1930/815] touch-pan-y overflow-hidden rounded-[var(--radius-panel)] bg-graphite max-sm:-mx-[var(--gutter)] max-sm:rounded-none"
           onPointerDown={(e) => {
             start.current = { x: e.clientX, moved: false };
           }}

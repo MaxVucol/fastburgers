@@ -135,7 +135,7 @@ export function ScrollRail({
       </div>
       {/* Phones: the buttons on their own line above the footer, which then takes the full width. */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-5 sm:mt-8">
-        <div className="order-2 w-full sm:order-1 sm:w-auto">{footer}</div>
+        {footer && <div className="order-2 w-full sm:order-1 sm:w-auto">{footer}</div>}
         <div className={cn("order-1 ml-auto flex shrink-0 gap-2 sm:order-2 lg:hidden", fits && "hidden")}>
           <button type="button" className={cn(button, "grid")} onClick={() => page(-1)} disabled={edges.start} aria-label={prevLabel} aria-controls={listId}>
             <ArrowLeft className="size-5" aria-hidden />

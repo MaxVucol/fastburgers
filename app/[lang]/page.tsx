@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { CategoryIndex } from "@/components/home/category-index";
 import { Hero } from "@/components/home/hero";
 import { Hits } from "@/components/home/hits";
@@ -6,7 +8,6 @@ import { OrderCta } from "@/components/home/order-cta";
 import { PromoBanner } from "@/components/home/promo-banner";
 import { Reviews } from "@/components/home/reviews";
 import { ProductCard } from "@/components/product/product-card";
-import { ButtonLink } from "@/components/ui/button";
 import { ScrollRail } from "@/components/ui/scroll-rail";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { plural } from "@/lib/i18n/config";
@@ -76,17 +77,26 @@ export default async function HomePage() {
             label={t.picks.title}
             prevLabel={t.picks.prev}
             nextLabel={t.picks.next}
-            footer={
-              <ButtonLink href={href("/menu")} variant="outline" size="lg" className="w-full px-6 sm:w-auto">
-                {plural(locale, products.length, t.picks.viewAll)}
-              </ButtonLink>
-            }
           >
             {picks.map((p) => (
               <li key={p.id}>
                 <ProductCard product={p} className="w-full" />
               </li>
             ))}
+            {/* The last card of the row leads to the whole menu (instead of a button under the row). */}
+            <li>
+              <Link
+                href={href("/menu")}
+                className="group flex w-full flex-col justify-between gap-8 rounded-[var(--radius-card)] border border-line bg-cream p-6 shadow-[0_1px_2px_rgb(0_0_0/0.06),0_8px_20px_-10px_rgb(0_0_0/0.22)] transition-[border-color,box-shadow] duration-[450ms] hover:border-ink/30 hover:shadow-[0_2px_4px_rgb(0_0_0/0.08),0_12px_24px_-12px_rgb(0_0_0/0.3)] motion-reduce:transition-none"
+              >
+                <span className="font-display text-[1.375rem] leading-tight font-extrabold tracking-[-0.02em] text-ink sm:text-[1.5rem]">
+                  {plural(locale, products.length, t.picks.viewAll)}
+                </span>
+                <span className="grid size-12 place-items-center rounded-full border-[1.5px] border-accent text-accent-ink transition-colors duration-[var(--duration-fast)] group-hover:bg-accent group-hover:text-on-accent">
+                  <ArrowRight className="size-5" aria-hidden />
+                </span>
+              </Link>
+            </li>
           </ScrollRail>
         </section>
       )}
