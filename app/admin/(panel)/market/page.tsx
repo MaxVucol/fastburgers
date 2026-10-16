@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { AlertTriangle, Download, ExternalLink, Pencil } from "lucide-react";
-import { AdminPageHeader, Panel } from "@/components/admin/admin-ui";
+import { AdminPageHeader, EmptyState, Panel, adminButton, adminControl } from "@/components/admin/admin-ui";
 import { CompetitorForm, CsvImportForm, DeleteCompetitorButton, PriceChange } from "@/components/admin/market-controls";
-import { buttonStyles } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatDate, formatPrice } from "@/lib/format";
 import { fill } from "@/lib/i18n/config";
@@ -33,17 +32,17 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
         description={t.lead}
       >
         {/* A file download from a route handler: a plain link, not client-side navigation. */}
-        <a href="/admin/market-export" download className={buttonStyles({ variant: "outline", size: "md" })}>
+        <a href="/admin/market-export" download className={adminButton.outline}>
           <Download className="size-4.5" aria-hidden /> {t.export}
         </a>
       </AdminPageHeader>
 
-      <p className="mb-5 rounded-xl bg-mustard-soft p-4 text-sm">{fill(t.explain, { min: MIN_COMPARABLES, days: STALE_DAYS })}</p>
+      <p className="mb-5 rounded-2xl border border-line bg-paper p-4 text-sm text-ink-soft">{fill(t.explain, { min: MIN_COMPARABLES, days: STALE_DAYS })}</p>
 
       <Panel title={t.comparison}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[56rem] text-sm">
-            <thead className="border-b border-line text-left text-xs font-bold tracking-wide text-muted uppercase">
+            <thead className="border-b border-line text-left text-xs font-semibold text-muted">
               <tr>
                 <th className="px-5 py-3">{t.colProduct}</th>
                 <th className="px-3 py-3">{t.colPrice}</th>
@@ -57,7 +56,7 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
             </thead>
             <tbody className="divide-y divide-line">
               {overview.map((p) => (
-                <tr key={p.id} className={cn(p.draft && "bg-cream/60")}>
+                <tr key={p.id} className={cn("transition-colors hover:bg-sand/40", p.draft && "bg-sand/30")}>
                   <td className="px-5 py-3">
                     <Link href={`/admin/products/${p.id}`} className="font-semibold hover:text-accent-ink">{p.name}</Link>
                     <span className="block text-xs text-muted">
@@ -133,16 +132,16 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
         <form role="search" className="flex gap-2 border-b border-line p-4">
           <label className="flex-1">
             <span className="sr-only">{a.common.search}</span>
-            <input name="q" defaultValue={q} placeholder={t.searchPlaceholder} className="h-10 w-full rounded-lg border border-line bg-paper px-3 text-sm focus:border-accent focus:outline-none" />
+            <input name="q" defaultValue={q} placeholder={t.searchPlaceholder} className={`${adminControl} w-full`} />
           </label>
-          <button type="submit" className={buttonStyles({ variant: "dark", size: "sm" })}>{a.common.search}</button>
+          <button type="submit" className={adminButton.dark}>{a.common.search}</button>
         </form>
         {offers.length === 0 ? (
-          <p className="p-5 text-sm text-muted">{t.empty}</p>
+          <EmptyState>{t.empty}</EmptyState>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[60rem] text-sm">
-              <thead className="border-b border-line text-left text-xs font-bold tracking-wide text-muted uppercase">
+              <thead className="border-b border-line text-left text-xs font-semibold text-muted">
                 <tr>
                   <th className="px-5 py-3">{t.colRestaurant}</th>
                   <th className="px-3 py-3">{t.colCategory}</th>
@@ -175,7 +174,7 @@ export default async function AdminMarketPage({ searchParams }: PageProps<"/admi
                     <td className="px-3 py-3 text-xs">{o.productId ? (productName.get(o.productId) ?? "—") : "—"}</td>
                     <td className="px-5 py-3">
                       <span className="flex justify-end gap-1">
-                        <Link href={`/admin/market?edit=${o.id}`} className="grid size-9 place-items-center rounded-lg text-muted hover:bg-sand hover:text-ink" aria-label={fill(a.common.edit, { name: o.itemName })}>
+                        <Link href={`/admin/market?edit=${o.id}`} className="grid size-9 place-items-center rounded-lg text-muted transition-colors hover:bg-sand hover:text-ink" aria-label={fill(a.common.edit, { name: o.itemName })}>
                           <Pencil className="size-4" aria-hidden />
                         </Link>
                         <DeleteCompetitorButton id={o.id} label={`${o.restaurant} · ${o.itemName}`} />

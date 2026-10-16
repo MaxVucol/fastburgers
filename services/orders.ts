@@ -1,6 +1,6 @@
 import "server-only";
 import { createHash, randomInt } from "node:crypto";
-import { Prisma, type OrderStatus } from "@prisma/client";
+import { Prisma, type DeliveryMethod, type OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { computeDeliveryFee, MIN_DELIVERY_ORDER } from "@/lib/pricing";
 import { consumeAll, mongoRateLimitStore, RATE_LIMITS, type RateLimitStore } from "@/lib/rate-limit";
@@ -336,12 +336,15 @@ export type OrderFilters = {
   to?: Date;
   /** "real": placed with ORDER_MODE=live; "demo": tagged demo orders; undefined: both. */
   kind?: "real" | "demo";
+  /** Delivery or pick-up; undefined: both. */
+  method?: DeliveryMethod;
 };
 
-function orderWhere(f: OrderFilters): Prisma.OrderWhereInput {
+export function orderWhere(f: OrderFilters): Prisma.OrderWhereInput {
   const q = f.q?.trim();
   const and: Prisma.OrderWhereInput[] = [];
   if (f.status) and.push({ status: f.status });
+  if (f.method) and.push({ deliveryMethod: f.method });
   if (f.from || f.to) and.push({ createdAt: { ...(f.from ? { gte: f.from } : {}), ...(f.to ? { lt: f.to } : {}) } });
   // Orders from before the demo flag existed have no `demo` field at all: they count as real.
   if (f.kind === "demo") and.push({ demo: true });

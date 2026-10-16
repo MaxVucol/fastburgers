@@ -2,8 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ImageOff, Pencil, Plus, Search } from "lucide-react";
 import { DeleteButton, ProductFlagSwitch } from "@/components/admin/admin-controls";
-import { AdminPageHeader, Panel, SavedNotice } from "@/components/admin/admin-ui";
-import { buttonStyles } from "@/components/ui/button";
+import { AdminPageHeader, EmptyState, Panel, SavedNotice, adminControl, adminIconButton, adminButton } from "@/components/admin/admin-ui";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatPrice } from "@/lib/format";
 import { fill } from "@/lib/i18n/config";
@@ -28,7 +27,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
     listProductsAdmin({ q, categoryId, status, sort }),
     listCategoryOptions(),
   ]);
-  const select = "h-11 w-full rounded-xl border border-line bg-paper px-3";
+  const select = `${adminControl} w-full`;
 
   return (
     <>
@@ -39,11 +38,11 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
       />
       <SavedNotice show={params.saved === "1"}>{t.saved}</SavedNotice>
 
-      <form className="mb-5 flex flex-col gap-2 sm:flex-row" role="search">
+      <form className="mb-5 flex flex-col gap-2 rounded-2xl border border-line bg-paper p-3 sm:flex-row" role="search">
         <label className="relative flex-1">
           <span className="sr-only">{t.search}</span>
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4.5 -translate-y-1/2 text-muted" aria-hidden />
-          <input name="q" defaultValue={q} placeholder={t.searchPlaceholder} className="h-11 w-full rounded-xl border border-line bg-paper pr-3 pl-10 focus:border-accent focus:outline-none" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" aria-hidden />
+          <input name="q" type="search" defaultValue={q} placeholder={t.searchPlaceholder} className={`${adminControl} w-full pl-9`} />
         </label>
         <label>
           <span className="sr-only">{t.category}</span>
@@ -71,11 +70,11 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
             ))}
           </select>
         </label>
-        <button type="submit" className={buttonStyles({ variant: "dark" })}>{a.common.filter}</button>
+        <button type="submit" className={adminButton.dark}>{a.common.filter}</button>
       </form>
 
       <Panel>
-        <div className="hidden grid-cols-[3.5rem_1fr_7rem_4rem_4.5rem_4rem_4rem_4rem_5.5rem] gap-4 border-b border-line px-5 py-3 text-xs font-bold tracking-wide text-muted uppercase lg:grid">
+        <div className="hidden grid-cols-[3.5rem_1fr_7rem_4rem_4.5rem_4rem_4rem_4rem_5.5rem] gap-4 border-b border-line px-5 py-3 text-xs font-semibold text-muted lg:grid">
           <span />
           <span>{t.colProduct}</span>
           <span>{t.colPrice}</span>
@@ -87,13 +86,13 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
           <span className="text-right">{t.colActions}</span>
         </div>
         {products.length === 0 ? (
-          <p className="p-6 text-sm text-muted">{t.empty}</p>
+          <EmptyState>{t.empty}</EmptyState>
         ) : (
           <ul className="divide-y divide-line">
             {products.map((p) => (
               <li
                 key={p.id}
-                className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-x-4 gap-y-3 px-5 py-3.5 lg:grid-cols-[3.5rem_1fr_7rem_4rem_4.5rem_4rem_4rem_4rem_5.5rem]"
+                className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-x-4 gap-y-3 px-5 py-3.5 transition-colors hover:bg-sand/40 lg:grid-cols-[3.5rem_1fr_7rem_4rem_4.5rem_4rem_4rem_4rem_5.5rem]"
               >
                 <span className="relative grid size-14 place-items-center overflow-hidden rounded-lg bg-sand text-muted">
                   {p.image ? <Image src={p.image} alt="" fill sizes="56px" className="object-cover" /> : <ImageOff className="size-5" aria-label={t.noPhoto} />}
@@ -135,7 +134,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                   <span className="ml-auto flex items-center justify-end gap-1">
                     <Link
                       href={`/admin/products/${p.id}`}
-                      className="grid size-9 place-items-center rounded-lg text-muted hover:bg-sand hover:text-ink"
+                      className={adminIconButton}
                       aria-label={fill(a.common.edit, { name: p.name })}
                     >
                       <Pencil className="size-4" aria-hidden />

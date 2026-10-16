@@ -16,24 +16,34 @@ const items = [
   { href: "/admin/audit", key: "audit", icon: History },
 ] as const;
 
-function AdminNavView({ pathname }: { pathname: string }) {
+function AdminNavView({ pathname, newOrders, onNavigate }: { pathname: string; newOrders: number; onNavigate?: () => void }) {
   const { a } = useAdminI18n();
   return (
-    <ul className="no-scrollbar flex gap-1 overflow-x-auto lg:flex-col">
+    <ul className="flex flex-col gap-1">
       {items.map(({ href, key, icon: Icon }) => {
         const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
+        const badge = key === "orders" && newOrders > 0 ? newOrders : 0;
         return (
-          <li key={href} className="shrink-0">
+          <li key={href}>
             <Link
               href={href}
+              onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors",
-                active ? "bg-ink text-on-ink" : "text-ink-soft hover:bg-sand",
+                "group flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition-colors",
+                active ? "bg-accent text-on-accent" : "text-ink-soft hover:bg-sand hover:text-ink",
               )}
             >
-              <Icon className="size-4.5" aria-hidden />
-              {a.shell.nav[key]}
+              <Icon className={cn("size-[1.125rem]", active ? "" : "text-muted group-hover:text-ink")} aria-hidden strokeWidth={1.9} />
+              <span className="flex-1">{a.shell.nav[key]}</span>
+              {badge > 0 && (
+                <span
+                  className={cn("min-w-5 rounded-md px-1.5 text-center text-xs leading-5 tabular-nums", active ? "bg-black/15" : "bg-accent text-on-accent")}
+                  aria-label={a.ui.notifications.replace("{count}", String(badge))}
+                >
+                  {badge}
+                </span>
+              )}
             </Link>
           </li>
         );
@@ -42,6 +52,6 @@ function AdminNavView({ pathname }: { pathname: string }) {
   );
 }
 
-export function AdminNav() {
-  return <WithPathname>{(pathname) => <AdminNavView pathname={pathname} />}</WithPathname>;
+export function AdminNav({ newOrders = 0, onNavigate }: { newOrders?: number; onNavigate?: () => void }) {
+  return <WithPathname>{(pathname) => <AdminNavView pathname={pathname} newOrders={newOrders} onNavigate={onNavigate} />}</WithPathname>;
 }

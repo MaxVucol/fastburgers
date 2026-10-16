@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { AdminPageHeader, Panel } from "@/components/admin/admin-ui";
+import { AdminPageHeader, EmptyState, Panel, SegmentTabs } from "@/components/admin/admin-ui";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatDateTime } from "@/lib/format";
 import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
-import { cn } from "@/lib/utils";
 import { listAudit } from "@/services/audit";
 
 export const generateMetadata = () => adminTitle("audit");
@@ -35,30 +34,20 @@ export default async function AdminAuditPage({ searchParams }: PageProps<"/admin
   return (
     <>
       <AdminPageHeader title={a.meta.audit} description={a.audit.lead} />
-      <nav aria-label={a.audit.filter} className="no-scrollbar mb-5 flex gap-2 overflow-x-auto pb-1">
-        {ENTITIES.map((e) => (
-          <Link
-            key={e.key || "all"}
-            href={e.key ? `/admin/audit?entity=${e.key}` : "/admin/audit"}
-            aria-current={entity === e.key ? "page" : undefined}
-            className={cn(
-              "inline-flex h-9 shrink-0 items-center rounded-full px-3.5 text-sm font-semibold",
-              entity === e.key ? "bg-ink text-on-ink" : "bg-paper text-ink-soft ring-1 ring-line hover:bg-sand",
-            )}
-          >
-            {a.audit[e.label]}
-          </Link>
-        ))}
-      </nav>
+      <SegmentTabs
+        label={a.audit.filter}
+        className="mb-5"
+        items={ENTITIES.map((e) => ({ href: e.key ? `/admin/audit?entity=${e.key}` : "/admin/audit", label: a.audit[e.label], active: entity === e.key }))}
+      />
       <Panel>
         {entries.length === 0 ? (
-          <p className="p-6 text-sm text-muted">{a.audit.empty}</p>
+          <EmptyState>{a.audit.empty}</EmptyState>
         ) : (
           <ul className="divide-y divide-line">
             {entries.map((e) => {
               const href = e.entityId && LINK[e.entity]?.(e.entityId);
               return (
-                <li key={e.id} className="grid gap-1 px-5 py-3 text-sm md:grid-cols-[10rem_minmax(0,1fr)_14rem] md:gap-4">
+                <li key={e.id} className="grid gap-1 px-5 py-3 text-sm transition-colors hover:bg-sand/40 md:grid-cols-[10rem_minmax(0,1fr)_14rem] md:gap-4">
                   <span className="text-xs text-muted tabular-nums">{formatDateTime(e.createdAt, locale)}</span>
                   <span className="min-w-0">
                     {href ? (
@@ -66,7 +55,7 @@ export default async function AdminAuditPage({ searchParams }: PageProps<"/admin
                     ) : (
                       <span className="font-semibold break-words">{e.summary}</span>
                     )}
-                    <span className="block text-xs text-muted">{e.action}</span>
+                    <span className="mt-0.5 inline-block rounded bg-sand px-1.5 py-0.5 font-mono text-[0.6875rem] text-muted">{e.action}</span>
                   </span>
                   <span className="truncate text-xs text-muted">{e.actorEmail}</span>
                 </li>

@@ -38,7 +38,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
         <span className="text-sm text-muted">{fill(t.placed, { date: formatDateTime(order.createdAt, locale) })}</span>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+      <div className="grid items-start gap-6 xl:grid-cols-[1.5fr_1fr]">
         <Panel title={fill(t.items, { count: order.items.length })}>
           <ul className="divide-y divide-line">
             {order.items.map((item) => (

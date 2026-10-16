@@ -24,3 +24,11 @@ export function preferredTheme(): Theme {
 export const themeInitScript = `(function(){var d=document.documentElement,k=${JSON.stringify(
   THEME_STORAGE_KEY,
 )},m=window.matchMedia("(prefers-color-scheme: dark)");function s(){var t=null;try{t=localStorage.getItem(k)}catch(e){}d.setAttribute("data-theme",t==="dark"||t==="light"?t:m.matches?"dark":"light")}s();m.addEventListener("change",s)})()`;
+
+/**
+ * The admin panel's variant: the same saved choice (one key for site and panel), but without one
+ * the panel opens in its dark graphite theme instead of following the system.
+ */
+export const adminThemeInitScript = `(function(){var t=null;try{t=localStorage.getItem(${JSON.stringify(
+  THEME_STORAGE_KEY,
+)})}catch(e){}document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark")})()`;

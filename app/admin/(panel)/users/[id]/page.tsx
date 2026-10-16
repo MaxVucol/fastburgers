@@ -29,7 +29,7 @@ export default async function AdminUserPage({ params }: PageProps<"/admin/users/
       </Link>
       <AdminPageHeader title={user.name} description={user.email} />
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Panel title={fill(t.orders, { count: user.orders.length })}>
           {user.orders.length === 0 ? (
             <p className="p-5 text-sm text-muted">{t.noOrders}</p>
@@ -37,7 +37,7 @@ export default async function AdminUserPage({ params }: PageProps<"/admin/users/
             <ul className="divide-y divide-line">
               {user.orders.map((o) => (
                 <li key={o.id}>
-                  <Link href={`/admin/orders/${o.id}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3 hover:bg-cream">
+                  <Link href={`/admin/orders/${o.id}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3 hover:bg-sand/40">
                     <span className="font-mono text-sm font-semibold">{o.number}</span>
                     <span className="flex-1 text-xs text-muted">{formatDateTime(o.createdAt, locale)}</span>
                     <StatusBadge status={o.status} label={a.status[o.status]} />

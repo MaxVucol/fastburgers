@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Pencil, Plus } from "lucide-react";
 import { CategoryActiveSwitch, DeleteButton, MoveButtons } from "@/components/admin/admin-controls";
-import { AdminPageHeader, Panel, SavedNotice } from "@/components/admin/admin-ui";
+import { AdminPageHeader, EmptyState, Panel, SavedNotice, adminIconButton } from "@/components/admin/admin-ui";
 import { requireAdmin } from "@/lib/auth/session";
 import { fill } from "@/lib/i18n/config";
 import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
@@ -26,11 +26,11 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps<"/
       <SavedNotice show={saved === "1"}>{t.saved}</SavedNotice>
       <Panel>
         {categories.length === 0 ? (
-          <p className="p-6 text-sm text-muted">{t.empty}</p>
+          <EmptyState>{t.empty}</EmptyState>
         ) : (
           <ol className="divide-y divide-line">
             {categories.map((c, i) => (
-              <li key={c.id} className="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5">
+              <li key={c.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-sand/40 sm:gap-4 sm:px-5">
                 <MoveButtons id={c.id} name={c.name} isFirst={i === 0} isLast={i === categories.length - 1} />
                 <span className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-sand">
                   {c.image && <Image src={c.image} alt="" fill sizes="48px" className="object-cover" />}
@@ -46,7 +46,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps<"/
                 <CategoryActiveSwitch id={c.id} value={c.active} label={fill(t.switchActive, { name: c.name })} />
                 <Link
                   href={`/admin/categories/${c.id}`}
-                  className="grid size-9 place-items-center rounded-lg text-muted hover:bg-sand hover:text-ink"
+                  className={adminIconButton}
                   aria-label={fill(a.common.edit, { name: c.name })}
                 >
                   <Pencil className="size-4" aria-hidden />

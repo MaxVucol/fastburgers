@@ -424,3 +424,40 @@ dialog[open]::backdrop {
     linear-gradient(to bottom, transparent, #000 12%, #000 90%, transparent);
   mask-composite: intersect;
 }
+
+/* ═════════════════════════ Admin panel (BUNIQ Admin) ═════════════════════════
+   The panel sets `admin-ui` on <html> (app/admin/layout.tsx) and re-maps the shared tokens, so
+   every admin page and form follows one palette without touching the public site. Dark graphite
+   is the panel's default (lib/theme.ts adminThemeInitScript); the light theme stays available.
+   Contrast checked (WCAG AA): dark — ink on paper 16.4:1, muted on paper 6.1:1, muted on cream
+   6.6:1, accent-ink on paper 6.9:1, on-accent on accent 6.5:1; light — ink on paper 16.0:1,
+   muted on paper 6.2:1, muted on cream 5.7:1, accent-ink on paper 5.8:1. */
+:root.admin-ui {
+  --color-cream: #f3f2ee; /* page */
+  --color-ivory: #fbfaf8; /* sidebar */
+  --color-paper: #ffffff; /* cards */
+  --color-sand: #eeece6; /* inputs, quiet fills */
+  --color-oat: #e0ddd4; /* hover */
+  --color-line: #e3e0d8;
+  --color-ink: #1c1e21;
+  --color-ink-soft: #3a3d42;
+  --color-muted: #5d636b;
+  --color-on-ink: #f6f6f4;
+}
+:root.admin-ui[data-theme="dark"] {
+  --color-cream: #0d0f12;
+  --color-ivory: #111418;
+  --color-paper: #15191d;
+  --color-sand: #1b2025;
+  --color-oat: #262c33;
+  --color-line: #242a30;
+  --color-ink: #f1f3f5;
+  --color-ink-soft: #cdd2d8;
+  --color-muted: #949da7;
+  --color-on-ink: #0d0f12;
+  --color-accent-soft: #2a170e;
+  --color-accent-ink: #ff8a57;
+}
+.admin-ui body {
+  background: var(--color-cream);
+}

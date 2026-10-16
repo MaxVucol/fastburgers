@@ -20,7 +20,7 @@ export function AdminPreferences({ className }: { className?: string }) {
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <div role="group" aria-label={a.shell.language} className={cn("flex rounded-full bg-sand p-0.5", pending && "opacity-60")}>
+      <div role="group" aria-label={a.shell.language} className={cn("flex rounded-lg border border-line bg-sand p-0.5", pending && "opacity-60")}>
         {locales.map((l) => {
           const active = l === locale;
           return (
@@ -35,8 +35,8 @@ export function AdminPreferences({ className }: { className?: string }) {
                 if (!active) startTransition(() => setAdminLocale(l));
               }}
               className={cn(
-                "h-8 min-w-10 rounded-full px-2.5 text-xs font-bold tracking-[0.08em] transition-colors",
-                active ? "bg-paper text-ink shadow-[var(--shadow-soft)] ring-1 ring-line" : "text-muted hover:text-ink",
+                "h-8 min-w-9 rounded-md px-2 text-xs font-bold tracking-[0.06em] transition-colors",
+                active ? "bg-paper text-ink shadow-[var(--shadow-soft)]" : "text-muted hover:text-ink",
               )}
             >
               <span className="sr-only">{localeNames[l].native}</span>
@@ -51,7 +51,7 @@ export function AdminPreferences({ className }: { className?: string }) {
         aria-pressed={dark}
         aria-label={a.shell.darkTheme}
         title={a.shell.darkTheme}
-        className="grid size-9 place-items-center rounded-full bg-sand text-ink-soft transition-colors hover:bg-oat hover:text-ink"
+        className="grid size-9 place-items-center rounded-lg border border-line bg-sand text-ink-soft transition-colors hover:bg-oat hover:text-ink"
       >
         <Moon className="size-4.5 dark:hidden" aria-hidden strokeWidth={1.9} />
         <Sun className="hidden size-4.5 dark:block" aria-hidden strokeWidth={1.9} />
