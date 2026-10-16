@@ -136,6 +136,18 @@ demo, если `ORDER_MODE` не `live`), письма, Telegram. В Vercel → 
 - Защита от ботов (managed rules / BotID) как отдельная опция, если нужна для заказов.
 - Vercel Security Checkpoint уже срабатывал на частые запросы с моей машины, то есть платформенная защита работает; её настройки я не видел.
 
+### 7.5. Отдельная база Preview (`fastburgers_preview`)
+
+1. Atlas → Database Access → Add New Database User: имя `fastburgers_preview_app`, пароль свой (не тот, что у боевого пользователя).
+   Database User Privileges → Specific Privileges → роль `readWrite`, база `fastburgers_preview` (коллекция пусто). Других ролей нет.
+   Temporary User выключен. Если есть Restrict Access, ограничьте вашим кластером.
+2. Локальный файл `.env.preview` в корне проекта (игнорируется Git, значения никому не отправлять):
+   `DATABASE_URL` (как боевой, но с этим пользователем и `/fastburgers_preview?retryWrites=true&w=majority`), `ADMIN_EMAIL`,
+   `ADMIN_PASSWORD` (отдельный администратор Preview, от 12 символов, 3 класса знаков). Пароль с `@ : / ? # %` кодируется в адресе.
+3. `npm run db:check:preview` (чтение: структура файла, ping, список коллекций) → `npm run db:push:preview` (схема, индексы) →
+   `npm run db:seed:preview` (вымышленные данные). Скрипт `scripts/preview-db.mjs` ничего не запускает, пока адрес не указывает точно на
+   `fastburgers_preview`, пользователь/пароль совпадают с боевыми из `.env.atlas` или нет `--confirm-preview`.
+
 ## 8. MFA администратора (не включено, дизайн)
 
 Пока не проверены восстановление доступа и совместимость с сессиями, в код не добавлялось. План:
