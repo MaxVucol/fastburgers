@@ -63,7 +63,7 @@ const IMAGES = {
   // Regular Fanta Orange (the previous shot was Fanta Zero). Temporary until an in-house product shot exists.
   "products/fanta/main.webp": ["1787453712989-3bf7db8211c4", { focus: [0.62, 0.5, 1.6] }], // @erik-mclean
   "products/sprite/main.webp": ["1680404005217-a441afdefe83", { position: "centre" }], // @miheer-tewari
-  "products/lemonade/main.webp": "1621263764928-df1444c5e859",
+  // products/lemonade/main.webp is supplied by the project owner (1920×1280, cropped to 4:3, no grade), not fetched.
   "products/milkshake/main.webp": "1579954115545-a95591f28bfc",
   // ── Category tiles (each its own shot, never a product photo) ──
   // categories/burgeri.webp is supplied by the project owner, not fetched: their 1448×1086 shot set on a

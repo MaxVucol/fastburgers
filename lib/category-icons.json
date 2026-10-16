@@ -1,0 +1,116 @@
+{
+  "bar": {
+    "src": "/images/categories/icons/bar.webp",
+    "width": 96,
+    "showcase": "/images/categories/showcase/bar.webp"
+  },
+  "bauturi": {
+    "src": "/images/categories/icons/bauturi.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/bauturi.webp"
+  },
+  "burgeri": {
+    "src": "/images/categories/icons/burgeri.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/burgeri.webp"
+  },
+  "cafea": {
+    "src": "/images/categories/icons/cafea.webp",
+    "width": 186,
+    "showcase": "/images/categories/showcase/cafea.webp"
+  },
+  "cartofi": {
+    "src": "/images/categories/icons/cartofi.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/cartofi.webp"
+  },
+  "chicken": {
+    "src": "/images/categories/icons/chicken.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/chicken.webp"
+  },
+  "combo": {
+    "src": "/images/categories/icons/combo.webp",
+    "width": 216,
+    "showcase": "/images/categories/showcase/combo.webp"
+  },
+  "deserturi": {
+    "src": "/images/categories/icons/deserturi.webp",
+    "width": 216,
+    "showcase": "/images/categories/showcase/deserturi.webp"
+  },
+  "garnituri": {
+    "src": "/images/categories/icons/garnituri.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/garnituri.webp"
+  },
+  "la-bere": {
+    "src": "/images/categories/icons/la-bere.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/la-bere.webp"
+  },
+  "mic-dejun": {
+    "src": "/images/categories/icons/mic-dejun.webp",
+    "width": 216,
+    "showcase": "/images/categories/showcase/mic-dejun.webp"
+  },
+  "paine": {
+    "src": "/images/categories/icons/paine.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/paine.webp"
+  },
+  "paste": {
+    "src": "/images/categories/icons/paste.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/paste.webp"
+  },
+  "pizza": {
+    "src": "/images/categories/icons/pizza.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/pizza.webp"
+  },
+  "poke": {
+    "src": "/images/categories/icons/poke.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/poke.webp"
+  },
+  "pranz-business": {
+    "src": "/images/categories/icons/pranz-business.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/pranz-business.webp"
+  },
+  "preparate-calde": {
+    "src": "/images/categories/icons/preparate-calde.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/preparate-calde.webp"
+  },
+  "salate": {
+    "src": "/images/categories/icons/salate.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/salate.webp"
+  },
+  "sosuri": {
+    "src": "/images/categories/icons/sosuri.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/sosuri.webp"
+  },
+  "supe": {
+    "src": "/images/categories/icons/supe.webp",
+    "width": 216,
+    "showcase": "/images/categories/showcase/supe.webp"
+  },
+  "all": {
+    "src": "/images/categories/icons/toate.webp",
+    "width": 144
+  },
+  "toppinguri": {
+    "src": "/images/categories/icons/toppinguri.webp",
+    "width": 169,
+    "showcase": "/images/categories/showcase/toppinguri.webp"
+  },
+  "wraps": {
+    "src": "/images/categories/icons/wraps.webp",
+    "width": 144,
+    "showcase": "/images/categories/showcase/wraps.webp"
+  }
+}
