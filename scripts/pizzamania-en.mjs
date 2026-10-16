@@ -1,8 +1,8 @@
 // English copy for the imported Pizza Mania catalogue: translated by hand from the Romanian rows.
 // Writes lib/i18n/catalog-pizzamania-en.ts, keyed by slug. Names and descriptions are indexed like
 // prisma/pizzamania-menu.json (the order of "products").
-const fs = require("node:fs");
-const menu = require("../prisma/pizzamania-menu.json");
+import fs from "node:fs";
+import menu from "../prisma/pizzamania-menu.json" with { type: "json" };
 
 const categories = {
   "mic-dejun": "Breakfast", "pranz-business": "Business lunch", supe: "Soups", salate: "Salads", poke: "Poke bowls",
@@ -204,7 +204,7 @@ for (const [i, p] of menu.products.entries()) {
 const q = JSON.stringify;
 const out = [
   "// English copy for the catalogue imported from the previous brand's menu, written by hand from the",
-  "// Romanian rows (scripts/pizzamania-en.cjs writes this file). Keyed by slug like catalog-translations.ts.",
+  "// Romanian rows (scripts/pizzamania-en.mjs writes this file). Keyed by slug like catalog-translations.ts.",
   "",
   "export const pizzamaniaEn = {",
   "  categories: {",

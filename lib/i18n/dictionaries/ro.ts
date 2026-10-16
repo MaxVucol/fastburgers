@@ -336,6 +336,7 @@ export const ro = {
     optionUnavailable: "O opțiune pentru „{name}” nu mai este disponibilă.",
     priceChanged: "Prețul unor produse s-a schimbat între timp. Am actualizat totalul: verifică-l și apasă din nou „Plasează comanda”.",
     tooManyOrders: "Prea multe comenzi într-un timp scurt. Încearcă din nou peste {minutes} min sau sună-ne.",
+    tooManyLookups: "Prea multe încercări. Încearcă din nou peste {minutes} min.",
     attemptMismatch: "Comanda s-a schimbat față de încercarea anterioară. Reîncarcă pagina și verifică totul înainte de a trimite din nou.",
     minDelivery: "Comanda minimă pentru livrare este {min}.",
     locationUnavailable: "Restaurantul selectat nu este disponibil.",

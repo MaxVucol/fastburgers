@@ -64,7 +64,7 @@ export async function saveImage(file: File): Promise<string> {
       });
       return blob.url;
     } catch (error) {
-      console.error("Blob upload failed", error);
+      console.error("Blob upload failed", error instanceof Error ? error.name : "unknown error");
       throw new UploadError("Încărcarea imaginii a eșuat. Încearcă din nou.");
     }
   }
@@ -83,7 +83,7 @@ export async function saveImage(file: File): Promise<string> {
 /** Deletes an uploaded image. Bundled demo images in /public are never touched. */
 export async function deleteImage(url: string): Promise<void> {
   if (isBlobUrl(url)) {
-    if (blobEnabled()) await del(url).catch((error) => console.error("Blob delete failed", error));
+    if (blobEnabled()) await del(url).catch((error) => console.error("Blob delete failed", error instanceof Error ? error.name : "unknown error"));
     return;
   }
   const name = mediaFileName(url);

@@ -46,6 +46,8 @@ export const RATE_LIMITS = {
   emailChangeAccount: { name: "email-change-account", limit: 3, windowMs: 60 * 60_000 },
   /** "Sign in with Google" round trips per IP address (each callback may create an account). */
   googleIp: { name: "google-ip", limit: 20, windowMs: 10 * 60_000 },
+  /** Order look-ups (number + phone) per IP address: a guess costs one try. */
+  lookupIp: { name: "lookup-ip", limit: 15, windowMs: 10 * 60_000 },
   /** Orders that reach the database step, per IP address. */
   orderIp: { name: "order-ip", limit: 6, windowMs: 10 * 60_000 },
   /** Orders per phone number, whatever the address they come from. */

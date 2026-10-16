@@ -328,6 +328,7 @@ export const en: Dictionary = {
     optionUnavailable: "An option for “{name}” is no longer available.",
     priceChanged: "Some prices have changed in the meantime. We have updated your total: check it and place the order again.",
     tooManyOrders: "Too many orders in a short time. Please try again in {minutes} min or call us.",
+    tooManyLookups: "Too many attempts. Try again in {minutes} min.",
     attemptMismatch: "Your order changed since the previous attempt. Reload the page and check it before sending it again.",
     minDelivery: "The minimum order for delivery is {min}.",
     locationUnavailable: "The selected restaurant is not available.",

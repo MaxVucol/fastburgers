@@ -64,7 +64,8 @@ export async function placeOrder(input: unknown, locale?: string): Promise<Check
       if (typeof params.min === "number") params.min = formatPrice(params.min, lang);
       return { ok: false, error: fill(t.errors[error.code], params), ...error.detail };
     }
-    console.error("placeOrder failed", error);
+    // Name and code only: a database error can carry the submitted values (name, phone, address).
+    console.error("placeOrder failed", error instanceof Error ? error.name : "unknown error", (error as { code?: unknown })?.code ?? "");
     return { ok: false, error: t.errors.unexpected };
   }
 }
