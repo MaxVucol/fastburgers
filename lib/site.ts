@@ -18,8 +18,8 @@ export const siteConfig = {
   /** Branded social card (1200×630), built by scripts/make-og.mjs. */
   ogImage: "/images/og/buniq.jpg",
   url: resolveSiteUrl(),
-  phone: "+40 721 000 321",
-  phoneHref: "tel:+40721000321",
+  phone: "+373 721 000 321",
+  phoneHref: "tel:+373721000321",
   email: "salut@fastburgers.ro",
   address: "Str. Ion Câmpineanu 21, București",
   /**

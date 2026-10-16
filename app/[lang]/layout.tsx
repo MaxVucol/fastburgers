@@ -4,6 +4,7 @@ import { InlineScript } from "@/components/inline-script";
 import { I18nProvider } from "@/components/i18n/i18n-provider";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { ScrollToTopOnNavigate } from "@/components/layout/scroll-to-top";
 import { fontVariables } from "@/lib/fonts";
 import { intlLocale, locales, ogLocale } from "@/lib/i18n/config";
 import { getI18n } from "@/lib/i18n/server";
@@ -66,6 +67,7 @@ export default async function SiteRootLayout({ children }: LayoutProps<"/[lang]"
           >
             {t.common.skipToContent}
           </a>
+          <ScrollToTopOnNavigate />
           <Header />
           <main id="continut" className="flex-1">
             {children}

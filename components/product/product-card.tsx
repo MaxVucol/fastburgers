@@ -1,11 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { QuickAddButton } from "@/components/cart/add-to-cart-button";
+import { CardActions, CardAdd } from "./card-actions";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { ProductBadges, type BadgeLabels } from "@/components/ui/badge";
 import { Price } from "@/components/ui/price";
 import { discountPercent } from "@/lib/format";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { getI18n } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 import type { ProductCardData } from "@/types/catalog";
 
@@ -16,12 +18,8 @@ function badgeLabels(t: Dictionary): BadgeLabels {
   return { isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest, spicy: t.product.badgeSpicy, soldOut: t.product.soldOut };
 }
 
-function quickAddProduct(product: ProductCardData) {
-  return { id: product.id, slug: product.slug, name: product.name, image: product.image, price: product.price, soldOut: product.soldOut };
-}
-
 /** Catalog card: white card on cream, photo-led, price and a round "+" at the bottom. */
-export async function ProductCard({
+export function ProductCard({
   product,
   eager = false,
   preload = false,
@@ -36,16 +34,14 @@ export async function ProductCard({
   headingLevel?: "h2" | "h3";
   className?: string;
 }) {
-  const { locale, t, href } = await getI18n();
+  const { locale, t, href } = useI18n();
   const Heading = headingLevel;
   const discount = discountPercent(product.price, product.oldPrice);
 
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper",
-        "transition-[border-color,transform,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out-brand)]",
-        "hover:-translate-y-1 hover:border-oat hover:shadow-[var(--shadow-lift)]",
+        "group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-transparent bg-cream transition-[border-color,box-shadow] duration-[450ms] ease-out motion-reduce:transition-none shadow-[0_2px_6px_rgb(0_0_0/0.12),0_12px_28px_-10px_rgb(0_0_0/0.38)] hover:border-oat hover:shadow-[0_4px_10px_rgb(0_0_0/0.16),0_18px_36px_-12px_rgb(0_0_0/0.5)]",
         className,
       )}
     >
@@ -56,7 +52,7 @@ export async function ProductCard({
           fill
           sizes={PRODUCT_GRID_SIZES}
           {...(preload ? { preload: true } : { loading: eager ? "eager" : "lazy" })}
-          className="object-cover transition-transform duration-500 ease-[var(--ease-out-brand)] group-hover:scale-[1.05]"
+          className="object-cover"
         />
         <ProductBadges
           popular={product.popular}
@@ -64,10 +60,18 @@ export async function ProductCard({
           featured={product.featured}
           spicy={product.spicy}
           soldOut={product.soldOut}
-          discount={discount}
+          discount={null}
           labels={badgeLabels(t)}
           className="absolute top-3 left-3"
         />
+        {/* The discount is a diagonal ribbon in the top-right corner. */}
+        {discount ? (
+          <span className="pointer-events-none absolute top-0 right-0 size-20 overflow-hidden">
+            <span className="absolute top-[1.125rem] -right-[2.75rem] w-32 rotate-45 bg-[#8b1a1a] py-0.5 text-center font-display text-[0.8125rem] leading-4 font-extrabold tracking-[-0.01em] text-white">
+              −{discount}%
+            </span>
+          </span>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col p-4 sm:px-[1.125rem]">
@@ -90,7 +94,10 @@ export async function ProductCard({
             ) : null}
             <Price price={product.price} oldPrice={product.oldPrice} locale={locale} oldPriceLabel={t.product.oldPrice} />
           </div>
-          <QuickAddButton variant="icon" className="relative z-10" product={quickAddProduct(product)} />
+          <div className="flex items-center gap-1">
+            <CardActions product={product} />
+            <CardAdd product={product} />
+          </div>
         </div>
       </div>
     </article>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Plus } from "lucide-react";
+import { Check, Plus, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { buttonStyles } from "@/components/ui/button";
@@ -79,7 +79,7 @@ export function QuickAddButton({
         className={buttonStyles({
           variant: added ? doneVariant : "primary",
           size: "icon",
-          className: cn("size-11 hover:scale-105 active:scale-95", className),
+          className: cn("size-11", className),
         })}
         aria-label={ariaLabel}
       >
@@ -89,7 +89,7 @@ export function QuickAddButton({
         {added ? (
           <Check className="size-5 animate-pop" aria-hidden strokeWidth={2.5} />
         ) : (
-          <Plus className="size-5" aria-hidden strokeWidth={2.6} />
+          <ShoppingCart className="size-5 text-white" aria-hidden strokeWidth={2.2} />
         )}
       </button>
     );

@@ -1,20 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight, SearchX } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { ProductList } from "@/components/product/product-card";
 import { ButtonLink } from "@/components/ui/button";
 import { plural } from "@/lib/i18n/config";
-import { getI18n } from "@/lib/i18n/server";
 import type { CategorySummary, ProductCardData } from "@/types/catalog";
 
-/** The full menu, grouped by category, with anchors (/menu#burgeri). */
-export async function GroupedMenu({
+/** The full menu, grouped by category, with anchors (/menu#burgeri). Rendered on the server for the first paint, then lives in the browser. */
+export function GroupedMenu({
   categories,
   products,
 }: {
   categories: CategorySummary[];
   products: ProductCardData[];
 }) {
-  const { locale, t, href } = await getI18n();
+  const { locale, t, href } = useI18n();
   const groups = categories
     .map((c) => ({ category: c, items: products.filter((p) => p.categoryId === c.id) }))
     .filter((g) => g.items.length > 0);
@@ -55,8 +57,8 @@ export async function GroupedMenu({
   );
 }
 
-export async function FilteredMenu({ products, hasSearch }: { products: ProductCardData[]; hasSearch: boolean }) {
-  const { locale, t, href } = await getI18n();
+export function FilteredMenu({ products, hasSearch }: { products: ProductCardData[]; hasSearch: boolean }) {
+  const { locale, t, href } = useI18n();
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-[var(--radius-panel)] border-[1.5px] border-dashed border-oat px-6 py-20 text-center">

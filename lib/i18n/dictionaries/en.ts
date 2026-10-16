@@ -79,6 +79,11 @@ export const en: Dictionary = {
     primary: "Order now",
     from: "Burgers from {price}",
     imageAlt: "Cheeseburger in a sesame bun with lettuce, red onion, tomato, melted cheddar and pickles on a dark wooden board",
+    slides: ["BUNIQ autumn menu: bacon cheddar burger, fries and creamy pumpkin soup", "BUNIQ Kids Menu: burger, fries, chicken nuggets and Cappy Mini juice", "BUNIQ offer: order 5 pizzas and get 5 Coca-Cola on the house"],
+    carousel: "Offers and news",
+    prev: "Previous slide",
+    next: "Next slide",
+    goTo: "Slide {n}",
   },
 
   benefits: {
@@ -103,6 +108,8 @@ export const en: Dictionary = {
     lead: "Every category, one standard: everything is cooked after you order.",
     count: { one: "{count} item", other: "{count} items" },
     viewAll: "See the full menu",
+    showMore: "Show more",
+    showLess: "Show less",
   },
 
   promo: {
@@ -188,6 +195,10 @@ export const en: Dictionary = {
     showImage: "Show image {index}",
     gallery: "Image gallery",
     loading: "Loading item",
+    quickView: "Quick view",
+    wishlist: "Wishlist",
+    quickViewClose: "Close quick view",
+    fullDetails: "Full details",
   },
 
   quantity: {
@@ -219,6 +230,8 @@ export const en: Dictionary = {
     filters: { all: "All", popular: "Popular", new: "New", sale: "Deals" },
     filtersLabel: "Filters",
     categoriesLabel: "Categories",
+    scrollBack: "Scroll back",
+    scrollForward: "Scroll forward",
     allCategories: "All categories",
     emptyTitle: "Nothing found",
     emptySearch: "Try another word, for example “burger”, “chicken” or “chocolate”.",

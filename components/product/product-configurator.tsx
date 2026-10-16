@@ -14,7 +14,10 @@ import type { ProductOptionView } from "@/types/catalog";
 
 export function ProductConfigurator({
   product,
+  onAdded,
 }: {
+  /** Called right after the dish is put in the cart (the quick-add dialog closes itself here). */
+  onAdded?: () => void;
   product: {
     id: string;
     slug: string;
@@ -62,6 +65,7 @@ export function ProductConfigurator({
     setAdded(true);
     setSelected([]);
     setQuantity(1);
+    onAdded?.();
   }
 
   return (

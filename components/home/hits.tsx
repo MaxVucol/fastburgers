@@ -66,10 +66,10 @@ async function FeatureCard({ product }: { product: ProductCardData }) {
       <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto md:min-h-[19rem] lg:min-h-[22rem]">
         <Image
           src={product.image}
-          alt={product.name}
           fill
+          alt={product.name}
           sizes="(min-width: 1344px) 660px, (min-width: 768px) 50vw, 100vw"
-          className="object-cover transition-transform duration-700 ease-[var(--ease-out-brand)] group-hover:scale-[1.04]"
+          className="object-cover"
         />
         <ProductBadges
           popular={product.popular}
@@ -113,10 +113,10 @@ async function CompactCard({ product }: { product: ProductCardData }) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={product.image}
-          alt={product.name}
           fill
+          alt={product.name}
+          className="object-cover"
           sizes="(min-width: 1344px) 320px, (min-width: 768px) 24vw, 48vw"
-          className="object-cover transition-transform duration-500 ease-[var(--ease-out-brand)] group-hover:scale-[1.05]"
         />
       </div>
       <div className="flex flex-1 flex-col p-3.5 sm:p-5">

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type Tone = "accent" | "dark" | "light" | "herb" | "sage";
+type Tone = "accent" | "dark" | "light" | "herb" | "sage" | "fx-popular" | "fx-best" | "fx-new";
 
 const tones: Record<Tone, string> = {
   accent: "bg-accent text-on-accent",
@@ -9,6 +9,10 @@ const tones: Record<Tone, string> = {
   light: "bg-paper text-ink",
   herb: "bg-herb text-on-ink",
   sage: "bg-sage text-on-accent",
+  // Animated pills (see .badge-fx in globals.css).
+  "fx-popular": "badge-fx badge-fx-popular",
+  "fx-best": "badge-fx badge-fx-best",
+  "fx-new": "badge-fx badge-fx-new",
 };
 
 /** Small pill label on photos and in lists; never interactive. */
@@ -24,7 +28,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-1 text-[0.6875rem] leading-none font-semibold tracking-[0.01em]",
+        "inline-flex items-center overflow-hidden rounded-full px-2.5 py-1 text-[0.6875rem] leading-none font-semibold tracking-[0.01em]",
         tones[tone],
         className,
       )}
@@ -59,10 +63,10 @@ export function ProductBadges({
   const items: ReactNode[] = [];
   if (soldOut && labels.soldOut) items.push(<Badge key="out" tone="light">{labels.soldOut}</Badge>);
   if (discount) items.push(<Badge key="sale" tone="accent">−{discount}%</Badge>);
-  if (isNew) items.push(<Badge key="new" tone="sage">{labels.isNew}</Badge>);
+  if (isNew) items.push(<Badge key="new" tone="fx-new">{labels.isNew}</Badge>);
   if (spicy && labels.spicy) items.push(<Badge key="spicy" tone="accent">{labels.spicy}</Badge>);
-  if (popular) items.push(<Badge key="pop" tone="dark">{labels.popular}</Badge>);
-  else if (featured) items.push(<Badge key="best" tone="light">{labels.best}</Badge>);
+  if (popular) items.push(<Badge key="pop" tone="fx-popular">{labels.popular}</Badge>);
+  else if (featured) items.push(<Badge key="best" tone="fx-best">{labels.best}</Badge>);
   if (items.length === 0) return null;
   return <div className={cn("flex flex-wrap gap-1.5", className)}>{items.slice(0, 2)}</div>;
 }

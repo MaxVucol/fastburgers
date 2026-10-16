@@ -34,8 +34,6 @@ export default async function HomePage() {
 
   const popular = products.filter((p) => p.popular);
   const hits = popular.slice(0, 4);
-  const burgerPrices = products.filter((p) => p.categorySlug === "burgeri").map((p) => p.price);
-  const burgersFrom = burgerPrices.length > 0 ? Math.min(...burgerPrices) : null;
   const featured = products.filter((p) => p.featured && !p.popular).slice(0, 4);
   const fresh = products.filter((p) => p.isNew && !p.popular && !p.featured).slice(0, 4);
   const picks = [...featured, ...fresh].slice(0, 8);
@@ -47,7 +45,7 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={restaurantJsonLd(t.meta.description, href("/menu"))} />
-      <Hero burgersFrom={burgersFrom} />
+      <Hero />
 
       <CategoryIndex categories={categories} counts={counts} />
 

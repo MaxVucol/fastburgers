@@ -86,6 +86,11 @@ export const ro = {
     primary: "Comandă acum",
     from: "Burgeri de la {price}",
     imageAlt: "Cheeseburger cu chiflă cu susan, salată, ceapă roșie, roșii, cheddar topit și castraveți murați, pe un fundal de lemn întunecat",
+    slides: ["Meniul de toamnă BUNIQ: burger cu bacon și cheddar, cartofi prăjiți și supă cremă de dovleac", "Kids Menu BUNIQ: burger, cartofi, nuggets de pui și suc Cappy Mini", "Oferta BUNIQ: comanzi 5 pizza și primești 5 Coca-Cola din partea casei"],
+    carousel: "Oferte și noutăți",
+    prev: "Slide-ul anterior",
+    next: "Slide-ul următor",
+    goTo: "Slide-ul {n}",
   },
 
   benefits: {
@@ -110,6 +115,8 @@ export const ro = {
     lead: "Fiecare categorie, un singur standard: totul se gătește după comandă.",
     count: plural({ one: "{count} produs", few: "{count} produse", other: "{count} de produse" }),
     viewAll: "Vezi tot meniul",
+    showMore: "Afișează mai mult",
+    showLess: "Afișează mai puțin",
   },
 
   promo: {
@@ -195,6 +202,10 @@ export const ro = {
     showImage: "Afișează imaginea {index}",
     gallery: "Galerie imagini",
     loading: "Se încarcă produsul",
+    quickView: "Vizualizare rapidă",
+    wishlist: "Favorite",
+    quickViewClose: "Închide vizualizarea rapidă",
+    fullDetails: "Detalii complete",
   },
 
   quantity: {
@@ -227,6 +238,8 @@ export const ro = {
     filters: { all: "Toate", popular: "Populare", new: "Noi", sale: "Reduceri" },
     filtersLabel: "Filtre",
     categoriesLabel: "Categorii",
+    scrollBack: "Derulează înapoi",
+    scrollForward: "Derulează înainte",
     allCategories: "Toate categoriile",
     emptyTitle: "Niciun produs găsit",
     emptySearch: "Încearcă un alt termen, de exemplu „burger”, „pui” sau „ciocolată”.",

@@ -58,23 +58,33 @@ export function Logo({
   label = "BUNIQ",
   tone = "light",
   size = "md",
+  sparkle = false,
   className,
   onClick,
 }: {
   href?: string;
   label?: string;
   tone?: "light" | "dark";
-  /** "lg": the site header, about 12 % larger than the default lock-up. */
-  size?: "md" | "lg";
+  /** "lg": the site header, about 12 % larger than the default lock-up; "xl": the centred logo of the tall desktop header. */
+  size?: "md" | "lg" | "xl";
+  /** Sesame seeds and sparks drifting through the wordmark (the site header). */
+  sparkle?: boolean;
   className?: string;
   onClick?: () => void;
 }) {
   return (
-    <Link href={href} onClick={onClick} className={cn("inline-flex rounded-[var(--radius-xs)]", className)} aria-label={label}>
+    <Link href={href} onClick={onClick} className={cn("relative inline-flex rounded-[var(--radius-xs)]", className)} aria-label={label}>
       <Wordmark
         tone={tone}
-        className={size === "lg" ? "text-[1.875rem] lg:text-[2.125rem] xl:text-[2.25rem]" : "text-[1.75rem] lg:text-[2rem]"}
+        className={
+          size === "xl"
+            ? "text-[3.75rem] xl:text-[4.75rem]"
+            : size === "lg"
+              ? "text-[1.875rem] lg:text-[2.125rem] xl:text-[2.25rem]"
+              : "text-[1.75rem] lg:text-[2rem]"
+        }
       />
+      {sparkle && <span aria-hidden className="logo-fx pointer-events-none absolute -inset-x-3 -inset-y-2" />}
     </Link>
   );
 }

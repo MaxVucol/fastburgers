@@ -1,95 +1,68 @@
 "use client";
 
-import { ChevronDown, Loader2, Search, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { ChevronDown, Search, X } from "lucide-react";
+import { useLayoutEffect, useRef } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
-import { MENU_FILTERS, MENU_SORTS, menuQueryToSearch, type MenuQuery, type MenuSort } from "@/lib/menu-query";
+import { MENU_SORTS, type MenuFilter, type MenuQuery, type MenuSort } from "@/lib/menu-query";
 import { cn } from "@/lib/utils";
-import type { CategorySummary } from "@/types/catalog";
 
+/**
+ * Search, filters and sorting. Fully controlled: every press goes straight to `onChange`, and the
+ * list is filtered in the browser (see MenuExplorer), so nothing waits for the server.
+ */
 export function MenuToolbar({
   query,
-  categories,
+  filters,
+  onChange,
 }: {
   query: MenuQuery;
-  categories: CategorySummary[];
+  /** The filters offered (those with something to show). With only "all" left, none are shown. */
+  filters: readonly MenuFilter[];
+  onChange: (next: Partial<MenuQuery>) => void;
 }) {
-  const { t, href } = useI18n();
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [text, setText] = useState(query.q);
-  const [lastSent, setLastSent] = useState(query.q);
-  const [prevQ, setPrevQ] = useState(query.q);
+  const { t } = useI18n();
+  const groupRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+  const pillPlaced = useRef(false);
 
-  // Sync the input when the URL changes from elsewhere (e.g. the header search).
-  if (query.q !== prevQ) {
-    setPrevQ(query.q);
-    if (query.q !== lastSent) {
-      setText(query.q);
-      setLastSent(query.q);
+  // The orange pill glides to the chosen filter (instead of each button lighting up on its own).
+  function placePill(animate: boolean) {
+    const group = groupRef.current;
+    const pill = pillRef.current;
+    const active = group?.querySelector<HTMLElement>("button[aria-pressed=true]");
+    if (!group || !pill || !active) return;
+    pill.style.transition = animate ? "" : "none";
+    pill.style.width = `${active.offsetWidth}px`;
+    pill.style.transform = `translateX(${active.offsetLeft}px)`;
+    if (!animate) void pill.offsetWidth; // apply the jump before transitions come back
+  }
+  useLayoutEffect(() => {
+    placePill(pillPlaced.current);
+    if (!pillPlaced.current && groupRef.current) {
+      pillPlaced.current = true;
+      // From now on the pill carries the colour (CSS keyed on this attribute, no re-render needed).
+      groupRef.current.dataset.pill = "";
     }
-  }
-
-  const menuPath = href("/menu");
-
-  function navigate(next: Partial<MenuQuery>) {
-    const search = menuQueryToSearch({ ...query, ...next });
-    startTransition(() => {
-      router.replace(`${menuPath}${search}`, { scroll: false });
+  }, [query.filter, filters]);
+  // A new width of the group (window resize, font load) moves the pill without animating. The
+  // first callback only reports the initial size, and this observer is not rebuilt per filter:
+  // otherwise it would snap the pill into place and cancel the glide.
+  useLayoutEffect(() => {
+    const group = groupRef.current;
+    if (!group) return;
+    let initial = true;
+    const observer = new ResizeObserver(() => {
+      if (initial) initial = false;
+      else placePill(false);
     });
-  }
-
-  // Debounced live search.
-  useEffect(() => {
-    const value = text.trim();
-    if (value === lastSent.trim()) return;
-    const timer = window.setTimeout(() => {
-      setLastSent(value);
-      const search = menuQueryToSearch({ ...query, q: value });
-      startTransition(() => router.replace(`${menuPath}${search}`, { scroll: false }));
-    }, 300);
-    return () => window.clearTimeout(timer);
-  }, [text, lastSent, query, router, menuPath]);
-
-  // Category chips: the active one is the orange pill, the rest stay quiet.
-  const tab = (active: boolean) =>
-    cn(
-      "inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
-      active ? "border-accent bg-accent text-on-accent" : "border-line bg-paper text-ink-soft hover:border-ink/30 hover:text-ink",
-    );
+    observer.observe(group);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div>
-      <nav aria-label={t.menu.categoriesLabel} className="border-b border-line">
-        <div className="no-scrollbar -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] pb-3">
-          <button type="button" aria-pressed={!query.category} onClick={() => navigate({ category: "" })} className={tab(!query.category)}>
-            {t.menu.allCategories}
-          </button>
-          {categories.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              aria-pressed={query.category === c.slug}
-              onClick={() => navigate({ category: query.category === c.slug ? "" : c.slug })}
-              className={tab(query.category === c.slug)}
-            >
-              {c.name}
-            </button>
-          ))}
-        </div>
-      </nav>
-
       <div className="flex flex-col gap-3 py-3 md:flex-row md:items-center">
-        <form
-          role="search"
-          className="relative md:max-w-sm md:flex-1"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setLastSent(text.trim());
-            navigate({ q: text.trim() });
-          }}
-        >
+        <form role="search" className="relative md:max-w-sm md:flex-1" onSubmit={(e) => e.preventDefault()}>
           <label htmlFor="menu-search" className="sr-only">
             {t.menu.searchLabel}
           </label>
@@ -97,56 +70,60 @@ export function MenuToolbar({
           <input
             id="menu-search"
             type="search"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+            value={query.q}
+            onChange={(e) => onChange({ q: e.target.value.slice(0, 80) })}
             placeholder={t.menu.searchPlaceholder}
             className="h-11 w-full rounded-full border-[1.5px] border-line bg-paper pr-11 pl-11 text-[0.9375rem] placeholder:text-muted/75 hover:border-ink/30 focus:border-ink focus:ring-4 focus:ring-accent/20 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
           />
-          {isPending ? (
-            <Loader2 className="absolute top-1/2 right-4 size-[1.125rem] -translate-y-1/2 animate-spin text-muted" aria-label={t.common.loading} />
-          ) : text ? (
+          {query.q && (
             <button
               type="button"
-              onClick={() => {
-                setText("");
-                setLastSent("");
-                navigate({ q: "" });
-              }}
+              onClick={() => onChange({ q: "" })}
               className="absolute top-1/2 right-1.5 grid size-8 -translate-y-1/2 place-items-center rounded-full text-muted hover:bg-sand hover:text-ink"
               aria-label={t.menu.clearSearch}
             >
               <X className="size-4" aria-hidden />
             </button>
-          ) : null}
+          )}
         </form>
 
         <div className="flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center md:ml-auto">
+          {filters.length > 1 && (
           <div
+            ref={groupRef}
             role="group"
             aria-label={t.menu.filtersLabel}
-            className="no-scrollbar flex min-w-0 flex-1 overflow-x-auto rounded-full border-[1.5px] border-line p-0.5 md:flex-none [&>button]:flex-1 md:[&>button]:flex-none"
+            className="no-scrollbar relative flex min-w-0 flex-1 overflow-x-auto rounded-full border-[1.5px] border-line p-0.5 md:flex-none [&>button]:flex-1 md:[&>button]:flex-none"
           >
-            {MENU_FILTERS.map((f) => (
+            <span
+              ref={pillRef}
+              aria-hidden
+              className="pointer-events-none absolute top-0.5 bottom-0.5 left-0 rounded-full bg-accent opacity-0 transition-[transform,width] duration-[480ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none [[data-pill]_&]:opacity-100"
+            />
+            {filters.map((f) => (
               <button
                 key={f}
                 type="button"
                 aria-pressed={query.filter === f}
-                onClick={() => navigate({ filter: f })}
+                onClick={() => onChange({ filter: f })}
                 className={cn(
-                  "h-9 shrink-0 rounded-full px-3.5 text-sm font-semibold whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
-                  query.filter === f ? "bg-accent text-on-accent" : "text-ink-soft hover:bg-sand",
+                  "relative z-10 h-9 shrink-0 rounded-full px-3.5 text-sm font-semibold whitespace-nowrap transition-colors duration-300",
+                  query.filter === f ? "text-on-accent" : "text-ink-soft hover:text-ink",
+                  // Until the pill has been measured (first paint) the chosen button carries the colour itself.
+                  query.filter === f && "bg-accent [[data-pill]_&]:bg-transparent",
                 )}
               >
                 {t.menu.filters[f]}
               </button>
             ))}
           </div>
+          )}
 
           <label className="relative shrink-0 self-start min-[480px]:self-auto">
             <span className="sr-only">{t.menu.sortLabel}</span>
             <select
               value={query.sort}
-              onChange={(e) => navigate({ sort: e.target.value as MenuSort })}
+              onChange={(e) => onChange({ sort: e.target.value as MenuSort })}
               className="h-10 cursor-pointer appearance-none rounded-full border-[1.5px] border-line bg-transparent pr-9 pl-4 text-sm font-semibold hover:border-ink/30 focus:border-ink focus:outline-none"
             >
               {MENU_SORTS.map((s) => (
@@ -158,6 +135,17 @@ export function MenuToolbar({
             <ChevronDown className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2" aria-hidden />
           </label>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** The toolbar in its bar: full width, under the header, and it stays on screen while the list scrolls. */
+export function MenuToolbarBar(props: { query: MenuQuery; filters: readonly MenuFilter[]; onChange: (next: Partial<MenuQuery>) => void }) {
+  return (
+    <div className="z-30 border-b border-line bg-cream/95 backdrop-blur-md sm:sticky sm:top-[var(--header-h)]">
+      <div className="container-page">
+        <MenuToolbar {...props} />
       </div>
     </div>
   );

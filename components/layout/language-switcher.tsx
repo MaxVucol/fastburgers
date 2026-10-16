@@ -10,17 +10,43 @@ function remember(locale: Locale) {
   document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; samesite=lax`;
 }
 
-function Switcher({ pathname, tone }: { pathname: string; tone: "light" | "dark" }) {
-  const { locale, t } = useI18n();
+/**
+ * The three languages with the link to the same page in each, and the click handler that switches
+ * (shared by the language bar and the language items of the header's category row).
+ */
+export function useLocaleLinks(pathname: string) {
+  const { locale } = useI18n();
   const router = useRouter();
   const path = splitLocale(pathname || "/").path;
+  return locales.map((l) => {
+    const target = localizePath(l, path);
+    return {
+      locale: l,
+      href: target,
+      active: l === locale,
+      onClick(event: React.MouseEvent<HTMLAnchorElement>) {
+        // The cookie is written before navigating, so proxy.ts already sees the new choice. Plain
+        // <a> (no prefetch) avoids requests made under the old cookie. The query string (menu
+        // filters) and hash are kept.
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        event.preventDefault();
+        remember(l);
+        if (l === locale) return;
+        // Same page in another language: stay where the reader is instead of scrolling to the top.
+        router.push(`${target}${window.location.search}${window.location.hash}`, { scroll: false });
+      },
+    };
+  });
+}
+
+function Switcher({ pathname, tone }: { pathname: string; tone: "light" | "dark" }) {
+  const { t } = useI18n();
+  const links = useLocaleLinks(pathname);
 
   return (
     <nav aria-label={t.topbar.language}>
       <ul className="flex items-center">
-        {locales.map((l) => {
-          const active = l === locale;
-          const target = localizePath(l, path);
+        {links.map(({ locale: l, href: target, active, onClick }) => {
           return (
             <li key={l} className="flex items-center">
               <a
@@ -29,16 +55,7 @@ function Switcher({ pathname, tone }: { pathname: string; tone: "light" | "dark"
                 lang={l}
                 aria-current={active ? "true" : undefined}
                 title={localeNames[l].native}
-                onClick={(event) => {
-                  // The cookie is written before navigating, so proxy.ts already sees the new
-                  // choice. Plain <a> (no prefetch) avoids requests made under the old cookie.
-                  // The query string (menu filters) and hash are kept.
-                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
-                  event.preventDefault();
-                  remember(l);
-                  if (active) return;
-                  router.push(`${target}${window.location.search}${window.location.hash}`);
-                }}
+                onClick={onClick}
                 className={cn(
                   "relative grid h-8 min-w-8 place-items-center px-1 text-xs font-bold xl:min-w-9 xl:text-[0.8125rem] tracking-[0.12em] transition-colors duration-[var(--duration-fast)]",
                   // Dark bar: the current language is plain cream with a thin cream rule; orange stays

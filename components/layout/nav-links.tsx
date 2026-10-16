@@ -31,7 +31,7 @@ function PathnameReader({ children }: { children: (pathname: string) => React.Re
   return children(pathname);
 }
 
-function NavLinksView({ pathname }: { pathname: string }) {
+function NavLinksView({ pathname, dense }: { pathname: string; dense: boolean }) {
   const { t, href } = useI18n();
   return (
     <ul className="flex items-center lg:gap-0.5 xl:gap-5">
@@ -43,7 +43,8 @@ function NavLinksView({ pathname }: { pathname: string }) {
               href={href(item.href)}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative inline-flex h-11 items-center px-2 text-[0.9375rem] font-medium whitespace-nowrap transition-colors duration-[var(--duration-fast)] xl:px-3 xl:text-[1.0625rem]",
+                "relative inline-flex items-center whitespace-nowrap transition-colors duration-[var(--duration-fast)]",
+                dense ? "h-9 px-2 text-sm font-medium xl:px-3" : "h-11 px-2 text-[0.9375rem] font-medium xl:px-3 xl:text-[1.0625rem]",
                 // Underline 2 px under the words, drawn from the centre on hover.
                 "after:absolute after:inset-x-2 after:bottom-1 after:h-[2px] after:rounded-full after:transition-[transform,background-color] after:duration-[var(--duration-base)] xl:after:inset-x-3",
                 active
@@ -60,6 +61,7 @@ function NavLinksView({ pathname }: { pathname: string }) {
   );
 }
 
-export function NavLinks() {
-  return <WithPathname>{(pathname) => <NavLinksView pathname={pathname} />}</WithPathname>;
+/** `dense`: the slim top bar of the tall header (smaller type and height). */
+export function NavLinks({ dense = false }: { dense?: boolean }) {
+  return <WithPathname>{(pathname) => <NavLinksView pathname={pathname} dense={dense} />}</WithPathname>;
 }

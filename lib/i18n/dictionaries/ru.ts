@@ -79,6 +79,11 @@ export const ru: Dictionary = {
     primary: "Заказать",
     from: "Бургеры от {price}",
     imageAlt: "Чизбургер в булочке с кунжутом: салат, красный лук, томаты, расплавленный чеддер и маринованные огурцы на тёмной деревянной доске",
+    slides: ["Осеннее меню BUNIQ: бургер с беконом и чеддером, картофель фри и крем-суп из тыквы", "Kids Menu BUNIQ: бургер, картофель, куриные нагетсы и сок Cappy Mini", "Акция BUNIQ: закажите 5 пицц и получите 5 Coca-Cola в подарок"],
+    carousel: "Предложения и новинки",
+    prev: "Предыдущий слайд",
+    next: "Следующий слайд",
+    goTo: "Слайд {n}",
   },
 
   benefits: {
@@ -103,6 +108,8 @@ export const ru: Dictionary = {
     lead: "Во всех категориях один стандарт: всё готовится после заказа.",
     count: { one: "{count} блюдо", few: "{count} блюда", many: "{count} блюд", other: "{count} блюда" },
     viewAll: "Всё меню",
+    showMore: "Показать больше",
+    showLess: "Показать меньше",
   },
 
   promo: {
@@ -193,6 +200,10 @@ export const ru: Dictionary = {
     showImage: "Показать фото {index}",
     gallery: "Галерея",
     loading: "Загружаем блюдо",
+    quickView: "Быстрый просмотр",
+    wishlist: "Избранное",
+    quickViewClose: "Закрыть быстрый просмотр",
+    fullDetails: "Подробнее",
   },
 
   quantity: {
@@ -226,6 +237,8 @@ export const ru: Dictionary = {
     filters: { all: "Все", popular: "Хиты", new: "Новинки", sale: "Скидки" },
     filtersLabel: "Фильтры",
     categoriesLabel: "Категории",
+    scrollBack: "Прокрутить назад",
+    scrollForward: "Прокрутить вперёд",
     allCategories: "Все категории",
     emptyTitle: "Ничего не нашлось",
     emptySearch: "Попробуйте другой запрос, например «бургер», «курица» или «шоколад».",

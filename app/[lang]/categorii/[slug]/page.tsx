@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ProductList } from "@/components/product/product-card";
+import { MenuExplorer } from "@/components/menu/menu-explorer";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { fill, plural } from "@/lib/i18n/config";
 import { siteConfig } from "@/lib/site";
 import { getI18n, localeAlternates } from "@/lib/i18n/server";
-import { cn } from "@/lib/utils";
 import { getCategories } from "@/services/catalog";
 import { getLocalizedCategory, getMenu } from "@/services/localized-catalog";
 
@@ -33,11 +31,9 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/categorii/
 
 export default function CategoryPage({ params }: PageProps<"/[lang]/categorii/[slug]">) {
   return (
-    <div className="container-page pt-8 pb-20 sm:pt-12 sm:pb-28">
-      <Suspense fallback={<div className="h-96 animate-pulse rounded-[var(--radius-panel)] bg-sand" aria-busy="true" />}>
-        <CategoryContent params={params} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div className="container-page pt-8 sm:pt-12"><div className="h-96 animate-pulse rounded-[var(--radius-panel)] bg-sand" aria-busy="true" /></div>}>
+      <CategoryContent params={params} />
+    </Suspense>
   );
 }
 
@@ -50,40 +46,25 @@ async function CategoryContent({ params }: { params: PageProps<"/[lang]/categori
 
   return (
     <>
-      <Breadcrumbs
-        items={[
-          { href: href("/"), label: t.common.home },
-          { href: href("/menu"), label: t.common.menu },
-          { label: category.name },
-        ]}
-      />
-      <header className="mb-8 grid gap-4 lg:grid-cols-[1fr_minmax(0,26rem)] lg:items-end">
-        <h1 className="type-h1">{category.name}</h1>
-        <div className="lg:pb-2">
-          <p className="text-muted sm:text-lg">{category.description}</p>
-          <p className="mt-2 text-sm font-semibold text-ink-soft">{plural(locale, items.length, t.categories.count)}</p>
-        </div>
-      </header>
-      <nav aria-label={t.menu.otherCategories} className="mb-10 border-b border-line">
-        <div className="no-scrollbar -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] pb-4 sm:mx-0 sm:px-0">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={href(`/categorii/${c.slug}`)}
-              aria-current={c.slug === slug ? "page" : undefined}
-              className={cn(
-                "inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors",
-                c.slug === slug
-                  ? "border-accent bg-accent text-on-accent"
-                  : "border-line bg-paper text-ink-soft hover:border-ink/30 hover:text-ink",
-              )}
-            >
-              {c.name}
-            </Link>
-          ))}
-        </div>
-      </nav>
-      <ProductList products={items} eagerCount={4} />
+      <div className="container-page pt-8 sm:pt-12">
+        <Breadcrumbs
+          items={[
+            { href: href("/"), label: t.common.home },
+            { href: href("/menu"), label: t.common.menu },
+            { label: category.name },
+          ]}
+        />
+        <header className="mb-8 grid gap-4 lg:grid-cols-[1fr_minmax(0,26rem)] lg:items-end">
+          <h1 className="type-h1">{category.name}</h1>
+          <div className="lg:pb-2">
+            <p className="text-muted sm:text-lg">{category.description}</p>
+            <p className="mt-2 text-sm font-semibold text-ink-soft">{plural(locale, items.length, t.categories.count)}</p>
+          </div>
+        </header>
+      </div>
+
+      {/* The same search, filters and sorting as the menu, working on this category in the browser. */}
+      <MenuExplorer products={items} categories={categories} categorySlug={slug} path={href(`/categorii/${slug}`)} />
     </>
   );
 }
