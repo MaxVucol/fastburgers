@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/auth/session";
 import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 
 export const generateMetadata = () => adminTitle("newCategory");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function NewCategoryPage() {
   await requireAdmin();

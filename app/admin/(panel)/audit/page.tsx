@@ -6,6 +6,8 @@ import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 import { listAudit } from "@/services/audit";
 
 export const generateMetadata = () => adminTitle("audit");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 const ENTITIES = [
   { key: "", label: "all" },

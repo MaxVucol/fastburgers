@@ -9,6 +9,8 @@ import { isObjectId } from "@/lib/utils";
 import { getProductAdmin, listCategoryOptions } from "@/services/admin-catalog";
 
 export const generateMetadata = () => adminTitle("editProduct");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function EditProductPage({ params }: PageProps<"/admin/products/[id]">) {
   await requireAdmin();

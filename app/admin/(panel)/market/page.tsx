@@ -10,6 +10,8 @@ import { cn, isObjectId } from "@/lib/utils";
 import { CSV_COLUMNS, listCompetitorPrices, marketOverview, MIN_COMPARABLES, STALE_DAYS } from "@/services/market";
 
 export const generateMetadata = () => adminTitle("market");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function AdminMarketPage({ searchParams }: PageProps<"/admin/market">) {
   await requireAdmin();

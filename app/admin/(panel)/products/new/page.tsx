@@ -5,6 +5,8 @@ import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 import { listCategoryOptions } from "@/services/admin-catalog";
 
 export const generateMetadata = () => adminTitle("newProduct");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function NewProductPage() {
   await requireAdmin();

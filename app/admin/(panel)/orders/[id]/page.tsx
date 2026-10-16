@@ -16,6 +16,8 @@ import { listAudit } from "@/services/audit";
 import { getOrderById } from "@/services/orders";
 
 export const generateMetadata = () => adminTitle("order");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function AdminOrderPage({ params }: PageProps<"/admin/orders/[id]">) {
   await requireAdmin();

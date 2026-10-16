@@ -14,6 +14,8 @@ import { countNewCustomers, getOrderItemSummaries, getProductThumbs, getSalesSer
 import { getCatalogAttention, getDashboardStats } from "@/services/orders";
 
 export const generateMetadata = () => adminTitle("dashboard");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 const DAY = 24 * 60 * 60 * 1000;
 const PRESETS = [

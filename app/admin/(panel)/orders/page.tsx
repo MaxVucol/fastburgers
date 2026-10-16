@@ -13,6 +13,8 @@ import { getOrderItemSummaries, getOrderStatusCounts } from "@/services/admin-da
 import { listOrders } from "@/services/orders";
 
 export const generateMetadata = () => adminTitle("orders");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function AdminOrdersPage({ searchParams }: PageProps<"/admin/orders">) {
   await requireAdmin();

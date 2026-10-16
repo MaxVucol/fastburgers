@@ -14,6 +14,10 @@ import { getAdminI18n } from "@/lib/i18n/admin/server";
 import { cn } from "@/lib/utils";
 import { countNewOrders } from "@/services/admin-dashboard";
 
+// Every panel request re-checks the admin against the database (role, block, session version),
+// so entering the panel waits for the server by design; authorisation is never cached.
+export const instant = false;
+
 /**
  * The panel frame. It authorises the request (DB-backed) before anything renders and reads the
  * panel language (a cookie), so it is request-time content inside Suspense.

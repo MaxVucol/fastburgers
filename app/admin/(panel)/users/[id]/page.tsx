@@ -12,6 +12,8 @@ import { getUserAdmin } from "@/services/admin-users";
 import { listAudit } from "@/services/audit";
 
 export const generateMetadata = () => adminTitle("user");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function AdminUserPage({ params }: PageProps<"/admin/users/[id]">) {
   const admin = await requireAdmin();

@@ -9,6 +9,8 @@ import { adminTitle, getAdminI18n } from "@/lib/i18n/admin/server";
 import { listUsersAdmin } from "@/services/admin-users";
 
 export const generateMetadata = () => adminTitle("users");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function AdminUsersPage({ searchParams }: PageProps<"/admin/users">) {
   await requireAdmin();

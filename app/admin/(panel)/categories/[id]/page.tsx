@@ -7,6 +7,8 @@ import { isObjectId } from "@/lib/utils";
 import { getCategoryAdmin } from "@/services/admin-catalog";
 
 export const generateMetadata = () => adminTitle("editCategory");
+// Re-checks the admin on every request (never cached), so navigating here waits for the server.
+export const instant = false;
 
 export default async function EditCategoryPage({ params }: PageProps<"/admin/categories/[id]">) {
   await requireAdmin();
