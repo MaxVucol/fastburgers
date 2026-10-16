@@ -3,8 +3,9 @@
 // Anything without a translation (e.g. a product added later in /admin) falls back to Romanian.
 
 import { pizzamaniaRu } from "./catalog-pizzamania";
+import { pizzamaniaEn } from "./catalog-pizzamania-en";
 
-type ProductCopy = { short: string; description: string; ingredients: string[] };
+type ProductCopy = { name?: string; short: string; description: string; ingredients: string[] };
 type CategoryCopy = { name: string; description: string };
 
 export type CatalogCopy = {
@@ -601,5 +602,7 @@ const en: CatalogCopy = {
 // Catalogue imported from the previous brand menu: Russian copy exists, English does not (it falls back to Romanian).
 Object.assign(ru.categories, pizzamaniaRu.categories);
 Object.assign(ru.products, pizzamaniaRu.products);
+Object.assign(en.categories, pizzamaniaEn.categories);
+Object.assign(en.products, pizzamaniaEn.products);
 
 export const catalogCopy: Record<"ru" | "en", CatalogCopy> = { ru, en };

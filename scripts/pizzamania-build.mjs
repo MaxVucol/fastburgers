@@ -150,8 +150,8 @@ const ts = [
   ...categories.map((c) => `    ${q(c.slug)}: { name: ${q(c.nameRu)}, description: "" },`),
   "  } as Record<string, { name: string; description: string }>,",
   "  products: {",
-  ...products.map((p) => `    ${q(p.slug)}: { short: ${q(p.descriptionRu)}, description: ${q(p.descriptionRu)}, ingredients: [] },`),
-  "  } as Record<string, { short: string; description: string; ingredients: string[] }>,",
+  ...products.map((p) => `    ${q(p.slug)}: { name: ${q(p.nameRu)}, short: ${q(p.descriptionRu)}, description: ${q(p.descriptionRu)}, ingredients: [] },`),
+  "  } as Record<string, { name: string; short: string; description: string; ingredients: string[] }>,",
   "};",
   "",
 ].join("\n");

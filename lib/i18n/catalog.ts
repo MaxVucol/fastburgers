@@ -14,20 +14,26 @@ export function localizeCategory<T extends Pick<CategorySummary, "slug" | "name"
   return copy ? { ...category, name: copy.name, description: copy.description } : category;
 }
 
+/** Imported menu texts carry raw line breaks ("<br>"); show them as a separator. */
+const tidy = (text: string) => text.replace(/\s*<br\s*\/?>\s*/gi, " · ");
+
 export function localizeCard<T extends ProductCardData>(product: T, locale: Locale): T {
-  if (locale === "ro") return product;
+  if (locale === "ro") {
+    return { ...product, shortDescription: tidy(product.shortDescription), description: tidy(product.description) };
+  }
   const copy = catalogCopy[locale].products[product.slug];
   const category = catalogCopy[locale].categories[product.categorySlug];
   return {
     ...product,
-    shortDescription: copy?.short ?? product.shortDescription,
-    description: copy?.description ?? product.description,
+    name: copy?.name || product.name,
+    shortDescription: tidy(copy?.short ?? product.shortDescription),
+    description: tidy(copy?.description ?? product.description),
     categoryName: category?.name ?? product.categoryName,
   };
 }
 
 export function localizeProduct(product: ProductDetail, locale: Locale): ProductDetail {
-  if (locale === "ro") return product;
+  if (locale === "ro") return localizeCard(product, locale);
   const copy = catalogCopy[locale];
   const translated = copy.products[product.slug];
   return {

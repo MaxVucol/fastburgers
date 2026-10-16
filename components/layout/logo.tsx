@@ -67,7 +67,7 @@ export function Logo({
   label?: string;
   tone?: "light" | "dark";
   /** "lg": the site header, about 12 % larger than the default lock-up; "xl": the centred logo of the tall desktop header. */
-  size?: "md" | "lg" | "xl";
+  size?: "md" | "lg" | "xl" | "drawer";
   /** Sesame seeds and sparks drifting through the wordmark (the site header). */
   sparkle?: boolean;
   className?: string;
@@ -79,13 +79,24 @@ export function Logo({
         tone={tone}
         className={
           size === "xl"
-            ? "text-[3.75rem] xl:text-[4.75rem]"
-            : size === "lg"
+            ? "text-[clamp(2.25rem,calc((100vw-11.5rem)/3.4),3.75rem)] md:text-[3.75rem] xl:text-[4.75rem]"
+            : size === "drawer"
+              ? "text-[2.75rem]"
+              : size === "lg"
               ? "text-[1.875rem] lg:text-[2.125rem] xl:text-[2.25rem]"
               : "text-[1.75rem] lg:text-[2rem]"
         }
       />
-      {sparkle && <span aria-hidden className="logo-fx pointer-events-none absolute -inset-x-3 -inset-y-2 max-md:scale-[1.7] max-md:[clip-path:inset(calc((100%-var(--header-h)/1.7)/2)_-1rem)]" />}
+      {sparkle && (
+        <span
+          aria-hidden
+          // The compact bar's logo is small on phones: its leaves are scaled up and kept inside the bar.
+          className={cn(
+            "logo-fx pointer-events-none absolute -inset-x-3 -inset-y-2",
+            size === "lg" && "max-md:scale-[1.7] max-md:[clip-path:inset(calc((100%-var(--header-h)/1.7)/2)_-1rem)]",
+          )}
+        />
+      )}
     </Link>
   );
 }

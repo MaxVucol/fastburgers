@@ -87,7 +87,7 @@ export async function Footer() {
         <NewsLine t={t} href={href} />
       </NewsSlot>
 
-      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 pt-14 pb-12 sm:gap-y-12 lg:grid-cols-[1.5fr_1fr_1fr_1.35fr] lg:gap-10 lg:pt-20">
+      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 pt-14 pb-12 sm:gap-y-12 lg:grid-cols-[1.4fr_0.8fr_1.7fr_1.3fr] lg:gap-10 lg:pt-20">
         <div className="col-span-2 lg:col-span-1">
           <Logo href={href("/")} label={t.header.homeLink} tone="dark" />
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-on-dark">{t.footer.about}</p>
@@ -110,11 +110,11 @@ export async function Footer() {
           )}
         </div>
 
-        <nav aria-label={t.footer.navigation}>
+        <nav aria-label={t.footer.navigation} className="col-span-2 lg:col-span-1">
           <ColumnTitle>{t.footer.navigation}</ColumnTitle>
-          <ul className="space-y-0.5 text-[0.9375rem]">
+          <ul className="columns-2 gap-x-6 text-[0.9375rem] lg:columns-1">
             {nav.map((item) => (
-              <li key={item.href}>
+              <li key={item.href} className="break-inside-avoid">
                 <Link href={href(item.href)} className="block py-1.5 text-on-dark/85 transition-colors hover:text-flame">
                   {item.label}
                 </Link>
@@ -123,13 +123,13 @@ export async function Footer() {
           </ul>
         </nav>
 
-        <nav aria-label={t.footer.categories}>
+        <nav aria-label={t.footer.categories} className="col-span-2 lg:col-span-1">
           <ColumnTitle>{t.footer.categories}</ColumnTitle>
-          <ul className="space-y-0.5 text-[0.9375rem]">
+          <ul className="columns-2 gap-x-6 text-[0.9375rem]">
             {categories.map((c) => {
               const category = localizeCategory(c, locale);
               return (
-                <li key={c.id}>
+                <li key={c.id} className="break-inside-avoid">
                   <Link href={href(`/categorii/${c.slug}`)} className="block py-1.5 text-on-dark/85 transition-colors hover:text-flame">
                     {category.name}
                   </Link>

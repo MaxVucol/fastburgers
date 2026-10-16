@@ -36,7 +36,7 @@ export async function Header() {
 
   return (
     <>
-      <div id={EXPANDED_HEADER_ID} className="site-header hidden border-b border-line-dark bg-night text-on-dark lg:block">
+      <div id={EXPANDED_HEADER_ID} className="site-header border-b border-line-dark bg-night text-on-dark">
         <div className="border-b border-line-dark">
           <div className="container-page flex h-9 items-center justify-center gap-10">
             <a
@@ -46,14 +46,17 @@ export async function Header() {
               <Phone className="size-3.5 text-accent" aria-hidden />
               {siteConfig.phone}
             </a>
-            <nav aria-label={t.nav.main}>
+            <nav aria-label={t.nav.main} className="hidden md:block">
               <NavLinks dense />
             </nav>
           </div>
         </div>
 
-        <div className="container-page grid grid-cols-[1fr_auto_1fr] items-center gap-6 py-5">
-          <ul className="flex items-center gap-2 justify-self-start">
+        <div className="container-page grid grid-cols-[1fr_auto_1fr] items-center gap-2 py-3 sm:gap-6 lg:py-5">
+          <div className="justify-self-start lg:hidden">
+            <MobileMenu categories={categoryLinks.map((c) => ({ slug: c.slug, name: c.name }))} />
+          </div>
+          <ul className="hidden items-center gap-2 justify-self-start lg:flex">
             {socials.map((s) => (
               <li key={s.label}>
                 <a
@@ -71,12 +74,13 @@ export async function Header() {
           <Logo href={href("/")} label={t.header.homeLink} tone="dark" size="xl" sparkle />
           <div className="flex items-center gap-1 justify-self-end">
             <ThemeToggle />
-            <SearchDialog />
-            <Link href={href("/account")} aria-label={t.me.link} title={t.me.link} className={headerIconButton}>
+            <SearchDialog triggerClassName="hidden sm:grid" />
+            <Link href={href("/account")} aria-label={t.me.link} title={t.me.link} className={`${headerIconButton} hidden sm:grid`}>
               <UserRound {...headerIcon} />
             </Link>
             <CartButton />
             <HideOnMenu>
+              <div className="hidden lg:block">
               <ButtonLink href={href("/menu")} size="sm" className="group ml-3 h-11 gap-2.5 rounded-[var(--radius-sm)]! px-5 text-[0.9375rem]!">
                 {t.common.orderNow}
                 <ArrowRight
@@ -85,12 +89,13 @@ export async function Header() {
                   strokeWidth={2.25}
                 />
               </ButtonLink>
+              </div>
             </HideOnMenu>
           </div>
         </div>
 
-        <div className="container-page pt-4 pb-2">
-          <HeaderCategories categories={categoryLinks} tone="dark" withLanguages />
+        <div className="container-page pt-1 pb-2 lg:pt-4">
+          <HeaderCategories categories={categoryLinks} tone="dark" withLanguages languageClassName="max-md:hidden" />
         </div>
       </div>
 
@@ -143,11 +148,6 @@ export async function Header() {
           </div>
         </div>
       </HeaderShell>
-
-      {/* Phones and tablets: the category row sits under the sticky bar and scrolls away with the page. */}
-      <div className="container-page pt-4 lg:hidden">
-        <HeaderCategories categories={categoryLinks} tone="page" withLanguages={false} />
-      </div>
     </>
   );
 }

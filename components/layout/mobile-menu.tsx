@@ -51,8 +51,8 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
         className="drawer-left fixed inset-y-0 right-auto left-0 m-0 h-dvh max-h-dvh w-full max-w-md bg-graphite p-0 text-on-dark"
       >
         <div className="flex h-full flex-col">
-          <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line-dark px-5">
-            <Logo href={href("/")} label={t.header.homeLink} tone="dark" size="lg" sparkle onClick={close} />
+          <div className="flex h-[6rem] shrink-0 items-center justify-between border-b border-line-dark px-5">
+            <Logo href={href("/")} label={t.header.homeLink} tone="dark" size="drawer" sparkle onClick={close} />
             <button
               type="button"
               onClick={close}

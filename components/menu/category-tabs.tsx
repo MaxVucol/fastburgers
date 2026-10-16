@@ -303,7 +303,9 @@ export function CategoryTabs({
       key={side}
       className={cn(
         "pointer-events-none absolute inset-y-0 z-10 flex w-16 transition-opacity duration-200",
-        side === "start" ? "left-0 justify-start bg-gradient-to-r" : "right-0 justify-end bg-gradient-to-l",
+        side === "start"
+          ? "left-0 justify-start bg-gradient-to-r max-sm:-left-[var(--gutter)] max-sm:w-[calc(4rem+var(--gutter))] max-sm:pl-[var(--gutter)]"
+          : cn("right-0 justify-end bg-gradient-to-l", !aside && "max-sm:-right-[var(--gutter)] max-sm:w-[calc(4rem+var(--gutter))] max-sm:pr-[var(--gutter)]"),
         tone === "dark" ? "from-night via-night/80" : "from-cream via-cream/80",
         "to-transparent",
         more[side] ? "opacity-100" : "opacity-0",

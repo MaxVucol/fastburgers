@@ -6,9 +6,8 @@ import { cn } from "@/lib/utils";
 export const EXPANDED_HEADER_ID = "header-expanded";
 
 /**
- * The compact header bar. Phones and tablets: sticky, always visible. Desktop: the tall header
- * (top bar, centred logo, category row) is shown at scroll 0, and this bar slides in from the top
- * once that block has scrolled out of view.
+ * The compact header bar. On every width the tall header (top bar, centred logo, category row) is shown
+ * at scroll 0, and this bar slides in from the top once that block has scrolled out of view.
  */
 export function HeaderShell({ children }: { children: React.ReactNode }) {
   const [compact, setCompact] = useState(false);
@@ -24,9 +23,9 @@ export function HeaderShell({ children }: { children: React.ReactNode }) {
   return (
     <header
       className={cn(
-        "site-header sticky top-0 z-40 border-b border-line-dark bg-night text-on-dark",
-        "lg:fixed lg:inset-x-0 lg:transition-[transform,visibility] lg:duration-300 lg:ease-[var(--ease-out-brand)] motion-reduce:lg:transition-none",
-        compact ? "lg:visible lg:translate-y-0" : "lg:invisible lg:-translate-y-full",
+        "site-header fixed inset-x-0 top-0 z-40 border-b border-line-dark bg-night text-on-dark",
+        "transition-[transform,visibility] duration-300 ease-[var(--ease-out-brand)] motion-reduce:transition-none",
+        compact ? "visible translate-y-0" : "invisible -translate-y-full",
       )}
     >
       {children}
