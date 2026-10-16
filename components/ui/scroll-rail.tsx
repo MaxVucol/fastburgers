@@ -58,7 +58,7 @@ export function ScrollRail({
   }
 
   const button =
-    "size-12 place-items-center rounded-full border-[1.5px] border-accent text-accent-ink transition-colors duration-[var(--duration-fast)] hover:bg-accent hover:text-on-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30";
+    "relative z-10 size-12 place-items-center rounded-full border-[1.5px] border-accent text-accent-ink transition-colors duration-[var(--duration-fast)] hover:bg-accent hover:text-on-accent active:scale-95 disabled:pointer-events-none disabled:opacity-30";
   const fits = edges.start && edges.end;
 
   // The mouse drags the row like a finger swipes it; a drag must not also open the card it ends on.
@@ -110,7 +110,7 @@ export function ScrollRail({
           // Phones: one card and a clear peek of the next; tablets: two and a peek; desktop: three,
           // four from `xl` (narrower cards would squeeze names and prices).
           "[&>li]:flex [&>li]:w-[min(74vw,18.5rem)] [&>li]:shrink-0 [&>li]:snap-start sm:[&>li]:w-[calc((100%-2.5rem)/2.3)] lg:[&>li]:w-[calc((100%-2.5rem)/3)] xl:[&>li]:w-[calc((100%-3.75rem)/4)]",
-          "lg:-mx-5 lg:scroll-px-5 lg:px-5",
+          "lg:-mx-7 lg:scroll-px-7 lg:px-7",
         )}
       >
         {children}

@@ -70,3 +70,21 @@ export function ProductBadges({
   if (items.length === 0) return null;
   return <div className={cn("flex flex-wrap gap-1.5", className)}>{items.slice(0, 2)}</div>;
 }
+
+/** The discount as a diagonal ribbon in the top-right corner of a picture (the picture's box must be `relative`); `lg` for large pictures. */
+export function DiscountRibbon({ percent, size = "md" }: { percent: number | null; size?: "md" | "lg" }) {
+  if (!percent) return null;
+  const lg = size === "lg";
+  return (
+    <span className={cn("pointer-events-none absolute top-0 right-0 overflow-hidden", lg ? "size-28" : "size-20")}>
+      <span
+        className={cn(
+          "absolute rotate-45 bg-[#8b1a1a] text-center font-display font-extrabold tracking-[-0.01em] text-white",
+          lg ? "top-[1.6rem] -right-[3.9rem] w-44 py-1 text-base leading-5" : "top-[1.125rem] -right-[2.75rem] w-32 py-0.5 text-[0.8125rem] leading-4",
+        )}
+      >
+        −{percent}%
+      </span>
+    </span>
+  );
+}

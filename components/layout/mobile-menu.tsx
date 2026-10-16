@@ -31,7 +31,11 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
     <>
       <button
         type="button"
-        onClick={() => ref.current?.showModal()}
+        onClick={(e) => {
+          ref.current?.showModal();
+          // Opened by a tap or click: the dialog's first link must not show a keyboard focus ring.
+          if (e.detail > 0) (document.activeElement as HTMLElement | null)?.blur();
+        }}
         className={cn(headerIconButton, "lg:hidden")}
         aria-label={t.header.openMenu}
         aria-haspopup="dialog"
@@ -48,7 +52,7 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
       >
         <div className="flex h-full flex-col">
           <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line-dark px-5">
-            <Logo href={href("/")} label={t.header.homeLink} tone="dark" onClick={close} />
+            <Logo href={href("/")} label={t.header.homeLink} tone="dark" size="lg" sparkle onClick={close} />
             <button
               type="button"
               onClick={close}
@@ -137,7 +141,6 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
                         <li key={item.href}>
                           <Link href={href(item.href)} onClick={close} aria-current={active ? "page" : undefined} className={linkClass}>
                             {t.nav[item.key]}
-                            <ArrowRight className="size-5 opacity-60" aria-hidden />
                           </Link>
                         </li>
                       );
@@ -168,7 +171,6 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
               className="mt-7 flex h-13 items-center justify-center gap-2 rounded-full bg-accent font-semibold text-on-accent hover:bg-accent-hover"
             >
               {t.common.orderNow}
-              <ArrowRight className="size-4" aria-hidden />
             </Link>
           </div>
 

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CardActions, CardAdd } from "./card-actions";
 import { useI18n } from "@/components/i18n/i18n-provider";
-import { ProductBadges, type BadgeLabels } from "@/components/ui/badge";
+import { DiscountRibbon, ProductBadges, type BadgeLabels } from "@/components/ui/badge";
 import { Price } from "@/components/ui/price";
 import { discountPercent } from "@/lib/format";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
@@ -41,7 +41,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-transparent bg-cream transition-[border-color,box-shadow] duration-[450ms] ease-out motion-reduce:transition-none shadow-[0_1px_2px_rgb(0_0_0/0.06),0_8px_22px_-8px_rgb(0_0_0/0.2)] hover:border-oat hover:shadow-[0_2px_4px_rgb(0_0_0/0.08),0_14px_28px_-10px_rgb(0_0_0/0.26)]",
+        "group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-transparent bg-cream transition-[border-color,box-shadow] duration-[450ms] ease-out motion-reduce:transition-none shadow-[0_1px_2px_rgb(0_0_0/0.06),0_8px_20px_-10px_rgb(0_0_0/0.22)] hover:border-oat hover:shadow-[0_2px_4px_rgb(0_0_0/0.08),0_12px_24px_-12px_rgb(0_0_0/0.3)]",
         className,
       )}
     >
@@ -65,14 +65,7 @@ export function ProductCard({
           labels={badgeLabels(t)}
           className="absolute top-3 left-3"
         />
-        {/* The discount is a diagonal ribbon in the top-right corner. */}
-        {discount ? (
-          <span className="pointer-events-none absolute top-0 right-0 size-20 overflow-hidden">
-            <span className="absolute top-[1.125rem] -right-[2.75rem] w-32 rotate-45 bg-[#8b1a1a] py-0.5 text-center font-display text-[0.8125rem] leading-4 font-extrabold tracking-[-0.01em] text-white">
-              −{discount}%
-            </span>
-          </span>
-        ) : null}
+        <DiscountRibbon percent={discount} />
       </div>
 
       <div className="flex flex-1 flex-col p-4 sm:px-[1.125rem]">

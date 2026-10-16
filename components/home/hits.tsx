@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { QuickAddButton } from "@/components/cart/add-to-cart-button";
-import { ProductBadges } from "@/components/ui/badge";
+import { DiscountRibbon, ProductBadges } from "@/components/ui/badge";
 import { Price } from "@/components/ui/price";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { discountPercent } from "@/lib/format";
@@ -77,10 +77,11 @@ async function FeatureCard({ product }: { product: ProductCardData }) {
           featured={product.featured}
           spicy={product.spicy}
           soldOut={product.soldOut}
-          discount={discountPercent(product.price, product.oldPrice)}
+          discount={null}
           labels={{ isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest, spicy: t.product.badgeSpicy, soldOut: t.product.soldOut }}
           className="absolute top-4 left-4"
         />
+        <DiscountRibbon percent={discountPercent(product.price, product.oldPrice)} size="lg" />
       </div>
       <div className="flex flex-col p-5 sm:p-6">
         <h3 className="font-display text-[1.75rem] leading-none font-black tracking-[-0.035em] uppercase sm:text-[2rem]">
