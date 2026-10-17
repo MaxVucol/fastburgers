@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Crown } from "@/components/ui/brand";
 import { cn } from "@/lib/utils";
+import { LogoLeaves } from "./logo-leaves";
 
 /**
  * Compact brand mark: the orange crown on a graphite tile. Used where the full wordmark
@@ -95,7 +96,9 @@ export function Logo({
             "logo-fx pointer-events-none absolute -inset-x-3 -inset-y-2",
             size === "lg" && "max-md:scale-[1.7] max-md:[clip-path:inset(calc((100%-var(--header-h)/1.7)/2)_-1rem)]",
           )}
-        />
+        >
+          <LogoLeaves />
+        </span>
       )}
     </Link>
   );

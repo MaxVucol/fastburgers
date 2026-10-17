@@ -32,6 +32,8 @@ export function useLocaleLinks(pathname: string) {
         event.preventDefault();
         remember(l);
         if (l === locale) return;
+        // Chosen inside the phone menu: close it now, so no open modal is left behind in the old page tree.
+        event.currentTarget.closest("dialog")?.close();
         // Same page in another language: stay where the reader is instead of scrolling to the top.
         router.push(`${target}${window.location.search}${window.location.hash}`, { scroll: false });
       },

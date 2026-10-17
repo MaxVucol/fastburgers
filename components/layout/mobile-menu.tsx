@@ -13,6 +13,7 @@ import { headerIconButton } from "./header-icon";
 import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import { isActivePath, WithPathname } from "./nav-links";
+import { useCloseOnHide } from "./use-close-on-hide";
 
 const icons: Record<string, { src: string; width: number }> = categoryIcons;
 
@@ -23,6 +24,7 @@ const icons: Record<string, { src: string; width: number }> = categoryIcons;
 export function MobileMenu({ categories }: { categories: { slug: string; name: string }[] }) {
   const { t, href } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
+  useCloseOnHide(ref);
   const close = () => ref.current?.close();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const categoriesId = useId();
