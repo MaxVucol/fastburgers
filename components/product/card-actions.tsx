@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { productOptionsAction } from "@/actions/catalog";
 import { QuickAddButton } from "@/components/cart/add-to-cart-button";
+import { useCloseOnHide } from "@/components/layout/use-close-on-hide";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { buttonStyles } from "@/components/ui/button";
 import { Price } from "@/components/ui/price";
@@ -33,6 +34,7 @@ function Tip({ label, children }: { label: string; children: React.ReactNode }) 
 function QuickView({ product }: { product: ProductCardData }) {
   const { locale, t, href } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
+  useCloseOnHide(ref);
   const close = () => ref.current?.close();
 
   return (
@@ -123,6 +125,7 @@ export function CardAdd({ product }: { product: ProductCardData }) {
 function OptionsAdd({ product, addable }: { product: ProductCardData; addable: Parameters<typeof QuickAddButton>[0]["product"] & { id: string } }) {
   const { locale, t } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
+  useCloseOnHide(ref);
   const [options, setOptions] = useState<ProductOptionView[] | null>(null);
   const close = () => ref.current?.close();
 
