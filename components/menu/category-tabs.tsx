@@ -74,6 +74,11 @@ export function CategoryTabs({
     setMenuKey(key);
   }
 
+  function closeMenu() {
+    setMenuAt(null);
+    setMenuKey(null);
+  }
+
   function measureMore() {
     const el = scrollerRef.current;
     if (!el) return;
@@ -138,14 +143,27 @@ export function CategoryTabs({
     if (drag.current?.moved) setDragging(false);
   }
 
+  // The card also closes on a press anywhere outside it (a tap elsewhere on a touch screen) and on Escape.
   useEffect(() => {
     if (!menuAt) return;
     const close = () => {
       setMenuAt(null);
       setMenuKey(null);
     };
+    const outside = (event: PointerEvent) => {
+      if (!(event.target as Element | null)?.closest?.("[data-menu-root]")) close();
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
     window.addEventListener("scroll", close, { passive: true, once: true });
-    return () => window.removeEventListener("scroll", close);
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      window.removeEventListener("scroll", close);
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
   }, [menuAt]);
 
   // Moves the line under `target`. Without `animate` it jumps (first paint, resize, font load).
@@ -254,21 +272,33 @@ export function CategoryTabs({
       <div
         key={tab.key}
         data-key={tab.key}
+        data-menu-root
         className={cn("shrink-0", tab.className)}
-        onMouseEnter={(e) => openMenu(tab.key, e.currentTarget)}
-        onFocus={(e) => openMenu(tab.key, e.currentTarget)}
+        // Hover is for a mouse only (a tap on a touch screen also sends "enter", and would open and close the card at once);
+        // moving the pointer off the item and its card closes it.
+        onPointerEnter={(e) => {
+          if (e.pointerType === "mouse") openMenu(tab.key, e.currentTarget);
+        }}
+        onPointerLeave={(e) => {
+          if (e.pointerType === "mouse") closeMenu();
+        }}
+        // Keyboard focus opens it; a mouse or finger press focuses the item too, but that is handled by the click below.
+        onFocus={(e) => {
+          if ((e.target as HTMLElement).matches(":focus-visible")) openMenu(tab.key, e.currentTarget);
+        }}
         onBlur={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget)) setMenuKey(null);
+          if (!e.currentTarget.contains(e.relatedTarget)) closeMenu();
         }}
       >
         <Link
           href={tab.href}
           hrefLang={tab.lang}
           lang={tab.lang}
-          // The selected language is already the current one: a tap (touch has no hover) opens the other languages instead.
+          // The selected language is already the current one: a click or tap opens the other languages instead, and closes them again.
           onClick={(e) => {
             e.preventDefault();
-            openMenu(tab.key, e.currentTarget.parentElement as HTMLElement);
+            if (open) closeMenu();
+            else openMenu(tab.key, e.currentTarget.parentElement as HTMLElement);
           }}
           aria-current={current}
           aria-haspopup="true" aria-expanded={open} className={linkClass}>
@@ -283,7 +313,10 @@ export function CategoryTabs({
                     href={option.href}
                     hrefLang={option.lang}
                     lang={option.lang}
-                    onClick={option.onClick}
+                    onClick={(e) => {
+                      closeMenu();
+                      option.onClick?.(e);
+                    }}
                     className="flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2.5 text-sm font-semibold text-on-dark/85 transition-colors duration-[var(--duration-fast)] hover:bg-on-dark/[0.08] hover:text-on-dark"
                   >
                     {option.icon}

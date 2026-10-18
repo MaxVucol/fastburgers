@@ -11,14 +11,15 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import { buttonStyles } from "@/components/ui/button";
 import { Price } from "@/components/ui/price";
 import { fill } from "@/lib/i18n/config";
+import { cn } from "@/lib/utils";
 import { FavoriteButton } from "./favorite-button";
 import { ProductConfigurator } from "./product-configurator";
 import type { ProductCardData, ProductOptionView } from "@/types/catalog";
 
 /** Small dark label above an icon, shown instantly on hover or keyboard focus (no animation). */
-function Tip({ label, children }: { label: string; children: React.ReactNode }) {
+function Tip({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (
-    <span className="group/tip relative inline-flex">
+    <span className={cn("group/tip relative inline-flex", className)}>
       {children}
       <span
         aria-hidden
@@ -31,7 +32,7 @@ function Tip({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
-function QuickView({ product }: { product: ProductCardData }) {
+function QuickView({ product, hideOnPhone = false }: { product: ProductCardData; hideOnPhone?: boolean }) {
   const { locale, t, href } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
   useCloseOnHide(ref);
@@ -39,7 +40,7 @@ function QuickView({ product }: { product: ProductCardData }) {
 
   return (
     <>
-      <Tip label={t.product.quickView}>
+      <Tip label={t.product.quickView} className={hideOnPhone ? "max-sm:hidden" : undefined}>
         <button
           type="button"
           onClick={() => ref.current?.showModal()}
@@ -99,11 +100,11 @@ function QuickView({ product }: { product: ProductCardData }) {
  * Quick view and wishlist icons on a catalog card. They appear when the card is hovered or has
  * keyboard focus (always on touch screens, which have no hover), with a label above each.
  */
-export function CardActions({ product }: { product: ProductCardData }) {
+export function CardActions({ product, dense = false }: { product: ProductCardData; dense?: boolean }) {
   const { t } = useI18n();
   return (
     <div className="relative z-10 flex items-center opacity-0 transition-opacity duration-300 ease-out group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none [@media(hover:none)]:opacity-100">
-      <QuickView product={product} />
+      <QuickView product={product} hideOnPhone={dense} />
       <Tip label={t.product.wishlist}>
         <FavoriteButton productId={product.id} variant="card" />
       </Tip>

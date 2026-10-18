@@ -28,15 +28,15 @@ export default async function MenuPage() {
 
   return (
     <>
-      {/* On phones the title block is dropped (the categories and the toolbar come first); screen readers keep it. */}
-      <header className="container-page pt-14 pb-10 max-sm:sr-only">
+      <header className="container-page pt-10 pb-8 sm:pt-14 sm:pb-10">
         <p className="type-eyebrow flex items-center gap-2 text-ink-soft">
           <Crown className="h-3.5 text-accent-ink" />
           {t.menu.eyebrow}
         </p>
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_minmax(0,24rem)] lg:items-end">
           <h1 className="type-h1">{t.menu.title}</h1>
-          <p className="text-muted sm:text-lg lg:pb-2">{plural(locale, products.length, t.menu.lead)}</p>
+          {/* The long sentence under the title is dropped on phones. */}
+          <p className="hidden text-muted sm:block sm:text-lg lg:pb-2">{plural(locale, products.length, t.menu.lead)}</p>
         </div>
       </header>
 

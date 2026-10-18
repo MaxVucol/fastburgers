@@ -23,7 +23,8 @@ export async function Hero() {
   const slides: HeroSlide[] = SLIDES.map(({ src, to }, i) => ({ src, alt: t.hero.slides[i] ?? "", href: href(to) }));
 
   return (
-    <section aria-labelledby="hero-title" className="container-page pt-5 pb-[var(--section-y)] sm:pt-8">
+    // Below `md` the banner touches the header (no gap above it) and both screen edges (see HeroSlider).
+    <section aria-labelledby="hero-title" className="container-page pt-0 pb-[var(--section-y)] md:pt-8">
       {/* The slogan is part of the brand and stays in English on every locale. */}
       <h1 id="hero-title" lang="en" className="sr-only">
         {siteConfig.slogan.join(" ")}

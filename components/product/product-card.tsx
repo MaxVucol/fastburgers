@@ -13,6 +13,8 @@ import type { ProductCardData } from "@/types/catalog";
 
 export const PRODUCT_GRID_SIZES =
   "(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 520px) 46vw, 100vw";
+/** The dense grid (two columns from the smallest screens): a card is never wider than about half the screen. */
+const DENSE_GRID_SIZES = "(min-width: 1280px) 300px, (min-width: 1024px) 30vw, 46vw";
 
 function badgeLabels(t: Dictionary): BadgeLabels {
   return { isNew: t.product.badgeNew, popular: t.product.badgePopular, best: t.product.badgeBest, spicy: t.product.badgeSpicy, soldOut: t.product.soldOut };
@@ -24,6 +26,7 @@ export function ProductCard({
   eager = false,
   preload = false,
   headingLevel = "h3",
+  dense = false,
   className,
 }: {
   product: ProductCardData;
@@ -32,6 +35,8 @@ export function ProductCard({
   /** Preload with high priority — only the first card of a page (its LCP image). */
   preload?: boolean;
   headingLevel?: "h2" | "h3";
+  /** In a two-column grid on phones: smaller type and padding, no description, the heart and the "+" on their own row. */
+  dense?: boolean;
   className?: string;
 }) {
   const { locale, t, href } = useI18n();
@@ -50,7 +55,7 @@ export function ProductCard({
           src={product.image}
           alt={product.name}
           fill
-          sizes={PRODUCT_GRID_SIZES}
+          sizes={dense ? DENSE_GRID_SIZES : PRODUCT_GRID_SIZES}
           quality={70}
           {...(preload ? { preload: true } : { loading: eager ? "eager" : "lazy" })}
           className="object-cover"
@@ -63,13 +68,13 @@ export function ProductCard({
           soldOut={product.soldOut}
           discount={null}
           labels={badgeLabels(t)}
-          className="absolute top-3 left-3"
+          className={cn("absolute top-3 left-3", dense && "max-sm:top-2 max-sm:left-2")}
         />
         <DiscountRibbon percent={discount} />
       </div>
 
-      <div className="flex flex-1 flex-col p-4 sm:px-[1.125rem]">
-        <Heading className="font-display text-[1.0625rem] leading-snug font-bold tracking-[-0.015em] text-ink">
+      <div className={cn("flex flex-1 flex-col p-4 sm:px-[1.125rem]", dense && "max-sm:p-3")}>
+        <Heading className={cn("font-display text-[1.0625rem] leading-snug font-bold tracking-[-0.015em] text-ink", dense && "max-sm:line-clamp-2 max-sm:text-[0.9375rem]")}>
           <Link
             href={href(`/menu/${product.slug}`)}
             className="after:absolute after:inset-0 after:z-0 after:content-[''] focus-visible:outline-none group-has-[a:focus-visible]:underline"
@@ -77,9 +82,9 @@ export function ProductCard({
             {product.name}
           </Link>
         </Heading>
-        <p className="mt-1 line-clamp-2 text-[0.8125rem] leading-relaxed text-muted">{product.shortDescription}</p>
+        <p className={cn("mt-1 line-clamp-2 text-[0.8125rem] leading-relaxed text-muted", dense && "max-sm:hidden")}>{product.shortDescription}</p>
 
-        <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+        <div className={cn("mt-auto flex items-end justify-between gap-3 pt-4", dense && "max-sm:flex-col max-sm:items-stretch max-sm:gap-2 max-sm:pt-2.5")}>
           <div>
             {product.weight ? (
               <p className="mb-0.5 text-xs text-muted tabular-nums">
@@ -88,8 +93,8 @@ export function ProductCard({
             ) : null}
             <Price price={product.price} oldPrice={product.oldPrice} locale={locale} oldPriceLabel={t.product.oldPrice} />
           </div>
-          <div className="flex items-center gap-1">
-            <CardActions product={product} />
+          <div className={cn("flex items-center gap-1", dense && "max-sm:justify-between")}>
+            <CardActions product={product} dense={dense} />
             <CardAdd product={product} />
           </div>
         </div>
@@ -112,7 +117,7 @@ export function ProductGrid({
   return (
     <div
       // The menu lists every product: cards far below the screen are not laid out or painted until near it.
-      className={cn("grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 sm:gap-5 [&>article]:[contain-intrinsic-size:auto_26rem] [&>article]:[content-visibility:auto]", wide, className)}
+      className={cn("grid grid-cols-2 gap-3 sm:gap-5 max-sm:[&>article]:[contain-intrinsic-size:auto_17rem] [&>article]:[contain-intrinsic-size:auto_26rem] [&>article]:[content-visibility:auto]", wide, className)}
     >
       {children}
     </div>
@@ -139,6 +144,7 @@ export function ProductList({
           product={p}
           eager={i < eagerCount}
           preload={i === 0 && eagerCount > 0}
+          dense
         />
       ))}
     </ProductGrid>

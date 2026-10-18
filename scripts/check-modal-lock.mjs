@@ -7,7 +7,7 @@
 //
 // Exit code 1 when a scenario fails. Scenarios (phone-sized viewport):
 //   A  menu → another language: no dialog may stay open, and the menu must open again on the new page
-//   B  product-card window open → browser Back / Forward: no dialog may stay open on either page
+//   B  (700px wide) product-card window open → browser Back / Forward: no dialog may stay open on either page
 //   C  (desktop width) search window open → page scrolled to the top behind it: the dialog is still visible and can be closed
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
@@ -89,13 +89,14 @@ await session(async ({ ev, go, tap, sleep }) => {
   check("A: the menu opens again on the new page", (await visibleDialogs(ev)) === 1, `${await visibleDialogs(ev)} visible`);
 });
 
-// B ─ a product-card window open while leaving with Back / Forward
+// B ─ a product-card window open while leaving with Back / Forward (700px wide: below 640px the quick-view eye is not shown)
 await session(async ({ ev, go, tap, sleep }) => {
   await go(`${BASE}/`);
   await ev(`[...document.querySelectorAll('a[href="/menu"]')].find(a=>a.checkVisibility())?.click()`);
   await sleep(2500);
-  await ev("window.scrollTo(0, 600)");
-  await sleep(600);
+  // Bring the first card button that opens a window (the quick-view eye is hidden on phones: the "+" of a dish with extras) into view.
+  await ev("[...document.querySelectorAll('main button[aria-haspopup=dialog]')].find(x=>x.checkVisibility())?.scrollIntoView({ block: 'center' })");
+  await sleep(800);
   const opened = await tap(`[...document.querySelectorAll('main button[aria-haspopup=dialog]')].find(x=>${inView})`);
   await sleep(900);
   check("B: a card window opens", opened && (await openDialogs(ev)) === 1);
@@ -105,7 +106,7 @@ await session(async ({ ev, go, tap, sleep }) => {
   await ev("history.forward()");
   await sleep(2500);
   check("B: Forward shows no stale dialog", (await openDialogs(ev)) === 0, `${await openDialogs(ev)} open on ${await ev("location.pathname")}`);
-});
+}, { width: 700, height: 900, mobile: true });
 
 // C ─ search window, page scrolled behind it
 await session(async ({ ev, go, tap, sleep }) => {
