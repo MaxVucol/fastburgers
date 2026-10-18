@@ -2,6 +2,7 @@
 // environment variables are missing or point to the wrong place.
 // Never prints secret values — only variable names and what is wrong with them.
 import { existsSync } from "node:fs";
+import { checkPreviewDatabase, isPreviewDeployment, PREVIEW_DATABASE_NAME } from "../lib/preview-guard.mjs";
 
 // Locally, Next.js loads .env itself, but this script runs before Next does.
 if (existsSync(".env") && typeof process.loadEnvFile === "function") {
@@ -45,6 +46,19 @@ if (!dbUrl) {
   }
 }
 
+// A Preview deployment must run on its own database. Reasons only, never the connection string.
+if (isPreviewDeployment()) {
+  const preview = checkPreviewDatabase();
+  if (!preview.ok) {
+    errors.push(
+      `This is a Preview deployment, and DATABASE_URL does not point at the separate Preview database (${preview.reason}).\n` +
+        `    Preview must use a database named exactly "${PREVIEW_DATABASE_NAME}" with its own Atlas user, so that test orders\n` +
+        `    never reach real data. On Vercel: Settings → Environment Variables → give DATABASE_URL a Preview-only value\n` +
+        "    and remove Preview from the Production one. See docs/SECURITY-RUNBOOK.md.",
+    );
+  }
+}
+
 const secret = process.env.AUTH_SECRET ?? "";
 if (secret.length < 32) {
   (onVercel ? errors : warnings).push(
@@ -62,8 +76,13 @@ if (onVercel && !process.env.BLOB_READ_WRITE_TOKEN) {
 if (onVercel && process.env.VERCEL_ENV === "production" && process.env.ORDER_MODE?.trim() !== "live") {
   warnings.push('ORDER_MODE is not "live": orders on this deployment are tagged as demo orders.');
 }
-if (onVercel && process.env.VERCEL_ENV === "preview" && process.env.ORDER_MODE?.trim() === "live") {
-  warnings.push('ORDER_MODE is "live" on a Preview deployment: preview orders would look like real ones. Give Preview its own database.');
+if (isPreviewDeployment() && process.env.ORDER_MODE?.trim() === "live") {
+  warnings.push('ORDER_MODE is "live" on a Preview deployment: it is ignored there (Preview orders are always demo orders). Remove it from Preview.');
+}
+if (isPreviewDeployment()) {
+  for (const name of ["BLOB_READ_WRITE_TOKEN", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "GMAIL_APP_PASSWORD", "RESEND_API_KEY"]) {
+    if (process.env[name]?.trim()) warnings.push(`${name} is set on a Preview deployment: it is ignored there (Telegram, e-mail and Blob writes are off in Preview). Remove it from Preview.`);
+  }
 }
 if (onVercel && !process.env.NEXT_PUBLIC_SITE_URL) {
   warnings.push("NEXT_PUBLIC_SITE_URL is not set: canonical URLs and the sitemap will use the Vercel production domain.");

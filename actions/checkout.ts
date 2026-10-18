@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
+import { ordersAreDemo, previewDatabaseBlocked } from "@/lib/preview-guard.mjs";
 import { clientIp } from "@/lib/client-ip";
 import { formatPrice } from "@/lib/format";
 import { defaultLocale, fill, isLocale } from "@/lib/i18n/config";
@@ -21,8 +22,8 @@ function isCheckoutKey(value: string | undefined): value is CheckoutErrorKey {
   return value != null && (CHECKOUT_ERROR_KEYS as readonly string[]).includes(value);
 }
 
-/** Orders are tagged as demo orders unless ORDER_MODE=live (see .env.example). */
-const isDemo = () => process.env.ORDER_MODE?.trim() !== "live";
+/** Orders are tagged as demo orders unless ORDER_MODE=live (see .env.example); a Preview order is always a demo order. */
+const isDemo = () => ordersAreDemo();
 
 /**
  * Places an order. Input comes from the browser, so it is treated as untrusted:
@@ -32,6 +33,12 @@ const isDemo = () => process.env.ORDER_MODE?.trim() !== "live";
 export async function placeOrder(input: unknown, locale?: string): Promise<CheckoutResult> {
   const lang = isLocale(locale) ? locale : defaultLocale;
   const t = getDictionary(lang);
+
+  // A Preview that is not on its own database takes no orders (and reads nothing: this runs first).
+  if (previewDatabaseBlocked()) {
+    console.error("placeOrder refused: this Preview deployment is not on the separate Preview database");
+    return { ok: false, error: t.errors.previewDatabase };
+  }
 
   const parsed = checkoutSchema.safeParse(input);
   if (!parsed.success) {
@@ -64,7 +71,8 @@ export async function placeOrder(input: unknown, locale?: string): Promise<Check
       if (typeof params.min === "number") params.min = formatPrice(params.min, lang);
       return { ok: false, error: fill(t.errors[error.code], params), ...error.detail };
     }
-    console.error("placeOrder failed", error);
+    // Name and code only: a database error can carry the submitted values (name, phone, address).
+    console.error("placeOrder failed", error instanceof Error ? error.name : "unknown error", (error as { code?: unknown })?.code ?? "");
     return { ok: false, error: t.errors.unexpected };
   }
 }

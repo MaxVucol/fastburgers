@@ -2,6 +2,7 @@ import "server-only";
 import { createHash, randomInt } from "node:crypto";
 import { Prisma, type DeliveryMethod, type OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { previewDatabaseBlocked } from "@/lib/preview-guard.mjs";
 import { computeDeliveryFee, MIN_DELIVERY_ORDER } from "@/lib/pricing";
 import { consumeAll, mongoRateLimitStore, RATE_LIMITS, type RateLimitStore } from "@/lib/rate-limit";
 import { canChangeStatus, OPEN_STATUSES, ORDER_STATUS_LABEL } from "@/lib/order-status";
@@ -18,7 +19,8 @@ export type OrderErrorCode =
   | "onlinePayment"
   | "tooManyOrders"
   | "attemptMismatch"
-  | "saveFailed";
+  | "saveFailed"
+  | "previewDatabase";
 
 /** Current prices of the ordered products, sent back when the cart's prices are out of date. */
 export type PriceUpdate = { productId: string; price: number; options: { id: string; price: number }[] };
@@ -111,6 +113,8 @@ async function findReplay(key: string, fingerprint: string) {
  * anything is written; replays do not count against them.
  */
 export async function createOrder(data: CheckoutData, context: OrderContext = {}) {
+  // Backstop for the check in the action: no order is written by a Preview that is not on its own database.
+  if (previewDatabaseBlocked()) throw new OrderError("previewDatabase");
   const { idempotencyKey: key, userId } = context;
   const fingerprint = checkoutFingerprint(data);
   if (key) {

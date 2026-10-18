@@ -23,5 +23,7 @@ export async function resolve(specifier, context, next) {
     const url = withExtension(new URL(specifier, context.parentURL));
     if (url) return { url, shortCircuit: true };
   }
+  // Next's own entry points ("next/headers", "next/server") are CommonJS files that need the extension in ESM.
+  if (/^next\/[a-z-]+$/.test(specifier)) return next(`${specifier}.js`, context);
   return next(specifier, context);
 }

@@ -1,4 +1,5 @@
 import "server-only";
+import { outboundChannelsClosed } from "@/lib/preview-guard.mjs";
 
 /**
  * Messages to the owner's Telegram chat through the official Bot API (`sendMessage` over HTTPS) —
@@ -7,6 +8,7 @@ import "server-only";
  * URL, so neither the URL nor raw fetch errors are ever logged.
  */
 export function telegramEnabled(): boolean {
+  if (outboundChannelsClosed()) return false; // Preview never messages the owner's chat
   return Boolean(process.env.TELEGRAM_BOT_TOKEN?.trim() && process.env.TELEGRAM_CHAT_ID?.trim());
 }
 
@@ -19,6 +21,7 @@ export type TelegramResult = { ok: true } | { ok: false; reason: string };
 
 /** Sends one HTML-formatted message; never throws. */
 export async function sendTelegramMessage(html: string): Promise<TelegramResult> {
+  if (outboundChannelsClosed()) return { ok: false, reason: "disabled on Preview" };
   const token = process.env.TELEGRAM_BOT_TOKEN?.trim();
   const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
   if (!token || !chatId) return { ok: false, reason: "not configured" };

@@ -1,9 +1,12 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { defaultLocale, isLocale, localizePath } from "@/lib/i18n/config";
+import { clientIp } from "@/lib/client-ip";
+import { defaultLocale, fill, isLocale, localizePath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
+import { consumeAll, RATE_LIMITS } from "@/lib/rate-limit";
 import { findOrderNumberByPhone } from "@/services/orders";
 
 const lookupSchema = z.object({
@@ -27,6 +30,10 @@ export async function lookupOrder(_prev: LookupState, formData: FormData): Promi
     const key = parsed.error.issues[0]?.message;
     return { error: key === "orderNumber" || key === "lookupPhone" ? t.errors[key] : t.errors.invalid };
   }
+
+  // Guessing order numbers against phone numbers: a few tries per address, then a short pause.
+  const limited = await consumeAll([{ rule: RATE_LIMITS.lookupIp, id: clientIp(await headers()) }]);
+  if (!limited.ok) return { error: fill(t.errors.tooManyLookups, { minutes: Math.ceil(limited.retryAfterSeconds / 60) }) };
 
   const number = await findOrderNumberByPhone(parsed.data.number, parsed.data.phone);
   if (!number) return { error: t.errors.orderNotFound };

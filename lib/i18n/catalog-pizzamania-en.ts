@@ -1,5 +1,5 @@
 // English copy for the catalogue imported from the previous brand's menu, written by hand from the
-// Romanian rows (scripts/pizzamania-en.cjs writes this file). Keyed by slug like catalog-translations.ts.
+// Romanian rows (scripts/pizzamania-en.mjs writes this file). Keyed by slug like catalog-translations.ts.
 
 export const pizzamaniaEn = {
   categories: {
