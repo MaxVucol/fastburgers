@@ -23,11 +23,19 @@ export function MenuToolbar({
   const { t } = useI18n();
   // Phones: the filters and the sorting sit behind a button; from `sm` up they are always shown.
   const [open, setOpen] = useState(false);
+  // Once the panel has finished opening, its clipping is lifted so the sorting list and the focus rings can overhang it.
+  const [settled, setSettled] = useState(false);
   const panelId = useId();
   const active = (query.q ? 1 : 0) + (query.filter !== DEFAULT_MENU_QUERY.filter ? 1 : 0) + (query.sort !== DEFAULT_MENU_QUERY.sort ? 1 : 0);
   const groupRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLSpanElement>(null);
   const pillPlaced = useRef(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const timer = window.setTimeout(() => setSettled(true), 340);
+    return () => window.clearTimeout(timer);
+  }, [open]);
 
   // The orange pill glides to the chosen filter (instead of each button lighting up on its own).
   function placePill(animate: boolean) {
@@ -65,11 +73,13 @@ export function MenuToolbar({
 
   return (
     <div>
-      <div className="flex flex-col gap-3 py-3 md:flex-row md:items-center">
-        <div className="flex flex-col gap-3 md:max-w-sm md:flex-1">
+      <div className="flex flex-col py-3 sm:gap-3 md:flex-row md:items-center">
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            setSettled(false);
+            setOpen((v) => !v);
+          }}
           aria-expanded={open}
           aria-controls={panelId}
           className={cn(
@@ -85,7 +95,23 @@ export function MenuToolbar({
             </span>
           )}
         </button>
-        <form role="search" className={cn("relative min-w-0", !open && "max-sm:hidden")} onSubmit={(e) => e.preventDefault()}>
+        {/* Phones: search and filters unfold under the button (the rows glide from 0 to their height, the content fades in); from sm up the wrappers vanish (contents) and everything is always shown. */}
+        <div
+          id={panelId}
+          className={cn(
+            "max-sm:grid max-sm:transition-[grid-template-rows,opacity,visibility] max-sm:duration-[var(--duration-slow)] max-sm:ease-[var(--ease-out-brand)] motion-reduce:transition-none sm:contents",
+            open ? "max-sm:grid-rows-[1fr] max-sm:opacity-100" : "max-sm:invisible max-sm:grid-rows-[0fr] max-sm:opacity-0",
+          )}
+        >
+        <div className={cn("min-h-0 sm:contents", !(open && settled) && "max-sm:overflow-hidden")}>
+        <div
+          className={cn(
+            "flex flex-col gap-3 max-sm:pt-3 sm:contents",
+            "max-sm:transition-transform max-sm:duration-[var(--duration-slow)] max-sm:ease-[var(--ease-out-brand)] motion-reduce:transition-none",
+            open ? "max-sm:translate-y-0" : "max-sm:-translate-y-2",
+          )}
+        >
+        <form role="search" className="relative min-w-0 md:max-w-sm md:flex-1" onSubmit={(e) => e.preventDefault()}>
           <label htmlFor="menu-search" className="sr-only">
             {t.menu.searchLabel}
           </label>
@@ -109,9 +135,8 @@ export function MenuToolbar({
             </button>
           )}
         </form>
-        </div>
 
-        <div id={panelId} className={cn("flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center md:ml-auto", !open && "max-sm:hidden")}>
+        <div className="flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center md:ml-auto">
           {filters.length > 1 && (
           <div
             ref={groupRef}
@@ -149,6 +174,9 @@ export function MenuToolbar({
             options={MENU_SORTS.map((value) => ({ value, label: t.menu.sorts[value] }))}
             onChange={(sort) => onChange({ sort })}
           />
+        </div>
+        </div>
+        </div>
         </div>
       </div>
     </div>
