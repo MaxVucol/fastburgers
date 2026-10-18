@@ -13,7 +13,7 @@ import { headerIconButton } from "./header-icon";
 import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import { isActivePath, WithPathname } from "./nav-links";
-import { useCloseOnHide } from "./use-close-on-hide";
+import { closeWithAnimation, useCloseOnHide } from "./use-close-on-hide";
 
 const icons: Record<string, { src: string; width: number }> = categoryIcons;
 
@@ -25,7 +25,7 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
   const { t, href } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
   useCloseOnHide(ref);
-  const close = () => ref.current?.close();
+  const close = () => closeWithAnimation(ref.current);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const categoriesId = useId();
 
@@ -47,6 +47,12 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
       <dialog
         ref={ref}
         aria-label={t.header.navigation}
+        // Escape closes with the same slide-out as the cross.
+        onCancel={(e) => {
+          e.preventDefault();
+          close();
+        }}
+        onClose={(e) => e.currentTarget.removeAttribute("data-closing")}
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
         }}

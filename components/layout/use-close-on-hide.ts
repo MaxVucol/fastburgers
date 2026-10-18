@@ -16,3 +16,28 @@ export function useCloseOnHide(ref: RefObject<HTMLDialogElement | null>) {
     };
   }, [ref]);
 }
+
+/**
+ * Closes a drawer <dialog> the way it opened: `data-closing` plays the slide-out (and the backdrop fade) from
+ * globals.css, and the dialog is really closed when that animation ends. Visitors who ask for less motion get
+ * an immediate close, and a timer closes it anyway should the animation never report back.
+ */
+export function closeWithAnimation(dialog: HTMLDialogElement | null) {
+  if (!dialog?.open || dialog.hasAttribute("data-closing")) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    dialog.close();
+    return;
+  }
+  const finish = () => {
+    dialog.removeEventListener("animationend", onEnd);
+    window.clearTimeout(timer);
+    dialog.removeAttribute("data-closing");
+    if (dialog.open) dialog.close();
+  };
+  const onEnd = (event: AnimationEvent) => {
+    if (event.target === dialog && event.animationName === "drawer-left-out") finish();
+  };
+  const timer = window.setTimeout(finish, 500);
+  dialog.addEventListener("animationend", onEnd);
+  dialog.setAttribute("data-closing", "");
+}
