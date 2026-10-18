@@ -43,6 +43,7 @@ import {
   deleteAddress,
   isFavorite,
   listAddresses,
+  mergeFavorites,
   toggleFavorite,
   updateProfile,
 } from "@/services/customer";
@@ -353,6 +354,13 @@ export async function favoriteStateAction(productId: string) {
   const user = await getSessionUser();
   if (!user) return { signedIn: false, favorite: false };
   return { signedIn: true, favorite: await isFavorite(user.id, productId) };
+}
+
+/** Hands the favourites kept in the browser to the account of the signed-in visitor (nothing for guests). */
+export async function mergeFavoritesAction(ids: unknown): Promise<{ merged: number }> {
+  const user = await getSessionUser();
+  if (!user || !Array.isArray(ids)) return { merged: 0 };
+  return { merged: await mergeFavorites(user.id, ids.filter((id): id is string => typeof id === "string").slice(0, 100)) };
 }
 
 export async function toggleFavoriteAction(productId: string) {

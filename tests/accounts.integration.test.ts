@@ -187,6 +187,24 @@ describe("accounts, roles, isolation (integration, test database)", { skip: usab
     }
   });
 
+  test("favourites kept in the browser join the account: only real products, no duplicates, other accounts untouched", async () => {
+    const a = await accounts.registerCustomer({ name: "Merge A", email: email(), password: "Parola1234" });
+    const b = await accounts.registerCustomer({ name: "Merge B", email: email(), password: "Parola1234" });
+    const another = await prisma.product.findFirst({ where: { id: { not: product.id } }, select: { id: true } });
+    assert.ok(another);
+    const ghost = "a".repeat(24); // well-formed id of a product that does not exist
+    assert.equal(await customer.toggleFavorite(a.id, product.id), true); // already a favourite in the account
+    const added = await customer.mergeFavorites(a.id, [product.id, another.id, another.id, ghost, "not-an-id", "<script>"]);
+    assert.equal(added, 1); // only the new, real one
+    assert.deepEqual((await customer.listFavoriteIds(a.id)).sort(), [product.id, another.id].sort());
+    assert.equal(await customer.mergeFavorites(a.id, [another.id]), 0); // a repeat adds nothing
+    assert.deepEqual(await customer.listFavoriteIds(b.id), []);
+    assert.equal(await customer.mergeFavorites(b.id, []), 0);
+    // A long list is cut to the per-request limit instead of being trusted.
+    const many = Array.from({ length: customer.MAX_FAVORITES_PER_MERGE + 50 }, (_, i) => i.toString(16).padStart(24, "b"));
+    assert.equal(await customer.mergeFavorites(b.id, many), 0); // none of them exists
+  });
+
   test("dashboard: demo/real filter treats orders without the flag as real", async () => {
     const store = rl.createMemoryRateLimitStore();
     const real = await orders.createOrder(orderData(), { rateLimitStore: store });

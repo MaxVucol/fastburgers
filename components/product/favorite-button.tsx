@@ -1,16 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { Heart } from "lucide-react";
-import { favoriteStateAction, toggleFavoriteAction } from "@/actions/customer";
+import { favoriteStateAction, mergeFavoritesAction, toggleFavoriteAction } from "@/actions/customer";
 import { useI18n } from "@/components/i18n/i18n-provider";
+import { readGuestFavorites, subscribeGuestFavorites, toggleGuestFavorite, writeGuestFavorites } from "@/lib/guest-favorites";
 import { cn } from "@/lib/utils";
 
 /**
- * Heart toggle on a dish page or, as the "card" variant, on a catalog card. The state is read after
- * hydration (the page itself stays cached for everyone); a card has many hearts, so each one reads
- * it only when the pointer or keyboard first reaches it. A guest is sent to sign-in and comes back.
+ * Heart toggle on a dish page or, as the "card" variant, on a catalog card. It works for everyone:
+ * a signed-in customer's favourites live in the account; a visitor without an account keeps them in
+ * this browser, and they join the account the first time the visitor is signed in. The account state is read
+ * after hydration (the page itself stays cached for everyone); a card has many hearts, so each one
+ * reads it only when the pointer or keyboard first reaches it.
  */
 export function FavoriteButton({
   productId,
@@ -21,17 +23,31 @@ export function FavoriteButton({
   className?: string;
   variant?: "page" | "card";
 }) {
-  const { t, href } = useI18n();
-  const router = useRouter();
-  const [state, setState] = useState<{ signedIn: boolean; favorite: boolean } | null>(null);
+  const { t } = useI18n();
+  const [account, setAccount] = useState<{ signedIn: boolean; favorite: boolean } | null>(null);
   const [pending, startTransition] = useTransition();
+  // The browser's own list (a visitor without an account); the server renders it as "not a favourite".
+  const kept = useSyncExternalStore(
+    subscribeGuestFavorites,
+    () => readGuestFavorites().includes(productId),
+    () => false,
+  );
 
   const requested = useRef(false);
   const load = useCallback(() => {
     if (requested.current) return;
     requested.current = true;
     favoriteStateAction(productId)
-      .then(setState)
+      .then(async (state) => {
+        setAccount(state);
+        if (!state.signedIn) return;
+        // Signed in: whatever was collected in this browser before joins the account, once.
+        const ids = readGuestFavorites();
+        if (ids.length === 0) return;
+        await mergeFavoritesAction(ids);
+        writeGuestFavorites([]);
+        setAccount(await favoriteStateAction(productId));
+      })
       .catch(() => {
         requested.current = false;
       });
@@ -42,31 +58,35 @@ export function FavoriteButton({
   }, [variant, load]);
 
   function toggle() {
-    if (state && !state.signedIn) {
-      router.push(href(`/account/login?next=${encodeURIComponent(window.location.pathname)}`));
-      return;
-    }
     startTransition(async () => {
       try {
-        const next = await toggleFavoriteAction(productId);
-        if (!next.signedIn) router.push(href(`/account/login?next=${encodeURIComponent(window.location.pathname)}`));
-        setState(next);
+        const state = account ?? (await favoriteStateAction(productId));
+        if (state.signedIn) {
+          const next = await toggleFavoriteAction(productId);
+          if (next.signedIn) {
+            setAccount(next);
+            return;
+          }
+        }
+        // No account (or the session ended a moment ago): the browser keeps it.
+        setAccount({ signedIn: false, favorite: false });
+        toggleGuestFavorite(productId);
       } catch {
         // Network error: keep the previous state.
       }
     });
   }
 
-  const favorite = state?.favorite ?? false;
-  const label = state && !state.signedIn ? t.me.favorites.signInToSave : favorite ? t.me.favorites.remove : t.me.favorites.add;
+  const favorite = account?.signedIn ? account.favorite : kept;
+  const label = favorite ? t.me.favorites.remove : t.me.favorites.add;
   return (
     <button
       type="button"
       onClick={toggle}
-      disabled={pending || (variant === "page" && state === null)}
+      disabled={pending}
       onPointerEnter={load}
       onFocus={load}
-      aria-pressed={state?.signedIn ? favorite : undefined}
+      aria-pressed={favorite}
       aria-label={label}
       title={label}
       className={cn(

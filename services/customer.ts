@@ -82,6 +82,34 @@ export async function isFavorite(userId: string, productId: string) {
   return (await prisma.favorite.count({ where: { userId, productId } })) > 0;
 }
 
+/** Most favourites one request may add (what a visitor collected in the browser before signing in). */
+export const MAX_FAVORITES_PER_MERGE = 100;
+
+/**
+ * Adds the favourites a visitor kept in the browser to their account. Only existing products are
+ * saved, a dish that is already a favourite is left as it is, and unknown ids are ignored.
+ */
+export async function mergeFavorites(userId: string, productIds: string[]): Promise<number> {
+  const wanted = [...new Set(productIds.filter(isObjectId))].slice(0, MAX_FAVORITES_PER_MERGE);
+  if (wanted.length === 0) return 0;
+  const [products, have] = await Promise.all([
+    prisma.product.findMany({ where: { id: { in: wanted } }, select: { id: true } }),
+    prisma.favorite.findMany({ where: { userId, productId: { in: wanted } }, select: { productId: true } }),
+  ]);
+  const owned = new Set(have.map((f) => f.productId));
+  let added = 0;
+  for (const { id } of products) {
+    if (owned.has(id)) continue;
+    try {
+      await prisma.favorite.create({ data: { userId, productId: id } });
+      added++;
+    } catch {
+      // A parallel merge created the pair first (unique): it is a favourite either way.
+    }
+  }
+  return added;
+}
+
 /** Toggles a favourite for an existing product; returns the new state. */
 export async function toggleFavorite(userId: string, productId: string): Promise<boolean> {
   if (!isObjectId(productId)) return false;
