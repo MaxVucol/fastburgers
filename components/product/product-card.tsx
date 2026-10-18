@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRef } from "react";
 import Link from "next/link";
 import { CardActions, CardAdd } from "./card-actions";
 import { useI18n } from "@/components/i18n/i18n-provider";
@@ -10,6 +11,7 @@ import { discountPercent } from "@/lib/format";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { cn } from "@/lib/utils";
 import type { ProductCardData } from "@/types/catalog";
+import { useImageLookahead } from "./use-image-lookahead";
 
 export const PRODUCT_GRID_SIZES =
   "(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 520px) 46vw, 100vw";
@@ -114,8 +116,11 @@ export function ProductGrid({
   className?: string;
 }) {
   const wide = columns === "four" ? "lg:grid-cols-4" : "lg:grid-cols-3 xl:grid-cols-4";
+  const ref = useRef<HTMLDivElement>(null);
+  useImageLookahead(ref);
   return (
     <div
+      ref={ref}
       // The menu lists every product: cards far below the screen are not laid out or painted until near it.
       className={cn("grid grid-cols-2 gap-3 sm:gap-5 max-sm:[&>article]:[contain-intrinsic-size:auto_17rem] [&>article]:[contain-intrinsic-size:auto_26rem] [&>article]:[content-visibility:auto]", wide, className)}
     >
