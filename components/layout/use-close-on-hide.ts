@@ -17,8 +17,11 @@ export function useCloseOnHide(ref: RefObject<HTMLDialogElement | null>) {
   }, [ref]);
 }
 
+/** The exit animations (globals.css) a dialog may play while it has `data-closing`. */
+const EXIT_ANIMATIONS = ["drawer-left-out", "sheet-out"];
+
 /**
- * Closes a drawer <dialog> the way it opened: `data-closing` plays the slide-out (and the backdrop fade) from
+ * Closes a drawer or sheet <dialog> the way it opened: `data-closing` plays the exit animation (and the backdrop fade) from
  * globals.css, and the dialog is really closed when that animation ends. Visitors who ask for less motion get
  * an immediate close, and a timer closes it anyway should the animation never report back.
  */
@@ -35,7 +38,7 @@ export function closeWithAnimation(dialog: HTMLDialogElement | null) {
     if (dialog.open) dialog.close();
   };
   const onEnd = (event: AnimationEvent) => {
-    if (event.target === dialog && event.animationName === "drawer-left-out") finish();
+    if (event.target === dialog && EXIT_ANIMATIONS.includes(event.animationName)) finish();
   };
   const timer = window.setTimeout(finish, 500);
   dialog.addEventListener("animationend", onEnd);

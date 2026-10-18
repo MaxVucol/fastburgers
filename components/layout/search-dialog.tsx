@@ -7,13 +7,13 @@ import { useRef } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { cn } from "@/lib/utils";
 import { headerIcon, headerIconButton } from "./header-icon";
-import { useCloseOnHide } from "./use-close-on-hide";
+import { closeWithAnimation, useCloseOnHide } from "./use-close-on-hide";
 
 export function SearchDialog({ triggerClassName }: { triggerClassName?: string }) {
   const { t, href } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
   useCloseOnHide(ref);
-  const close = () => ref.current?.close();
+  const close = () => closeWithAnimation(ref.current);
 
   return (
     <>
@@ -29,6 +29,12 @@ export function SearchDialog({ triggerClassName }: { triggerClassName?: string }
       <dialog
         ref={ref}
         aria-label={t.search.label}
+        // Escape closes with the same fade as the cross.
+        onCancel={(e) => {
+          e.preventDefault();
+          close();
+        }}
+        onClose={(e) => e.currentTarget.removeAttribute("data-closing")}
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
         }}

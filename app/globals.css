@@ -342,12 +342,22 @@ dialog[open]::backdrop {
 .drawer-left[open][data-closing] {
   animation: drawer-left-out var(--duration-slow) var(--ease-out-brand) forwards;
 }
+.sheet[open][data-closing] {
+  animation: sheet-out var(--duration-base) ease-in forwards;
+}
+.sheet[open][data-closing]::backdrop {
+  animation-duration: var(--duration-base);
+}
 dialog[open][data-closing]::backdrop {
   animation: fade-out var(--duration-slow) ease-out forwards;
 }
 @keyframes drawer-left-out {
   from { transform: none; }
   to { transform: translateX(-100%); }
+}
+@keyframes sheet-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-10px); }
 }
 @keyframes fade-out {
   from { opacity: 1; }
@@ -370,6 +380,7 @@ dialog[open][data-closing]::backdrop {
   .drawer-left[open],
   .drawer-left[open][data-closing],
   .sheet[open],
+  .sheet[open][data-closing],
   dialog[open]::backdrop,
   dialog[open][data-closing]::backdrop {
     animation: none;
