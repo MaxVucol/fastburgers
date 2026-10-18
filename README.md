@@ -98,7 +98,7 @@ lib/i18n/            configurare limbi, dicționare, traduceri catalog
 - Fonturi (`lib/fonts.ts`): Montserrat pentru logo, titluri și prețuri, Inter pentru text, Caveat pentru notițele scrise de mână.
 - Logo: `components/layout/logo.tsx` (wordmark cu coroană, variantă pentru fundal închis și semn compact); coroana este în `components/ui/brand.tsx`. Iconițele site-ului: `app/icon.svg`, `app/apple-icon.png`, `app/favicon.ico`.
 - Numele, sloganul („Real Burgers. Better Days.”, rămâne în engleză în toate limbile) și rețelele sociale sunt în `lib/site.ts`. Iconițele sociale apar în footer doar după ce se completează adresele reale ale profilurilor.
-- Previzualizarea socială (Open Graph / Twitter, 1200×630): `public/images/og/buniq.jpg`, generată de `npm run og:build` (`scripts/make-og.mjs`) din logo, slogan și fotografia hero, cu Montserrat și `next/og` — fără dependențe noi; fontul se descarcă doar pentru randare și nu se păstrează în repo.
+- Previzualizarea socială (Open Graph / Twitter, 1200×630): `public/images/og/buniq-banner.jpg` (bannerul publicitar BUNIQ, decupat la 1200×630). Varianta veche, generată de `npm run og:build` (`scripts/make-og.mjs`, cu Montserrat și `next/og`; fontul se descarcă doar pentru randare și nu se păstrează în repo), este `public/images/og/buniq.jpg`.
 
 ## Imagini
 

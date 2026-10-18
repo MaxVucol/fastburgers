@@ -16,7 +16,7 @@ export const siteConfig = {
   tagline: "Burgers & More",
   slogan: ["Real Burgers.", "Better Days."],
   /** Branded social card (1200×630), built by scripts/make-og.mjs. */
-  ogImage: "/images/og/buniq.jpg",
+  ogImage: "/images/og/buniq-banner.jpg",
   url: resolveSiteUrl(),
   phone: "+373 721 000 321",
   phoneHref: "tel:+373721000321",
