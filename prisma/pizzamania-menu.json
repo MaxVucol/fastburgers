@@ -206,8 +206,8 @@
   },
   {
    "slug": "jagermeister",
-   "name": "Jagermeister",
-   "nameRu": "Эгермейтер",
+   "name": "Jägermeister",
+   "nameRu": "Ягермейстер",
    "category": "bar",
    "price": 5000,
    "weight": 50,
@@ -304,8 +304,8 @@
   },
   {
    "slug": "izvorul-alb-plata-500-ml",
-   "name": "Izvorul alb (plată) 500 ml",
-   "nameRu": "Изворул алб (не газированная) 500 мл",
+   "name": "Izvorul Alb (plată) 500 ml",
+   "nameRu": "Изворул Алб (негазированная) 500 мл",
    "category": "bauturi",
    "price": 2500,
    "weight": 500,
@@ -332,7 +332,7 @@
   },
   {
    "slug": "piine-neagra",
-   "name": "Pîine neagră",
+   "name": "Pâine neagră",
    "nameRu": "Черный хлеб",
    "category": "paine",
    "price": 800,
@@ -347,7 +347,7 @@
   {
    "slug": "pesmeti",
    "name": "Pesmeți",
-   "nameRu": "Сухарики",
+   "nameRu": "Панировочные сухари",
    "category": "paine",
    "price": 800,
    "weight": 50,
@@ -416,7 +416,7 @@
   },
   {
    "slug": "fresh-cheese",
-   "name": "Fresh cheese",
+   "name": "Brânză cremă",
    "nameRu": "Творожный сыр",
    "category": "toppinguri",
    "price": 1500,
@@ -430,8 +430,8 @@
   },
   {
    "slug": "double-cappucino",
-   "name": "Double Cappucino",
-   "nameRu": "Двойной каппучино",
+   "name": "Double Cappuccino",
+   "nameRu": "Двойной капучино",
    "category": "cafea",
    "price": 5000,
    "weight": 300,
@@ -445,7 +445,7 @@
   {
    "slug": "mozzarella",
    "name": "Mozzarella",
-   "nameRu": "Mоцарелла",
+   "nameRu": "Моцарелла",
    "category": "toppinguri",
    "price": 1500,
    "weight": 30,
@@ -473,7 +473,7 @@
   {
    "slug": "double-espresso",
    "name": "Double Espresso",
-   "nameRu": "Двойной Эспрессо",
+   "nameRu": "Двойной эспрессо",
    "category": "cafea",
    "price": 3700,
    "weight": 240,
@@ -486,7 +486,7 @@
   },
   {
    "slug": "wine-crime-sparcling-rose",
-   "name": "Wine Crime Sparcling Rose",
+   "name": "Wine Crime Sparkling Rosé",
    "nameRu": "Вайн Крайм Спарклинг Розе",
    "category": "bar",
    "price": 20500,
@@ -542,7 +542,7 @@
   },
   {
    "slug": "rose-sec-500-ml",
-   "name": "Rose (sec) 500 ml",
+   "name": "Rosé (sec) 500 ml",
    "nameRu": "Розе (сухое) 500 мл",
    "category": "bar",
    "price": 6000,
@@ -556,7 +556,7 @@
   },
   {
    "slug": "becon",
-   "name": "Becon",
+   "name": "Bacon",
    "nameRu": "Бекон",
    "category": "toppinguri",
    "price": 1500,
@@ -613,7 +613,7 @@
   {
    "slug": "bailey-s",
    "name": "Bailey's",
-   "nameRu": "Бейлис",
+   "nameRu": "Бейлиз",
    "category": "bar",
    "price": 5000,
    "weight": 50,
@@ -682,8 +682,8 @@
   },
   {
    "slug": "sweet-chili",
-   "name": "Sweet-chili",
-   "nameRu": "Кисло-сладкий чилли",
+   "name": "Sweet chili",
+   "nameRu": "Кисло-сладкий чили",
    "category": "sosuri",
    "price": 1500,
    "weight": 50,
@@ -724,7 +724,7 @@
   },
   {
    "slug": "visina",
-   "name": "Vişină",
+   "name": "Vișină",
    "nameRu": "Вишня",
    "category": "toppinguri",
    "price": 1000,
@@ -808,7 +808,7 @@
   },
   {
    "slug": "cirnaciori-vinatoresti",
-   "name": "Cîrnăciori vînătorești",
+   "name": "Cârnăciori vânătorești",
    "nameRu": "Охотничьи колбаски",
    "category": "toppinguri",
    "price": 1500,
@@ -837,7 +837,7 @@
   {
    "slug": "salam",
    "name": "Salam",
-   "nameRu": "Cалями",
+   "nameRu": "Салями",
    "category": "toppinguri",
    "price": 1500,
    "weight": 50,
@@ -850,8 +850,8 @@
   },
   {
    "slug": "jemeson",
-   "name": "Jemeson",
-   "nameRu": "Джемесон",
+   "name": "Jameson",
+   "nameRu": "Джеймсон",
    "category": "bar",
    "price": 5500,
    "weight": 50,
@@ -864,7 +864,7 @@
   },
   {
    "slug": "rose-sec-200-ml",
-   "name": "Rose (sec) 200 ml",
+   "name": "Rosé (sec) 200 ml",
    "nameRu": "Розе (сухое) 200 мл",
    "category": "bar",
    "price": 3000,
@@ -892,7 +892,7 @@
   },
   {
    "slug": "piine-toast",
-   "name": "Pîine toast",
+   "name": "Pâine toast",
    "nameRu": "Хлеб Тост",
    "category": "paine",
    "price": 800,
@@ -920,7 +920,7 @@
   },
   {
    "slug": "rosii",
-   "name": "Roşii",
+   "name": "Roșii",
    "nameRu": "Помидоры",
    "category": "toppinguri",
    "price": 1000,
@@ -962,7 +962,7 @@
   },
   {
    "slug": "piine-alba",
-   "name": "Pîine albă",
+   "name": "Pâine albă",
    "nameRu": "Белый хлеб",
    "category": "paine",
    "price": 800,
@@ -990,8 +990,8 @@
   },
   {
    "slug": "triple-sec",
-   "name": "Triple-Sec",
-   "nameRu": "Трипл-Сек",
+   "name": "Triple Sec",
+   "nameRu": "Трипл сек",
    "category": "bar",
    "price": 5000,
    "weight": 50,
@@ -1004,7 +1004,7 @@
   },
   {
    "slug": "wine-crime-sparcling-white",
-   "name": "Wine Crime Sparcling White",
+   "name": "Wine Crime Sparkling White",
    "nameRu": "Вайн Крайм Спарклинг Вайт",
    "category": "bar",
    "price": 20500,
@@ -1075,7 +1075,7 @@
   {
    "slug": "cappuccino",
    "name": "Cappuccino",
-   "nameRu": "Каппучино",
+   "nameRu": "Капучино",
    "category": "cafea",
    "price": 4000,
    "weight": 120,
@@ -1088,8 +1088,8 @@
   },
   {
    "slug": "cappucino-cu-lapte-de-migdale",
-   "name": "Cappucino cu lapte de migdale",
-   "nameRu": "Каппучино на миндальном молоке",
+   "name": "Cappuccino cu lapte de migdale",
+   "nameRu": "Капучино на миндальном молоке",
    "category": "cafea",
    "price": 5500,
    "weight": 120,
@@ -1116,7 +1116,7 @@
   },
   {
    "slug": "inghetata-clasica",
-   "name": "Înghețata clasica",
+   "name": "Înghețată clasică",
    "nameRu": "Классическое мороженое",
    "category": "deserturi",
    "price": 6500,
@@ -1199,7 +1199,7 @@
   {
    "slug": "espresso-macchiato",
    "name": "Espresso Macchiato",
-   "nameRu": "Эспрессо микиато",
+   "nameRu": "Эспрессо макиато",
    "category": "cafea",
    "price": 3000,
    "weight": 28,
@@ -1338,8 +1338,8 @@
   },
   {
    "slug": "izvorul-alb-plata-750-ml",
-   "name": "Izvorul alb (plată) 750 ml",
-   "nameRu": "Изворул алб (не газированная) 750 мл",
+   "name": "Izvorul Alb (plată) 750 ml",
+   "nameRu": "Изворул Алб (негазированная) 750 мл",
    "category": "bauturi",
    "price": 5000,
    "weight": 750,
@@ -1366,7 +1366,7 @@
   },
   {
    "slug": "inghetata-snickers",
-   "name": "Înghețata Snickers",
+   "name": "Înghețată Snickers",
    "nameRu": "Мороженое Сникерс",
    "category": "deserturi",
    "price": 7000,
@@ -1380,7 +1380,7 @@
   },
   {
    "slug": "inghetata-bubble-gum",
-   "name": "Înghețata Bubble Gum",
+   "name": "Înghețată Bubble Gum",
    "nameRu": "Мороженое Bubble Gum",
    "category": "deserturi",
    "price": 6800,
@@ -1394,7 +1394,7 @@
   },
   {
    "slug": "badar-x-o-silver-5-y-o-500-ml",
-   "name": "Badar x.o Silver 5 Y.O 500 ml",
+   "name": "Bardar X.O. Silver 5 Y.O. 500 ml",
    "nameRu": "Бардар Сильвер 5 лет 500 мл",
    "category": "bar",
    "price": 35000,
@@ -1408,7 +1408,7 @@
   },
   {
    "slug": "badar-x-o-silver-5-y-o-50-ml",
-   "name": "Badar x.o Silver 5 Y.O 50 ml",
+   "name": "Bardar X.O. Silver 5 Y.O. 50 ml",
    "nameRu": "Бардар Сильвер 5 лет 50 мл",
    "category": "bar",
    "price": 3500,
@@ -1450,7 +1450,7 @@
   },
   {
    "slug": "lamiie-200-ml",
-   "name": "Lămîie 200 ml",
+   "name": "Lămâie 200 ml",
    "nameRu": "Лимон 200 мл",
    "category": "bauturi",
    "price": 5500,
@@ -1464,7 +1464,7 @@
   },
   {
    "slug": "lamiie-400-ml",
-   "name": "Lămîie 400 ml",
+   "name": "Lămâie 400 ml",
    "nameRu": "Лимон 400 мл",
    "category": "bauturi",
    "price": 7700,
@@ -1478,7 +1478,7 @@
   },
   {
    "slug": "grapefruit-200-ml",
-   "name": "Grapefruit 200 ml",
+   "name": "Grepfrut 200 ml",
    "nameRu": "Грейпфрут 200 мл",
    "category": "bauturi",
    "price": 5500,
@@ -1492,7 +1492,7 @@
   },
   {
    "slug": "grapefruit-400-ml",
-   "name": "Grapefruit 400 ml",
+   "name": "Grepfrut 400 ml",
    "nameRu": "Грейпфрут 400 мл",
    "category": "bauturi",
    "price": 7700,
@@ -1520,8 +1520,8 @@
   },
   {
    "slug": "costite-de-porc",
-   "name": "Costite de porc",
-   "nameRu": "Свинная костица",
+   "name": "Costițe de porc",
+   "nameRu": "Свиные ребрышки",
    "category": "preparate-calde",
    "price": 23000,
    "weight": 570,
@@ -1562,7 +1562,7 @@
   },
   {
    "slug": "rose-sec-1000-ml",
-   "name": "Rose (sec) 1000 ml",
+   "name": "Rosé (sec) 1000 ml",
    "nameRu": "Розе (сухое) 1000 мл",
    "category": "bar",
    "price": 11500,
@@ -1632,8 +1632,8 @@
   },
   {
    "slug": "medovic-bento",
-   "name": "Medovic bento",
-   "nameRu": "Медовик ,бенто",
+   "name": "Medovik bento",
+   "nameRu": "Медовик бенто",
    "category": "meniu-banchet",
    "price": 50000,
    "weight": 1500,
@@ -1660,8 +1660,8 @@
   },
   {
    "slug": "bruschetti-cu-scrob-si-avocado",
-   "name": "Bruschetti cu scrob si avocado",
-   "nameRu": "Брускетти со скробом и авокадо",
+   "name": "Bruschete cu scrob și avocado",
+   "nameRu": "Брускетта со скрэмблом и авокадо",
    "category": "mic-dejun",
    "price": 9500,
    "weight": 260,
@@ -1702,8 +1702,8 @@
   },
   {
    "slug": "pina-colada",
-   "name": "Pina Colada",
-   "nameRu": "Пина Колада",
+   "name": "Piña Colada",
+   "nameRu": "Пина колада",
    "category": "bar",
    "price": 9000,
    "weight": 340,
@@ -1716,8 +1716,8 @@
   },
   {
    "slug": "52",
-   "name": "В-52",
-   "nameRu": "Б-52",
+   "name": "B-52",
+   "nameRu": "B-52",
    "category": "bar",
    "price": 7500,
    "weight": 60,
@@ -1786,7 +1786,7 @@
   },
   {
    "slug": "limonada-480-ml",
-   "name": "Limonadã 480 ml",
+   "name": "Limonadă 480 ml",
    "nameRu": "Лимонад 480 мл",
    "category": "bauturi",
    "price": 6000,
@@ -1800,7 +1800,7 @@
   },
   {
    "slug": "limonada-1000-ml",
-   "name": "Limonadã 1000 ml",
+   "name": "Limonadă 1000 ml",
    "nameRu": "Лимонад 1000 мл",
    "category": "bauturi",
    "price": 10500,
@@ -1814,8 +1814,8 @@
   },
   {
    "slug": "balti-barza-alba-7-y-o-50-ml",
-   "name": "Bălți Barză Albă 7 Y.O 50 ml",
-   "nameRu": "Бэлць Барзэ Албэ 7 лет 50 мл",
+   "name": "Bălți Barza Albă 7 Y.O. 50 ml",
+   "nameRu": "Бэлць Барза Албэ 7 лет 50 мл",
    "category": "bar",
    "price": 5000,
    "weight": 50,
@@ -1828,8 +1828,8 @@
   },
   {
    "slug": "balti-barza-alba-7-y-o-500-ml",
-   "name": "Bălți Barză Albă 7 Y.O 500 ml",
-   "nameRu": "Бэлць Барзэ Албэ 7 лет 500 мл",
+   "name": "Bălți Barza Albă 7 Y.O. 500 ml",
+   "nameRu": "Бэлць Барза Албэ 7 лет 500 мл",
    "category": "bar",
    "price": 50000,
    "weight": 500,
@@ -1843,7 +1843,7 @@
   {
    "slug": "platou-la-bere",
    "name": "Platou la bere",
-   "nameRu": "Пивное плато",
+   "nameRu": "Плато к пиву",
    "category": "la-bere",
    "price": 29000,
    "weight": 700,
@@ -1856,7 +1856,7 @@
   },
   {
    "slug": "inele-de-ceapa-fri",
-   "name": "Inele de ceapa fri",
+   "name": "Inele de ceapă fri",
    "nameRu": "Луковые кольца фри",
    "category": "la-bere",
    "price": 5500,
@@ -1940,7 +1940,7 @@
   },
   {
    "slug": "fettuccine-cu-creveti",
-   "name": "Fettuccine cu creveti",
+   "name": "Fettuccine cu creveți",
    "nameRu": "Фетучини с креветками",
    "category": "paste",
    "price": 16500,
@@ -1996,7 +1996,7 @@
   },
   {
    "slug": "purcari-chardonnay-alb-sec",
-   "name": "Purcari Chardonnay (alb sec.)",
+   "name": "Purcari Chardonnay (alb sec)",
    "nameRu": "Пуркарь Шардоне (белое сух.)",
    "category": "bar",
    "price": 29000,
@@ -2010,7 +2010,7 @@
   },
   {
    "slug": "purcari-rose-rose-sec",
-   "name": "Purcari Rose (rose sec.)",
+   "name": "Purcari Rosé (rosé sec)",
    "nameRu": "Пуркарь Розе (розе сух.)",
    "category": "bar",
    "price": 29000,
@@ -2024,8 +2024,8 @@
   },
   {
    "slug": "purcari-cabernet-sauvignon-rosu-sec",
-   "name": "Purcari Cabernet-Sauvignon (roșu sec.)",
-   "nameRu": "Пуркарь Каберне-Совиньон (красное сух.)",
+   "name": "Purcari Cabernet Sauvignon (roșu sec)",
+   "nameRu": "Пуркарь Каберне Совиньон (красное сух.)",
    "category": "bar",
    "price": 29000,
    "weight": 750,
@@ -2094,8 +2094,8 @@
   },
   {
    "slug": "platou-de-cascaval-cu-mezeluri-crud-zvantate",
-   "name": "Platou de cașcaval cu mezeluri crud zvântate",
-   "nameRu": "Ассорти из сыра и сыровялеными колбасами",
+   "name": "Platou de cașcaval cu mezeluri crud-uscate",
+   "nameRu": "Ассорти из сыра и сыровяленых колбас",
    "category": "meniu-banchet",
    "price": 32000,
    "weight": 420,
@@ -2249,7 +2249,7 @@
   {
    "slug": "salata-fitness",
    "name": "Salată Fitness",
-   "nameRu": "Салат Фитнесс",
+   "nameRu": "Салат Фитнес",
    "category": "meniu-banchet",
    "price": 18000,
    "weight": 460,
@@ -2262,7 +2262,7 @@
   },
   {
    "slug": "platou-haiducesc",
-   "name": ": Platou Haiducesc",
+   "name": "Platou Haiducesc",
    "nameRu": "Плато Хайдуков",
    "category": "meniu-banchet",
    "price": 61000,
@@ -2291,7 +2291,7 @@
   {
    "slug": "platou-de-carne-la-grill",
    "name": "Platou de carne la grill",
-   "nameRu": ": Мясная тарелка гриль",
+   "nameRu": "Мясная тарелка гриль",
    "category": "meniu-banchet",
    "price": 51000,
    "weight": 950,
@@ -2305,7 +2305,7 @@
   {
    "slug": "set-de-aperitive",
    "name": "Set de aperitive",
-   "nameRu": "Сет из апперитивов",
+   "nameRu": "Сет из аперитивов",
    "category": "meniu-banchet",
    "price": 32000,
    "weight": 1070,
@@ -2318,8 +2318,8 @@
   },
   {
    "slug": "mozaic-mediterrian",
-   "name": "Mozaic Mediterrian",
-   "nameRu": "Средиземноморская мозайка",
+   "name": "Mozaic mediteranean",
+   "nameRu": "Средиземноморская мозаика",
    "category": "meniu-banchet",
    "price": 32000,
    "weight": 670,
@@ -2346,8 +2346,8 @@
   },
   {
    "slug": "sammer-cake",
-   "name": "Sammer Cake",
-   "nameRu": "Самер Кейк",
+   "name": "Summer Cake",
+   "nameRu": "Саммер кейк",
    "category": "meniu-banchet",
    "price": 75000,
    "weight": 1800,
@@ -2389,7 +2389,7 @@
   {
    "slug": "sprite-meniu-banchet",
    "name": "Sprite",
-   "nameRu": "Cпрайт",
+   "nameRu": "Спрайт",
    "category": "meniu-banchet",
    "price": 7000,
    "weight": 1500,
@@ -2403,7 +2403,7 @@
   {
    "slug": "scrob",
    "name": "Scrob",
-   "nameRu": "Скроб с прошутто и авокадо",
+   "nameRu": "Скрэмбл",
    "category": "mic-dejun",
    "price": 12500,
    "weight": 240,
@@ -2416,7 +2416,7 @@
   },
   {
    "slug": "shakshuca-cu-becon",
-   "name": "Shakshuca cu becon",
+   "name": "Shakshuka cu bacon",
    "nameRu": "Шакшука с беконом",
    "category": "mic-dejun",
    "price": 9500,
@@ -2472,8 +2472,8 @@
   },
   {
    "slug": "bruschetti-cu-somon",
-   "name": "Bruschetti cu somon",
-   "nameRu": "Брускетти с лососем",
+   "name": "Bruschete cu somon",
+   "nameRu": "Брускетта с лососем",
    "category": "mic-dejun",
    "price": 9800,
    "weight": 280,
@@ -2528,7 +2528,7 @@
   },
   {
    "slug": "asorti-de-cascaval-la-vin",
-   "name": "Asorti de cascaval la vin",
+   "name": "Asorti de cașcaval la vin",
    "nameRu": "Сырное ассорти к вину",
    "category": "garnituri",
    "price": 18000,
@@ -2654,7 +2654,7 @@
   },
   {
    "slug": "pizza-ceddar",
-   "name": "Pizza Ceddar",
+   "name": "Pizza Cheddar",
    "nameRu": "Пицца Чеддер",
    "category": "pizza",
    "price": 15000,
@@ -2752,7 +2752,7 @@
   },
   {
    "slug": "pizza-al-marino",
-   "name": "Pizza AL Marino",
+   "name": "Pizza Al Marino",
    "nameRu": "Пицца Ал Марино",
    "category": "pizza",
    "price": 16500,
@@ -2794,7 +2794,7 @@
   },
   {
    "slug": "shakshuca",
-   "name": "Shakshuca",
+   "name": "Shakshuka",
    "nameRu": "Шакшука",
    "category": "mic-dejun",
    "price": 8500,
@@ -2836,7 +2836,7 @@
   },
   {
    "slug": "salata-cu-somon",
-   "name": "Salata cu somon",
+   "name": "Salată cu somon",
    "nameRu": "Салат с лососем",
    "category": "salate",
    "price": 14500,
@@ -2879,7 +2879,7 @@
   {
    "slug": "salata-fitness-salate",
    "name": "Salată Fitness",
-   "nameRu": "Салат Фитнесс",
+   "nameRu": "Салат Фитнес",
    "category": "salate",
    "price": 8000,
    "weight": 230,
@@ -2934,7 +2934,7 @@
   },
   {
    "slug": "poke-bowl-cu-falafel",
-   "name": "Poke Bowl cu falafel",
+   "name": "Poke bowl cu falafel",
    "nameRu": "Поке Болл с фалафелем",
    "category": "poke",
    "price": 15000,
@@ -2990,8 +2990,8 @@
   },
   {
    "slug": "cartofi-ca-acasa",
-   "name": "Cartofi ca acasã",
-   "nameRu": "Картофель по домашнему",
+   "name": "Cartofi ca acasă",
+   "nameRu": "Картофель по-домашнему",
    "category": "garnituri",
    "price": 5000,
    "weight": 170,
@@ -3004,7 +3004,7 @@
   },
   {
    "slug": "legume-grill",
-   "name": "Legume grill",
+   "name": "Legume la grill",
    "nameRu": "Овощи гриль",
    "category": "garnituri",
    "price": 11500,
@@ -3018,7 +3018,7 @@
   },
   {
    "slug": "snitel-de-pui",
-   "name": "Snitel de pui",
+   "name": "Șnițel de pui",
    "nameRu": "Куриный шницель",
    "category": "preparate-calde",
    "price": 15500,
@@ -3088,7 +3088,7 @@
   },
   {
    "slug": "ariopioare-fri",
-   "name": "Ariopioare fri",
+   "name": "Aripioare fri",
    "nameRu": "Крылышки Фри",
    "category": "preparate-calde",
    "price": 12000,
@@ -3103,7 +3103,7 @@
   {
    "slug": "mici-la-gratar",
    "name": "Mici la grătar",
-   "nameRu": "Мититей на гратаре",
+   "nameRu": "Мититеи на гриле",
    "category": "preparate-calde",
    "price": 15000,
    "weight": 430,
@@ -3116,8 +3116,8 @@
   },
   {
    "slug": "frigarui-de-porc-la-gratar",
-   "name": "Frigarui de porc la grătar",
-   "nameRu": "Шашлык свиной на гратаре",
+   "name": "Frigărui de porc la grătar",
+   "nameRu": "Шашлык из свинины на гриле",
    "category": "preparate-calde",
    "price": 19500,
    "weight": 470,
@@ -3172,7 +3172,7 @@
   },
   {
    "slug": "lasagne-cu-sos-beshamel",
-   "name": "Lasagne cu sos Beshamel",
+   "name": "Lasagna cu sos Bechamel",
    "nameRu": "Лазанья с соусом Бешамель",
    "category": "paste",
    "price": 13500,
@@ -3186,7 +3186,7 @@
   },
   {
    "slug": "lasagna-cu-sos-alla-bologneze",
-   "name": "Lasagna cu sos alla Bologneze",
+   "name": "Lasagna cu sos Bolognese",
    "nameRu": "Лазанья с соусом Болоньезе",
    "category": "paste",
    "price": 13500,
@@ -3201,7 +3201,7 @@
   {
    "slug": "fettuccine-carbonara",
    "name": "Fettuccine Carbonara",
-   "nameRu": "Фетучини, в соусе карбонара",
+   "nameRu": "Фетучини в соусе карбонара",
    "category": "paste",
    "price": 14000,
    "weight": 340,
@@ -3214,7 +3214,7 @@
   },
   {
    "slug": "noodles-cu-vita",
-   "name": "Noodles cu vita",
+   "name": "Noodles cu vită",
    "nameRu": "Нудлс с говядиной",
    "category": "paste",
    "price": 19500,
@@ -3270,8 +3270,8 @@
   },
   {
    "slug": "pizza-tuno",
-   "name": "Pizza Tuno",
-   "nameRu": "Пицца Tuno",
+   "name": "Pizza Tonno",
+   "nameRu": "Пицца Тонно",
    "category": "pizza",
    "price": 16000,
    "weight": 520,
@@ -3285,7 +3285,7 @@
   {
    "slug": "bere-franziskaner",
    "name": "Bere Franziskaner",
-   "nameRu": "Пиво Франзесканер",
+   "nameRu": "Пиво Францисканер",
    "category": "bar",
    "price": 8500,
    "weight": 500,
@@ -3355,7 +3355,7 @@
   {
    "slug": "efes-pilsner",
    "name": "Efes Pilsner",
-   "nameRu": "Эфес Пилснер",
+   "nameRu": "Эфес Пилзнер",
    "category": "bar",
    "price": 5500,
    "weight": 500,
@@ -3369,7 +3369,7 @@
   {
    "slug": "bere-don-compagno",
    "name": "Bere Don Compagno",
-   "nameRu": "Пиво Дон Компанье",
+   "nameRu": "Пиво Дон Компаньо",
    "category": "bar",
    "price": 5000,
    "weight": 400,
@@ -3382,8 +3382,8 @@
   },
   {
    "slug": "bere-hopfen-brau",
-   "name": "Bere hopfen brau",
-   "nameRu": "Пиво hopfen brau",
+   "name": "Bere Hopfen Brau",
+   "nameRu": "Пиво Хопфен Брау",
    "category": "bar",
    "price": 6000,
    "weight": 500,
@@ -3396,7 +3396,7 @@
   },
   {
    "slug": "foccacia",
-   "name": "Foccacia",
+   "name": "Focaccia",
    "nameRu": "Фокачча",
    "category": "paine",
    "price": 5500,
@@ -3411,7 +3411,7 @@
   {
    "slug": "scrob-cu-somon",
    "name": "Scrob cu somon",
-   "nameRu": "Скроб с лососем",
+   "nameRu": "Скрэмбл с лососем",
    "category": "mic-dejun",
    "price": 14000,
    "weight": 260,
@@ -3508,7 +3508,7 @@
   },
   {
    "slug": "milk-shake",
-   "name": "Milk Shake",
+   "name": "Milkshake",
    "nameRu": "Молочный шейк",
    "category": "bauturi",
    "price": 6000,
@@ -3522,7 +3522,7 @@
   },
   {
    "slug": "smoothi-vegan",
-   "name": "Smoothi Vegan",
+   "name": "Smoothie Vegan",
    "nameRu": "Смузи веган",
    "category": "bauturi",
    "price": 6500,
@@ -3550,7 +3550,7 @@
   },
   {
    "slug": "carnaciori-vanatoresti",
-   "name": "Cãrnaciori Vãnatoresti",
+   "name": "Cârnăciori vânătorești",
    "nameRu": "Охотничьи колбаски",
    "category": "la-bere",
    "price": 7000,
@@ -3578,7 +3578,7 @@
   },
   {
    "slug": "aripi-in-sos-picant",
-   "name": "Aripi in sos picant",
+   "name": "Aripi în sos picant",
    "nameRu": "Крылышки в пикантном соусе",
    "category": "la-bere",
    "price": 10000,
@@ -3592,8 +3592,8 @@
   },
   {
    "slug": "pizza-pipperoni",
-   "name": "Pizza Pipperoni",
-   "nameRu": "Пицца Пипперони",
+   "name": "Pizza Pepperoni",
+   "nameRu": "Пицца Пеперони",
    "category": "pizza",
    "price": 15000,
    "weight": 440,
@@ -3621,13 +3621,13 @@
   {
    "slug": "business-lunch-joi",
    "name": "Business Lunch Joi",
-   "nameRu": "Бизнесс Ланч Четверг",
+   "nameRu": "Бизнес-ланч Четверг",
    "category": "pranz-business",
    "price": 14500,
    "weight": null,
    "weightUnit": "g",
-   "description": "Supă cu perișoare de pui 300g<br>, Pizzetta Capriciosa/Pipperoni/Quattro Formaggi, salată Grecească 200g<br>Coca-Cola/Coca-Cola Fără Zahăr/Fanta/Sprite 250ml/<br>Suc 200ml sau Cafea Americano/Espresso<br>Pîine 100g<br>Disponibil 12:00-16:00",
-   "descriptionRu": "Суп с куриными тефтелями 300гр<br>ре, Пиццетта Cfpriciosa/Pipperoni/Quattro Formaggi, салат Греческий 200гр<br>Coca-Colа/Coca-Cola Fără Zahăr/Fanta/Sprite 250мл/<br>Сок 200мл или Кофе Americano/Espresso<br>Хлеб 100гр<br>Доступен 12:00-16:00",
+   "description": "Supă cu perișoare de pui 300g<br>, Pizzetta Capriciosa/Pepperoni/Quattro Formaggi, salată Grecească 200g<br>Coca-Cola/Coca-Cola Fără Zahăr/Fanta/Sprite 250ml/<br>Suc 200ml sau Cafea Americano/Espresso<br>Pîine 100g<br>Disponibil 12:00-16:00",
+   "descriptionRu": "Суп с куриными тефтелями 300гр<br>ре, Пиццетта Capriciosa/Pepperoni/Quattro Formaggi, салат Греческий 200гр<br>Coca-Colа/Coca-Cola Fără Zahăr/Fanta/Sprite 250мл/<br>Сок 200мл или Кофе Americano/Espresso<br>Хлеб 100гр<br>Доступен 12:00-16:00",
    "image": "/uploads/businesslunchjoi_a40350448c.jpg",
    "sourceId": 1420,
    "imageUrl": "https://ttq1fqgumbvfv1vp.public.blob.vercel-storage.com/products/business-lunch-joi/main.webp"
@@ -3635,7 +3635,7 @@
   {
    "slug": "business-lunch-miercuri",
    "name": "Business Lunch Miercuri",
-   "nameRu": "Бизнесс Ланч Среда",
+   "nameRu": "Бизнес-ланч Среда",
    "category": "pranz-business",
    "price": 14500,
    "weight": null,
@@ -3649,7 +3649,7 @@
   {
    "slug": "business-lunch-marti",
    "name": "Business Lunch Marți",
-   "nameRu": "Бизнесс Ланч Вторник",
+   "nameRu": "Бизнес-ланч Вторник",
    "category": "pranz-business",
    "price": 14500,
    "weight": null,
@@ -3663,7 +3663,7 @@
   {
    "slug": "business-lunch-vineri",
    "name": "Business Lunch Vineri",
-   "nameRu": "Бизнесс Ланч Пятница",
+   "nameRu": "Бизнес-ланч Пятница",
    "category": "pranz-business",
    "price": 14500,
    "weight": null,
@@ -3677,7 +3677,7 @@
   {
    "slug": "business-lunch-luni",
    "name": "Business Lunch Luni",
-   "nameRu": "Бизнесс Ланч Понедельник",
+   "nameRu": "Бизнес-ланч Понедельник",
    "category": "pranz-business",
    "price": 14500,
    "weight": null,
