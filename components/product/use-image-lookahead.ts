@@ -22,7 +22,12 @@ export function useImageLookahead(ref: RefObject<HTMLElement | null>) {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
           observer.unobserve(entry.target);
-          for (const img of entry.target.querySelectorAll<HTMLImageElement>("img[loading=lazy]")) img.loading = "eager";
+          for (const img of entry.target.querySelectorAll<HTMLImageElement>("img[loading=lazy]")) {
+            // A card also holds closed dialogs (quick view, options) with their own, larger pictures. They are not on
+            // the page yet: left lazy they load when the dialog opens, eager they would load for every card and
+            // double the pictures the image optimizer has to produce.
+            if (!img.closest("dialog")) img.loading = "eager";
+          }
         }
       },
       { rootMargin: AHEAD },
