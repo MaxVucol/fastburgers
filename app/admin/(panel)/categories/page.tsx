@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { Pencil, Plus } from "lucide-react";
 import { CategoryActiveSwitch, DeleteButton, MoveButtons } from "@/components/admin/admin-controls";
@@ -35,7 +35,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps<"/
               <li key={c.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-sand/40 sm:gap-4 sm:px-5">
                 <MoveButtons id={c.id} name={c.name} isFirst={i === 0} isLast={i === categories.length - 1} />
                 <span className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-sand">
-                  {c.image && <Image src={c.image} alt="" fill sizes="48px" className="object-cover" />}
+                  {c.image && <SmartImage src={c.image} alt="" fill sizes="48px" className="object-cover" />}
                 </span>
                 <span className="min-w-0 flex-1">
                   <Link href={`/admin/categories/${c.id}`} className="block truncate font-semibold hover:text-accent-ink">

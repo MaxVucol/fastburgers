@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Mail, MapPin, MessageSquare, Phone } from "lucide-react";
@@ -46,7 +46,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
             {order.items.map((item) => (
               <li key={item.id} className="flex items-center gap-3 px-5 py-3.5">
                 <span className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-sand">
-                  <Image src={item.image} alt="" fill sizes="56px" className="object-cover" />
+                  <SmartImage src={item.image} alt="" fill sizes="56px" className="object-cover" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">

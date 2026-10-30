@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { startTransition, useActionState, useState } from "react";
 import { AlertCircle, ImagePlus, Loader2, Plus, Trash2 } from "lucide-react";
@@ -238,7 +238,7 @@ export function ProductForm({
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-sand">
             {preview || product?.image ? (
               // Local object URLs cannot go through the image optimizer.
-              <Image src={preview ?? product?.image ?? ""} alt={f.preview} fill sizes="352px" className="object-cover" unoptimized={Boolean(preview)} />
+              <SmartImage src={preview ?? product?.image ?? ""} alt={f.preview} fill sizes="352px" className="object-cover" unoptimized={Boolean(preview)} />
             ) : (
               <span className="grid h-full place-items-center text-muted">
                 <ImagePlus className="size-8" aria-hidden />
@@ -269,7 +269,7 @@ export function ProductForm({
                 <li key={src}>
                   <label className="group block cursor-pointer">
                     <span className="relative block aspect-square overflow-hidden rounded-lg bg-sand ring-2 ring-transparent group-has-[:checked]:ring-herb">
-                      <Image src={src} alt="" fill sizes="110px" className="object-cover" />
+                      <SmartImage src={src} alt="" fill sizes="110px" className="object-cover" />
                     </span>
                     <span className="mt-1 flex items-center gap-1.5 text-xs">
                       <Checkbox name="keepImages" value={src} defaultChecked className="size-3.5" /> {f.keep}

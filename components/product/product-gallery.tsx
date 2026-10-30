@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import { useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { fill } from "@/lib/i18n/config";
@@ -14,7 +14,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
   return (
     <div className="flex flex-col gap-3">
       <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-panel)] bg-sand">
-        <Image
+        <SmartImage
           key={current}
           src={current}
           alt={images.length > 1 ? fill(t.product.imageOf, { name, index: active + 1, count: images.length }) : name}
@@ -38,7 +38,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
                 i === active ? "ring-2 ring-ink ring-offset-2 ring-offset-cream" : "opacity-70 hover:opacity-100",
               )}
             >
-              <Image src={src} alt="" fill sizes="112px" className="object-cover" />
+              <SmartImage src={src} alt="" fill sizes="112px" className="object-cover" />
             </button>
           ))}
         </div>

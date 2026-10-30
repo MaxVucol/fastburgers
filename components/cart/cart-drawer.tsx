@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Truck, X } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -101,7 +101,7 @@ export function CartDrawer() {
                     tabIndex={-1}
                     aria-hidden
                   >
-                    <Image src={line.image} alt="" fill sizes="72px" className="object-cover" />
+                    <SmartImage src={line.image} alt="" fill sizes="72px" className="object-cover" />
                   </Link>
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex items-start justify-between gap-2">

@@ -46,6 +46,21 @@ Pași, o singură dată:
 
 Imaginile încărcate din admin merg în Vercel Blob când există `BLOB_READ_WRITE_TOKEN`. Local, fără token, rămân în `storage/uploads`. Fotografiile demo din `public/images` sunt în Git și funcționează oriunde.
 
+### Optimizarea imaginilor (în loc de `/_next/image`)
+
+Imaginile nu mai trec prin optimizatorul Vercel (facturat pe „transformări”), ci prin propriul `GET /img?u=<imagine>&w=<lățime>&q=<calitate>` ([app/img/route.ts](app/img/route.ts), [lib/image-optimizer](lib/image-optimizer)). Toate `<Image>` din site sunt `SmartImage` ([components/ui/smart-image.tsx](components/ui/smart-image.tsx); ESLint interzice `next/image` direct), iar `lib/image-loader.ts` construiește adresele. Se acceptă doar lățimile și calitățile din [lib/image-config.ts](lib/image-config.ts) și doar `/images/*`, `/media/*` și Blob-ul proiectului. Rezultatul este întotdeauna WebP.
+
+Un răspuns se caută pe rând în:
+
+1. **browser**: cache-ul HTTP (30 de zile) și **IndexedDB** ([lib/image-vault.ts](lib/image-vault.ts), până la ~60 MB, cele mai vechi ies primele);
+2. **L2, memoria serverului** (LRU pe octeți, `IMAGE_CACHE_MEMORY_MB`, implicit 48);
+3. **L1, baza de date** (colecția `ImageCache` din MongoDB, creată automat, fără `db push`; copiile expiră după 35 de zile);
+4. abia apoi se face cu `sharp`, cu **single flight** (o singură lucrare per imagine, oricâte cereri așteaptă) și cel mult 3 codări simultane.
+
+Fiecare răspuns are `ETag` care depinde doar de cerere: un `If-None-Match` primește **304** fără să atingă niciun cache. `gzip` se aplică doar tipurilor text (SVG, JSON); WebP este deja comprimat și nu se mai arhivează. Antetul `X-Image-Cache` arată stratul care a răspuns (`l2`, `l1`, `made`). Dacă originalul nu poate fi citit, răspunsul este un redirect către original, nu o imagine ruptă.
+
+`node scripts/check-image-variants.mjs` (build local + Chrome) verifică că meniul cere o singură variantă per fotografie.
+
 ## Scripturi
 
 | Script | Rol |

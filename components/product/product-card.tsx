@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useRef } from "react";
+import { SmartImage } from "@/components/ui/smart-image";
+import { Children, isValidElement, useMemo, useRef } from "react";
 import Link from "next/link";
 import { CardActions, CardAdd } from "./card-actions";
 import { useI18n } from "@/components/i18n/i18n-provider";
@@ -12,6 +12,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { cn } from "@/lib/utils";
 import type { ProductCardData } from "@/types/catalog";
 import { useImageLookahead } from "./use-image-lookahead";
+import { useVirtualGrid, VIRTUAL_MIN_ITEMS } from "./use-virtual-grid";
 
 export const PRODUCT_GRID_SIZES =
   "(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 520px) 46vw, 100vw";
@@ -53,7 +54,7 @@ export function ProductCard({
       )}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-sand">
-        <Image
+        <SmartImage
           src={product.image}
           alt={product.name}
           fill
@@ -118,13 +119,23 @@ export function ProductGrid({
   const wide = columns === "four" ? "lg:grid-cols-4" : "lg:grid-cols-3 xl:grid-cols-4";
   const ref = useRef<HTMLDivElement>(null);
   useImageLookahead(ref);
+  // A long menu keeps only the cards near the screen in the page (see use-virtual-grid.ts).
+  const cards = useMemo(() => Children.toArray(children), [children]);
+  const signature = useMemo(() => cards.map((card) => (isValidElement(card) ? card.key : "")).join("|"), [cards]);
+  const virtual = useVirtualGrid(ref, cards.length, signature, cards.length >= VIRTUAL_MIN_ITEMS);
   return (
     <div
       ref={ref}
-      // The menu lists every product: cards far below the screen are not laid out or painted until near it.
-      className={cn("grid grid-cols-2 gap-3 sm:gap-5 max-sm:[&>article]:[contain-intrinsic-size:auto_17rem] [&>article]:[contain-intrinsic-size:auto_26rem] [&>article]:[content-visibility:auto]", wide, className)}
+      // Until the grid is windowed it lists every product: cards far below the screen are not laid out or painted until near it.
+      className={cn(
+        "grid grid-cols-2 gap-3 sm:gap-5",
+        !virtual.windowed && "max-sm:[&>article]:[contain-intrinsic-size:auto_17rem] [&>article]:[contain-intrinsic-size:auto_26rem] [&>article]:[content-visibility:auto]",
+        wide,
+        className,
+      )}
+      style={virtual.windowed ? { paddingTop: virtual.padTop, paddingBottom: virtual.padBottom } : undefined}
     >
-      {children}
+      {virtual.windowed ? cards.slice(virtual.start, virtual.end) : cards}
     </div>
   );
 }

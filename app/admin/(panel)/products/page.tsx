@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { ImageOff, Pencil, Plus, Search } from "lucide-react";
 import { DeleteButton, ProductFlagSwitch } from "@/components/admin/admin-controls";
@@ -97,7 +97,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                 className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-x-4 gap-y-3 px-5 py-3.5 transition-colors hover:bg-sand/40 lg:grid-cols-[3.5rem_1fr_7rem_4rem_4.5rem_4rem_4rem_4rem_5.5rem]"
               >
                 <span className="relative grid size-14 place-items-center overflow-hidden rounded-lg bg-sand text-muted">
-                  {p.image ? <Image src={p.image} alt="" fill sizes="56px" className="object-cover" /> : <ImageOff className="size-5" aria-label={t.noPhoto} />}
+                  {p.image ? <SmartImage src={p.image} alt="" fill sizes="56px" className="object-cover" /> : <ImageOff className="size-5" aria-label={t.noPhoto} />}
                 </span>
                 <span className="min-w-0">
                   <Link href={`/admin/products/${p.id}`} className="block truncate font-semibold hover:text-accent-ink">

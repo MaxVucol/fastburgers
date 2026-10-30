@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -225,7 +225,7 @@ export function CategoryTabs({
           <span className={cn("flex h-14 items-center transition-transform duration-300 sm:h-16", tab.key === target && "scale-105")}>{tab.icon}</span>
         ) : (
           CATEGORY_ICONS[tab.key] && (
-            <Image
+            <SmartImage
               src={CATEGORY_ICONS[tab.key].src}
               alt=""
               width={CATEGORY_ICONS[tab.key].width}

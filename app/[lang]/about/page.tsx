@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import { ArrowRight, Award, ChefHat, Leaf, Soup } from "lucide-react";
 import { Crown } from "@/components/ui/brand";
 import { ButtonLink } from "@/components/ui/button";
@@ -42,7 +42,7 @@ export default async function AboutPage() {
         {/* Offset photo trio: one large frame, two smaller ones stepping down. */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-[var(--radius-panel)] bg-sand">
-            <Image
+            <SmartImage
               src="/images/products/classic-smash/2.webp"
               alt={t.about.imageMain}
               fill
@@ -52,10 +52,10 @@ export default async function AboutPage() {
             />
           </div>
           <div className="relative aspect-square overflow-hidden rounded-[var(--radius-card)] bg-sand">
-            <Image src="/images/products/margherita/main.webp" alt={t.about.imagePizza} fill sizes="(min-width: 1024px) 310px, 50vw" className="object-cover" />
+            <SmartImage src="/images/products/margherita/main.webp" alt={t.about.imagePizza} fill sizes="(min-width: 1024px) 310px, 50vw" className="object-cover" />
           </div>
           <div className="relative aspect-square translate-y-6 overflow-hidden rounded-[var(--radius-card)] bg-sand">
-            <Image src="/images/products/crispy-tenders/main.webp" alt={t.about.imageChicken} fill sizes="(min-width: 1024px) 310px, 50vw" className="object-cover" />
+            <SmartImage src="/images/products/crispy-tenders/main.webp" alt={t.about.imageChicken} fill sizes="(min-width: 1024px) 310px, 50vw" className="object-cover" />
           </div>
         </div>
       </section>

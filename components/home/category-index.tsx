@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -39,9 +39,9 @@ export async function CategoryIndex({
         >
           <span className="relative size-14 overflow-hidden rounded-[var(--radius-sm)] bg-graphite sm:size-16 lg:hidden">
             {icon ? (
-              <Image src={icon.src} alt="" fill sizes="64px" className="object-contain p-1" />
+              <SmartImage src={icon.src} alt="" fill sizes="64px" className="object-contain p-1" />
             ) : (
-              c.image && <Image src={c.image} alt="" fill sizes="64px" className="object-cover" />
+              c.image && <SmartImage src={c.image} alt="" fill sizes="64px" className="object-cover" />
             )}
           </span>
           <span className="hidden font-display text-sm font-bold text-accent-ink tabular-nums lg:block">
