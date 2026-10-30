@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -85,7 +85,7 @@ export function CategoryShowcase({
               photo.slug === active ? "opacity-100" : "opacity-0",
             )}
           >
-            <Image src={photo.src} alt="" fill sizes="(min-width: 1344px) 480px, 34vw" quality={70} className="object-contain px-8 pt-10 pb-32" />
+            <SmartImage src={photo.src} alt="" fill sizes="(min-width: 1344px) 480px, 34vw" quality={70} className="object-contain px-8 pt-10 pb-32" />
             <span className="absolute inset-x-8 bottom-8 text-ink dark:text-on-dark">
               <span className="block font-display text-[2.25rem] leading-none font-black tracking-[-0.04em] uppercase">{photo.name}</span>
               {photo.description && <span className="mt-2 block max-w-sm text-sm text-muted dark:text-on-dark/75">{photo.description}</span>}

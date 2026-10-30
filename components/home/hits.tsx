@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { QuickAddButton } from "@/components/cart/add-to-cart-button";
@@ -64,7 +64,7 @@ async function FeatureCard({ product }: { product: ProductCardData }) {
   return (
     <article className="group relative grid overflow-hidden rounded-[var(--radius-panel)] border border-line-dark bg-graphite md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:grid-cols-1 lg:grid-rows-[minmax(0,1fr)_auto]">
       <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto md:min-h-[19rem] lg:min-h-[22rem]">
-        <Image
+        <SmartImage
           src={product.image}
           fill
           alt={product.name}
@@ -112,7 +112,7 @@ async function CompactCard({ product }: { product: ProductCardData }) {
   return (
     <article className="group relative flex w-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-line-dark bg-graphite">
       <div className="relative aspect-[4/3] overflow-hidden">
-        <Image
+        <SmartImage
           src={product.image}
           fill
           alt={product.name}

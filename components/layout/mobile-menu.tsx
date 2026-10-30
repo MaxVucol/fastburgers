@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import Form from "next/form";
 import { ArrowRight, CircleUserRound, Clock, Menu, PackageSearch, Phone, Search, X } from "lucide-react";
@@ -133,7 +133,7 @@ export function MobileMenu({ categories }: { categories: { slug: string; name: s
                                         className="flex items-center gap-4 py-2.5 pl-1 text-lg font-semibold text-on-dark/90 transition-colors hover:text-flame"
                                       >
                                         <span className="grid h-11 w-14 shrink-0 place-items-center">
-                                          {icon && <Image src={icon.src} alt="" width={icon.width} height={144} sizes="64px" className="max-h-11 w-auto object-contain" />}
+                                          {icon && <SmartImage src={icon.src} alt="" width={icon.width} height={144} sizes="64px" className="max-h-11 w-auto object-contain" />}
                                         </span>
                                         {c.name}
                                       </Link>

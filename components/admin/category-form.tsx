@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { startTransition, useActionState, useState } from "react";
 import { AlertCircle, ImagePlus, Loader2 } from "lucide-react";
@@ -91,7 +91,7 @@ export function CategoryForm({ category }: { category?: CategoryFormValues }) {
         <h2 className="font-bold">{f.image}</h2>
         <div className="relative aspect-square overflow-hidden rounded-xl bg-sand">
           {image ? (
-            <Image src={image} alt={f.preview} fill sizes="256px" className="object-cover" unoptimized={Boolean(preview)} />
+            <SmartImage src={image} alt={f.preview} fill sizes="256px" className="object-cover" unoptimized={Boolean(preview)} />
           ) : (
             <span className="grid h-full place-items-center text-muted">
               <ImagePlus className="size-8" aria-hidden />

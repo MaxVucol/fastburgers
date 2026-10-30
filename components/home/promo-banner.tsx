@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { QuickAddButton } from "@/components/cart/add-to-cart-button";
@@ -64,7 +64,7 @@ export async function PromoBanner({ product }: { product: ProductCardData }) {
           {/* The whole 3:1 photo, wider than its slot and centred on it, so nothing is cropped; the copy
               and the buttons sit above it (z-10). */}
           <div className="absolute top-1/2 left-1/2 aspect-[3/1] w-[150%] -translate-x-[52%] -translate-y-1/2">
-            <Image
+            <SmartImage
               src={photo}
               alt={t.promo.imageAlt}
               fill

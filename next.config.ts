@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
-import { blobHostname, securityHeaders } from "./lib/security-headers";
+import { DEVICE_SIZES, IMAGE_QUALITIES, IMAGE_SIZES } from "./lib/image-config";
+import { securityHeaders } from "./lib/security-headers";
 
 const nextConfig: NextConfig = {
   // No "X-Powered-By: Next.js" header, and no source maps for the browser bundles: readers of the site get
@@ -20,17 +21,15 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
-    formats: ["image/avif", "image/webp"],
-    qualities: [70, 75, 85],
-    // Product photos change rarely and every one has its own URL: keep the optimized copies for a month
-    // (the default is a minute), and only generate the widths the layout actually asks for.
-    minimumCacheTTL: 60 * 60 * 24 * 30,
-    deviceSizes: [360, 480, 640, 828, 1080, 1280, 1600, 1920],
-    imageSizes: [48, 64, 96, 128, 256, 384],
-    // Admin uploads and the catalogue photos live in this project's Vercel Blob store (see lib/storage.ts).
-    // Only that store may be optimised by /_next/image; someone else's Blob store cannot borrow it. Without a
-    // token to read the store id from, every Blob store is allowed, as before.
-    remotePatterns: [{ protocol: "https", hostname: blobHostname() }],
+    // Pictures are not optimised by Vercel's /_next/image (every distinct picture/width/quality is a billed
+    // "transformation"), but by the site's own /img route (app/img, lib/image-optimizer) with a three-layer cache.
+    // The loader only builds the /img address; the widths and qualities below are what `srcset` offers and what
+    // /img agrees to produce (lib/image-config.ts).
+    loader: "custom",
+    loaderFile: "./lib/image-loader.ts",
+    qualities: IMAGE_QUALITIES,
+    deviceSizes: DEVICE_SIZES,
+    imageSizes: IMAGE_SIZES,
   },
   // The pictures in /public/images are part of the site, not user uploads: browsers and the CDN keep them
   // for a month (and may show the old one for a day while fetching a changed one).

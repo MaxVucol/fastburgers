@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
@@ -118,12 +118,12 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                 className="relative h-full w-full shrink-0"
               >
                 <Link href={slide.href} tabIndex={i === index ? 0 : -1} className="absolute inset-0 block">
-                  <Image
+                  <SmartImage
                     src={slide.src}
                     alt={slide.alt}
                     fill
                     {...(i === 0 ? { preload: true, fetchPriority: "high" as const } : { loading: "lazy" as const })}
-                    quality={80}
+                    quality={85}
                     sizes="(min-width: 1344px) 1312px, 100vw"
                     className="object-cover"
                   />

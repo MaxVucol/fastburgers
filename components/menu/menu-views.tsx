@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { ArrowUpRight, SearchX } from "lucide-react";
 import { useI18n } from "@/components/i18n/i18n-provider";
@@ -38,7 +38,7 @@ export function GroupedMenu({
             <div className="flex items-center gap-4 sm:gap-5">
               {/* The category's picture (the number, where a category has none yet). */}
               {icons[category.slug] ? (
-                <Image
+                <SmartImage
                   src={icons[category.slug].src}
                   alt=""
                   width={icons[category.slug].width}

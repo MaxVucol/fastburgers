@@ -1,11 +1,12 @@
-// Regression check for Vercel Image Optimization usage: how many different pictures does the optimizer have to produce
-// for one visitor of the menu? Every distinct /_next/image URL (source, width, quality) is one billed "transformation",
-// and the Hobby plan allows 5,000 a month. A picture that should load only on demand but is requested for every card
-// (for example the large one in the closed quick-view dialog) silently doubles the bill.
+// Regression check for the image optimizer's workload: how many different pictures does it have to produce for one
+// visitor of the menu? Every distinct /img URL (source, width, quality) is one picture to encode and to keep in the
+// cache layers (before the site had its own optimizer it was one billed Vercel "transformation", 5,000 a month on the
+// Hobby plan). A picture that should load only on demand but is requested for every card (for example the large
+// one in the closed quick-view dialog) silently doubles the work.
 //
 // Needs Google Chrome and a LOCAL running build: `npm run build && npm start` (default http://127.0.0.1:3000;
 // CHROME=path to chrome.exe overrides). Only loopback addresses are accepted: it never talks to Production or Vercel.
-// The browser's /_next/image requests are intercepted and answered with a 1x1 stub, so nothing is fetched from
+// The browser's /img requests are intercepted and answered with a 1x1 stub, so nothing is fetched from
 // Vercel Blob or transformed; it reads the menu and opens one quick-view window, and changes no data.
 //
 //   node scripts/check-image-variants.mjs [baseUrl]
@@ -61,7 +62,7 @@ async function session(viewport, run) {
     await new Promise((r) => ws.addEventListener("open", r));
     let id = 0, loaded = false;
     const pending = new Map();
-    const requests = []; // every /_next/image URL the page asked for, in order
+    const requests = []; // every /img URL the page asked for, in order
     let send;
     ws.addEventListener("message", (e) => {
       const m = JSON.parse(e.data);
@@ -79,7 +80,7 @@ async function session(viewport, run) {
     await send("Runtime.enable");
     await send("Emulation.setDeviceMetricsOverride", { ...viewport, deviceScaleFactor: viewport.dpr });
     if (viewport.mobile) await send("Emulation.setTouchEmulationEnabled", { enabled: true });
-    await send("Fetch.enable", { patterns: [{ urlPattern: "*/_next/image*" }] });
+    await send("Fetch.enable", { patterns: [{ urlPattern: "*/img?*" }] });
     const go = async (url) => { loaded = false; await send("Page.navigate", { url }); for (let i = 0; i < 300 && !loaded; i++) await sleep(100); await sleep(2500); };
     const click = async (js) => {
       const raw = await ev(`(()=>{const e=${js};if(!e)return null;e.scrollIntoView({block:"center"});const r=e.getBoundingClientRect();return JSON.stringify({x:r.left+r.width/2,y:r.top+r.height/2})})()`);
@@ -103,7 +104,7 @@ function variantsPerPhoto(urls) {
   const photos = new Map();
   for (const raw of urls) {
     const u = new URL(raw);
-    const src = u.searchParams.get("url") ?? "";
+    const src = u.searchParams.get("u") ?? "";
     if (!/\/products\//.test(src)) continue;
     if (!photos.has(src)) photos.set(src, new Set());
     photos.get(src).add(`w${u.searchParams.get("w")}/q${u.searchParams.get("q")}`);

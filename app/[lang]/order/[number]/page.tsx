@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Check, CircleX, MapPin } from "lucide-react";
@@ -112,7 +112,7 @@ async function OrderDetails({
           {order.items.map((item) => (
             <li key={item.id} className="flex items-center gap-4 py-4">
               <span className="relative size-14 shrink-0 overflow-hidden rounded-[var(--radius-sm)] bg-sand">
-                <Image src={item.image} alt="" fill sizes="56px" className="object-cover" />
+                <SmartImage src={item.image} alt="" fill sizes="56px" className="object-cover" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="font-display text-lg leading-tight font-semibold">

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { AlertCircle, ArrowRight, Banknote, Bike, CreditCard, Loader2, Lock, ShoppingBag, Store } from "lucide-react";
@@ -414,7 +414,7 @@ export function CheckoutForm({ locations }: { locations: PickupLocation[] }) {
           {lines.map((line) => (
             <li key={line.key} className="flex gap-3.5 py-4">
               <span className="relative size-16 shrink-0 overflow-hidden rounded-[var(--radius-sm)] bg-graphite">
-                <Image src={line.image} alt="" fill sizes="64px" className="object-cover" />
+                <SmartImage src={line.image} alt="" fill sizes="64px" className="object-cover" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="font-display text-lg leading-tight font-semibold">{line.name}</p>

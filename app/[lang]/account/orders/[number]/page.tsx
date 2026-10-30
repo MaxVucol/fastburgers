@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -47,7 +47,7 @@ async function OrderDetail({ params }: Pick<PageProps<"/[lang]/account/orders/[n
             {order.items.map((item) => (
               <li key={item.id} className="flex gap-4 py-3.5">
                 <span className="relative size-16 shrink-0 overflow-hidden rounded-[var(--radius-sm)] bg-sand">
-                  {item.image && <Image src={item.image} alt="" fill sizes="64px" className="object-cover" />}
+                  {item.image && <SmartImage src={item.image} alt="" fill sizes="64px" className="object-cover" />}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">{item.productName}</p>

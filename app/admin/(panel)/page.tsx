@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { BellRing, Banknote, CalendarRange, ClipboardList, FolderPlus, ImageOff, Plus, Receipt, Scale, UserPlus, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -285,7 +285,7 @@ export default async function AdminDashboardPage({ searchParams }: PageProps<"/a
                   return (
                     <li key={p.productId} className="flex items-center gap-3">
                       <span className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-sand text-muted">
-                        {img ? <Image src={img} alt="" fill sizes="44px" className="object-cover" /> : <ImageOff className="size-4" aria-hidden />}
+                        {img ? <SmartImage src={img} alt="" fill sizes="44px" className="object-cover" /> : <ImageOff className="size-4" aria-hidden />}
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-baseline justify-between gap-2 text-sm">

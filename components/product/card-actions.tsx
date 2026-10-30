@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, ShoppingCart, X } from "lucide-react";
-import Image from "next/image";
+import { SmartImage } from "@/components/ui/smart-image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { productOptionsAction } from "@/actions/catalog";
@@ -69,7 +69,7 @@ function QuickView({ product, hideOnPhone = false }: { product: ProductCardData;
             <X className="size-5" aria-hidden />
           </button>
           <div className="relative aspect-[4/3] bg-sand md:aspect-auto md:min-h-[22rem]">
-            <Image src={product.image} alt={product.name} fill sizes="(min-width: 768px) 384px, 100vw" className="object-cover" />
+            <SmartImage src={product.image} alt={product.name} fill sizes="(min-width: 768px) 384px, 100vw" className="object-cover" />
           </div>
           <div className="flex flex-col p-6 sm:p-8">
             <h2 className="pr-10 font-display text-2xl leading-tight font-extrabold tracking-[-0.02em] md:pr-0">{product.name}</h2>
@@ -161,7 +161,7 @@ function OptionsAdd({ product, addable }: { product: ProductCardData; addable: P
         <div className="p-5 sm:p-7">
           <div className="mb-6 flex items-center gap-4">
             <span className="relative size-16 shrink-0 overflow-hidden rounded-[var(--radius-sm)] bg-sand">
-              <Image src={product.image} alt="" fill sizes="64px" className="object-cover" />
+              <SmartImage src={product.image} alt="" fill sizes="64px" className="object-cover" />
             </span>
             <div className="min-w-0 flex-1">
               <h2 className="font-display text-xl leading-tight font-extrabold tracking-[-0.02em]">{product.name}</h2>
